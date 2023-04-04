@@ -4,7 +4,7 @@
     "web": {
       "bundler": "metro"
     },
-    "name": "OguaSchoolzApp",
-    "slug": "OguaSchoolzApp"
+    "name": "OguaSchoolz",
+    "slug": "OguaSchoolz"
   }
 }
