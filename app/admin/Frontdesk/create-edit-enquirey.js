@@ -1,21 +1,33 @@
 import axios from 'axios';
 import { Redirect, Stack, useRouter, useSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, DeviceEventEmitter, SafeAreaView, Text, ToastAndroid, View } from 'react-native'
+import { ActivityIndicator, Alert, DeviceEventEmitter, SafeAreaView, ScrollView, StyleSheet, Text, ToastAndroid, View } from 'react-native'
 import { Button, Card, TextInput } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { schoolzapi } from '../../../components/constants';
 import { selecttoken } from '../../../features/userinfoSlice';
 import { useEffect } from 'react';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 function Createeditenquiry() {
 
     const token = useSelector(selecttoken);
     const [name, setName] = useState("");
+    const [phone, setPhone] = useState("");
+    const [email, setEmail] = useState("");
+    const [address, setAddress] = useState("");
+    const [note, setNote] = useState("");
     const [creatoredit, isCreatedorEdit] = useState();
     const [isloading, setLoading] = useState(false);
     const router = useRouter();
     const {id} = useSearchParams();
+
+    const [open, setOpen] = useState(false);
+    const [gender, setValue] = useState(null);
+    const [items, setItems] = useState([
+        {label: 'Male', value: 'Male'},
+        {label: 'Female', value: 'Female'}
+    ]);
 
     useEffect(()=>{
       DeviceEventEmitter.removeAllListeners("event.test");
@@ -34,7 +46,7 @@ function Createeditenquiry() {
       
       setLoading(true);
 
-      axios.get(schoolzapi+'/student-classes/show/'+id,
+      axios.get(schoolzapi+'/enquiry/show/'+id,
       {
           headers: {Accept: 'application/json',
           Authorization: "Bearer "+token
@@ -42,7 +54,12 @@ function Createeditenquiry() {
       })
         .then(function (response) {
           setLoading(false);
-          setName(response.data.data.name);
+          setName(response.data.data.fullname);
+          setValue(response.data.data.gender);
+          setPhone(response.data.data.phone);
+          setEmail(response.data.data.email);
+          setAddress(response.data.data.location);
+          setNote(response.data.data.note);
         })
         .catch(function (error) {
           setLoading(false);
@@ -57,13 +74,33 @@ function Createeditenquiry() {
           return;
         }
 
+        if(gender == ""){
+            alert('Gender cant be empty');
+            return;
+        }
+
+        if(note == ""){
+            alert('Note cant be empty');
+            return;
+        }
+
+        if(phone == ""){
+            alert('Phone number cant be empty');
+            return;
+        }
+
         setLoading(true);
 
         const formdata = {
-            name: name
+            fullname: name,
+            gender: gender,
+            phone: phone,
+            email: email,
+            location: address,
+            note: note,
         }
 
-        axios.post(schoolzapi+'/student-classes',
+        axios.post(schoolzapi+'/enquiry',
         formdata,
         {
             headers: {Accept: 'application/json',
@@ -84,13 +121,39 @@ function Createeditenquiry() {
 
     const updatedata = () => {
 
-      setLoading(true);
+        if(name == ""){
+            alert('Subject cant be empty');
+            return;
+          }
+  
+          if(gender == ""){
+              alert('Gender cant be empty');
+              return;
+          }
+  
+          if(note == ""){
+              alert('Note cant be empty');
+              return;
+          }
+  
+          if(phone == ""){
+              alert('Phone number cant be empty');
+              return;
+          }
+      
+      
+        setLoading(true);
 
       const formdata = {
-          name: name
-      }
+        fullname: name,
+        gender: gender,
+        phone: phone,
+        email: email,
+        location: address,
+        note: note,
+    }
 
-      axios.patch(schoolzapi+'/student-classes/'+id,
+      axios.patch(schoolzapi+'/enquiry/'+id,
       formdata,
       {
           headers: {Accept: 'application/json',
@@ -116,42 +179,85 @@ function Createeditenquiry() {
                 presentation: 'formSheet'
             }}
         />
+        <ScrollView>
 
         <Card>
             <Card.Content>
 
-            <TextInput 
+            <TextInput
+             style={styles.Forminput}
+             mode="outlined"
               placeholder='Full Name'
               onChangeText={(e) => setName(e)}
               value={name} />
 
+
+           <DropDownPicker
+                    open={open}
+                    value={gender}
+                    items={items}
+                    setOpen={setOpen}
+                    setValue={setValue}
+                    setItems={setItems}
+                    placeholder={"Choose Gender"}
+                    placeholderStyle={{
+                        color: "#456A5A",
+                    }}
+                    listMode="MODAL"
+                    dropDownContainerStyle={{
+                        borderWidth: 0,
+                        borderRadius: 30,
+                        backgroundColor: "#fff"
+                    }}
+                    labelStyle={{
+                        color: "#456A5A",
+                    }}
+                    listItemLabelStyle={{
+                        color: "#456A5A",
+                    }}
+                    style={{
+                        borderWidth: 1,
+                        //backgroundColor: "#F5F7F6",
+                        minHeight: 40,
+                    }}
+           />
+
             <TextInput
+            style={styles.Forminput}
+             mode="outlined"
              keyboardType="phone-pad"
               placeholder='Phone number'
-              onChangeText={(e) => setName(e)}
-              value={name} />
+              onChangeText={(e) => setPhone(e)}
+              value={phone} />
 
 
           <TextInput
+            style={styles.Forminput}
+             mode="outlined"
              keyboardType="email-address"
               placeholder='Email Address'
-              onChangeText={(e) => setName(e)}
-              value={name} />
+              onChangeText={(e) => setEmail(e)}
+              value={email} />
 
 
            <TextInput
-             keyboardType="default"
+           style={styles.Forminput}
+             mode="outlined"
+              keyboardType="default"
               placeholder='Address'
-              onChangeText={(e) => setName(e)}
-              value={name} /> 
+              onChangeText={(e) => setAddress(e)}
+              value={address} /> 
 
 
           <TextInput
+            style={styles.Forminput}
+            mode="outlined"
+            multiline={true}
             numberOfLines={5}
-             keyboardType="default"
-              placeholder='Note'
-              onChangeText={(e) => setName(e)}
-              value={name} /> 
+            keyboardType="default"
+            placeholder='Note'
+            onChangeText={(e) => setNote(e)}
+            value={note} /> 
 
 
 
@@ -165,9 +271,17 @@ function Createeditenquiry() {
             </Card.Content>
         </Card>
 
+        </ScrollView>
+
 
       </SafeAreaView>
     )
 }
 
 export default Createeditenquiry;
+
+const styles = StyleSheet.create({
+    Forminput: {
+        marginBottom: 20
+    }
+});

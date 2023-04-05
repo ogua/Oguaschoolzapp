@@ -183,7 +183,7 @@ import { useRouter } from 'expo-router';
                     <DrawerItem
                       style={{marginLeft: 65}}
                       label="Visitors"
-                      onPress={() => {}}
+                      onPress={() => {props.navigation.navigate('Visitors')}}
                     />
 
                     <DrawerItem

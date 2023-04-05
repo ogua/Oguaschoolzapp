@@ -1,3 +1,4 @@
+import React, { Component } from 'react'
 import { Stack, useRouter } from 'expo-router';
 import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
    ScrollView, StyleSheet, Text, TouchableOpacity, 
@@ -11,9 +12,9 @@ import { useSelector } from 'react-redux';
 import * as Imagepicker from 'expo-image-picker';
 import { schoolzapi } from '../constants';
 import { selecttoken } from '../../features/userinfoSlice';
-import Enquirylist from '../../lists/Enquirylist';
+import Visitorslist from '../../lists/Visitorslist';
 
-function Enquiries () {
+function Visitors () {
 
     const token = useSelector(selecttoken);
     const [search, setSearch] = useState();
@@ -45,7 +46,7 @@ function Enquiries () {
 
     const loaddata = () => {
         setLoading(true);
-        axios.get(schoolzapi+'/enquiry',
+        axios.get(schoolzapi+'/visitors',
         {
             headers: {Accept: 'application/json',
             Authorization: "Bearer "+token
@@ -77,7 +78,7 @@ function Enquiries () {
                 text: "Yes Delete",
                 onPress: () => {
                     setLoading(true);
-                    axios.delete(schoolzapi+'/enquiry/'+id,
+                    axios.delete(schoolzapi+'/visitors/'+id,
                     {
                         headers: {Accept: 'application/json',
                         Authorization: "Bearer "+token
@@ -134,7 +135,7 @@ function Enquiries () {
            <View style={{marginVertical: 20}}>
                 <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>
                     
-                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/Frontdesk/create-edit-enquirey')}>
+                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/Frontdesk/create-edit-visitor')}>
                         <Ionicons name='add-circle' size={22} color="#17a2b8"/>
                         <Text style={{fontSize: 18}}>New</Text>
                     </TouchableOpacity>
@@ -152,7 +153,7 @@ function Enquiries () {
                 <Card.Content>
                 <FlatList
                     data={filterdata}
-                    renderItem={({item})=> <Enquirylist item={item} deletedata={deletedata} /> }
+                    renderItem={({item})=> <Visitorslist item={item} deletedata={deletedata} /> }
                     ItemSeparatorComponent={()=> <View style={styles.separator} />}
                       contentContainerStyle={{
                          marginBottom: 10
@@ -168,7 +169,7 @@ function Enquiries () {
     )
 }
 
-export default Enquiries;
+export default Visitors;
 
 const styles = StyleSheet.create({
 
@@ -183,5 +184,3 @@ const styles = StyleSheet.create({
       width: '100%'
   }
 });
-
-

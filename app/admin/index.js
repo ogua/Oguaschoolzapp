@@ -20,6 +20,7 @@ import Subjects from '../../components/Academics/Subjects';
 import Classrooms from '../../components/Academics/Classrooms';
 import Promotestudent from '../../components/Academics/Promotestudent';
 import Enquiries from '../../components/Frontdesk/Enquiries';
+import Visitors from '../../components/Frontdesk/Visitors';
 
 const Drawer = createDrawerNavigator();
 
@@ -43,6 +44,8 @@ function Mainmenu() {
       <Drawer.Screen name="Classroom" component={Classrooms} />
       <Drawer.Screen name="Promotestudent" component={Promotestudent} />
       <Drawer.Screen name="Enquiry" component={Enquiries} />
+      <Drawer.Screen name="Visitors" component={Visitors} />
+      
       <Drawer.Screen name="TextBottomsheet" component={TextBottomsheet} />
     </Drawer.Navigator>
     )

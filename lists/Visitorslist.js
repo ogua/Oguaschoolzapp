@@ -4,7 +4,7 @@ import { Button, Dialog, Divider, List, Menu, Portal, Snackbar, Text } from "rea
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from "expo-router";
 
-function Enquirylist ({item,deletedata}) {
+function Visitorslist ({item,deletedata}) {
 
     const [visible, setVisible] = useState(false);
     const router = useRouter();    
@@ -27,8 +27,8 @@ function Enquirylist ({item,deletedata}) {
             titleEllipsizeMode="middle"
             description={()=>(
                 <>
-                <Text style={{fontSize: 12, color: '#abc'}}>{item?.gender} - {item?.location}</Text>
-                <Text style={{fontSize: 13}}>{item?.note}</Text>
+                <Text style={{fontSize: 12, color: '#abc'}}>In: {item?.intime} - Out: {item?.outtime}, ID Card: ({item?.idcard})</Text>
+                <Text style={{fontSize: 13}}>{item?.purpose}</Text>
                 </>
             )}
             descriptionNumberOfLines={5}
@@ -40,9 +40,9 @@ function Enquirylist ({item,deletedata}) {
 
         {visible && (
             <View style={{backgroundColor: '#fff', borderBottomColor: '#000', borderBottomWidth: 1 }}>
-                <Menu.Item disabled={item.phone == "" ? true: false} style={{marginLeft: 10}} leadingIcon="phone" title="Call" onPress={() => Linking.openURL(`tel:${item?.phone}`)} />
-                <Menu.Item disabled={item.email == "" ? true: false} style={{marginLeft: 10}} leadingIcon="email-box" title="Send Mail" onPress={() => Linking.openURL(`mailto:${item?.email}`)} />
-                <Menu.Item style={{marginLeft: 10}} leadingIcon="square-edit-outline" onPress={()=> router.push(`/admin/Frontdesk/create-edit-enquirey?id=${item?.id}`)} title="Edit" />
+                <Menu.Item disabled={item?.phone == "" ? true: false} style={{marginLeft: 10}} leadingIcon="phone" title="Call" onPress={() => Linking.openURL(`tel:${item?.phone}`)} />
+                <Menu.Item disabled={item?.doc == "" ? true: false} style={{marginLeft: 10}} leadingIcon="email-box" title="Downlaod Attachment" onPress={() => Linking.openURL(`mailto:${item?.email}`)} />
+                <Menu.Item style={{marginLeft: 10}} leadingIcon="square-edit-outline" onPress={()=> router.push(`/admin/Frontdesk/create-edit-visitor?id=${item?.id}`)} title="Edit" />
                 <Menu.Item style={{marginLeft: 10}} leadingIcon="delete-forever-outline" title="Delete" onPress={()=> deletedata(item?.id,item?.fullname)} />
             </View>
         )}
@@ -50,4 +50,4 @@ function Enquirylist ({item,deletedata}) {
     )
 }
 
-export default Enquirylist;
+export default Visitorslist;

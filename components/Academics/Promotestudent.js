@@ -180,7 +180,7 @@ function Promotestudent () {
                         borderWidth: 1,
                         //backgroundColor: "#F5F7F6",
                         minHeight: 40,
-                        marginVertical: 30
+                        marginTop: 20
                     }}
                     />
                 </View>
@@ -188,6 +188,7 @@ function Promotestudent () {
             <Searchbar
                 placeholder='Search....'
                onChangeText={(text) => searchFilterFunction(text)}
+               mode="outlined"
                 value={search}
             />
 
