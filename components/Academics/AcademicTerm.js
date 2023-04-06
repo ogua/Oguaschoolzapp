@@ -1,14 +1,17 @@
 import { Stack, useRouter } from 'expo-router';
-import { ActivityIndicator, FlatList, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Alert, FlatList, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Button, Card, Chip, List, Menu, Provider, Searchbar, TextInput } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import { useEffect, useState } from 'react';
 import { schoolzapi } from '../constants';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { selecttoken } from '../../features/userinfoSlice';
 import Academiclistitem from './Academiclistitem';
+import { SwipeListView } from 'react-native-swipe-list-view';
 
 function Academicterm ({navigation}) {
     const token = useSelector(selecttoken);
@@ -91,6 +94,42 @@ function Academicterm ({navigation}) {
         }
     };
 
+    const deleteiterm = (id,delname) => {
+
+      return Alert.alert(
+          "Are your sure?",
+          "Are you sure you want to delete "+delname+" info",
+          [
+            {
+              text: "No",
+            },
+            {
+              text: "Yes Delete",
+              onPress: () => {
+                  setLoading(true);
+                  axios.delete(schoolzapi+'/academicterms/'+id,
+                  {
+                      headers: {Accept: 'application/json',
+                      Authorization: "Bearer "+token
+                  }
+                  })
+                    .then(function (response) {
+                      const newData = academicterm.filter((item) => item.id != id);
+                      setFilterterm(newData);
+                      setAcadmicterm(newData);
+                      setLoading(false);
+                    })
+                    .catch(function (error) {
+                      setLoading(false);
+                      console.log(error);
+                    });
+              },
+            },
+          ]
+        );
+
+  }
+
 
     return (
       <Provider>
@@ -125,12 +164,32 @@ function Academicterm ({navigation}) {
             
             <Card>
                 <Card.Content>
-                    <FlatList
+
+                <SwipeListView
+                  data={filterterm}
+                  ItemSeparatorComponent={()=> (<View style={styles.separator} />)}
+                  renderItem={ (item, rowMap) => <Academiclistitem deletedata={deletedata} items={item} />}
+                  renderHiddenItem={ (data, rowMap) => (
+                      <View style={styles.rowBack}>
+                          <TouchableOpacity onPress={() => deleteiterm(data.item.id, data.item.name)}>
+                            <MaterialCommunityIcons name="delete-circle" size={30} color="red" />
+                          </TouchableOpacity>
+                          <TouchableOpacity onPress={()=> router.push(`/admin/Academics/edit-academic?id=${data.item.id}`)}>
+                              <MaterialCommunityIcons name="circle-edit-outline" color="#1782b6" size={30} />
+                          </TouchableOpacity>
+                      </View>
+                  )}
+                  leftOpenValue={95}
+                  rightOpenValue={-95}
+              />
+
+
+                    {/* <FlatList
                         data={filterterm}
                         renderItem={({item})=> <Academiclistitem deletedata={deletedata} items={item} /> }
                         ItemSeparatorComponent={()=> (<View style={styles.separator} />)}
                         keyExtractor={item => item.id}
-                    />
+                    /> */}
 
                        {/* <TouchableOpacity style={{backgroundColor: '#ccc', padding: 10}}>
                             <Text>item 1</Text>
@@ -151,5 +210,13 @@ const styles = StyleSheet.create({
     separator: {
         height: 0.5,
         backgroundColor: 'rgba(0,0,0,0.4)',
+    },
+    rowBack: {
+      alignItems: 'center',
+      backgroundColor: '#ccc',
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingHorizontal: 30
     },
 });

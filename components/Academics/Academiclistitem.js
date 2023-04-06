@@ -34,31 +34,22 @@ function Academiclistitem ({items,deletedata}) {
             </View> */}
 
     <List.Item
-        title={items.name}
+        title={items.item.name}
         titleEllipsizeMode="middle"
         //description={`Created_at `+items.created_at}
         left={props => <Ionicons name="calendar" {...props} size={20} />}
-        right={props => <Ionicons name="ellipsis-vertical-sharp" {...props} size={20} />}
+        //right={props => <Ionicons name="ellipsis-vertical-sharp" {...props} size={20} />}
     />
             
         </TouchableOpacity>
 
-        {visible && (
+        {/* {visible && (
             <View style={{backgroundColor: '#fff', borderBottomColor: '#000', borderBottomWidth: 1 }}>
                 <Menu.Item style={{marginLeft: 10}} leadingIcon="square-edit-outline" onPress={()=> router.push(`/admin/Academics/edit-academic?id=${items.id}`)} title="Edit" />
                 <Menu.Item style={{marginLeft: 10}} leadingIcon="delete-forever-outline" onPress={showDialog} title="Delete" />
             </View>
-        )}
+        )} */}
 
-        {/* <Menu
-            visible={visible}
-            onDismiss={closeMenu}
-            style={{width:'100%'}}
-            anchor={<Button onPress={openMenu} mode="contained">Show menu</Button>}>
-            <List.Item onPress={() => {closeMenu()}} title="Item 1" />
-            <List.Item onPress={() => {}} title="Item 2" />
-            <List.Item onPress={() => {}} title="Item 3" />
-        </Menu> */}
 
         <Portal>
           <Dialog visible={showdialog} onDismiss={hideDialog}>

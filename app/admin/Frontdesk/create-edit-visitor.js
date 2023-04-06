@@ -83,10 +83,12 @@ function Createeditvisitor() {
         .then(function (response) {
           setLoading(false);
           setName(response.data.data.fullname);
-          setValue(response.data.data.gender);
           setPhone(response.data.data.phone);
-          setEmail(response.data.data.email);
-          setAddress(response.data.data.location);
+          setIDcard(response.data.data.idcard);
+          setNumper(response.data.data.numofpersons);
+          setPurpose(response.data.data.purpose);
+          setIntime(response.data.data.intime);
+          setOuttime(response.data.data.outtime);
           setNote(response.data.data.note);
         })
         .catch(function (error) {
@@ -130,9 +132,7 @@ function Createeditvisitor() {
         data.append('outtime',outtime);
         data.append('note',note);
 
-        //console.log("Entries",data);
-
-       // return;
+        console.log("enties",data);
 
         axios.post(schoolzapi+'/visitors',
         data,
@@ -150,47 +150,50 @@ function Createeditvisitor() {
           })
           .catch(function (error) {
             setLoading(false);
-            console.log(error.response);
+            console.log(error);
           });
     }
 
     const updatedata = () => {
 
-        if(name == ""){
-            alert('Subject cant be empty');
-            return;
-          }
-  
-          if(gender == ""){
-              alert('Gender cant be empty');
-              return;
-          }
-  
-          if(note == ""){
-              alert('Note cant be empty');
-              return;
-          }
-  
-          if(phone == ""){
-              alert('Phone number cant be empty');
-              return;
-          }
-      
-      
+      if(name == ""){
+        alert('Subject cant be empty');
+        return;
+      }
+
+      if(purpose == ""){
+          alert('Purpose cant be empty');
+          return;
+      }
+
+      const data = new FormData();
+
+      if(file != null){
+
+        data.append('doc', {
+          uri: file.uri,
+          name: file.name,
+          type: file.mimeType
+        });
+
+      }
+
+      data.append('fullname',name);
+      data.append('phone',phone);
+      data.append('idcard',idcard);
+      data.append('numofpersons',numberperson);
+      data.append('purpose',purpose);
+      data.append('intime',intime);
+      data.append('outtime',outtime);
+      data.append('note',note);
+    
       setLoading(true);
 
-      const formdata = {
-        fullname: name,
-        phone: phone,
-        email: email,
-        location: address,
-        note: note,
-    }
-
       axios.patch(schoolzapi+'/visitors/'+id,
-      formdata,
+      data,
       {
           headers: {Accept: 'application/json',
+          'Content-Type': 'multipart/form-data',
           Authorization: "Bearer "+token
       }
       })
@@ -201,7 +204,7 @@ function Createeditvisitor() {
         })
         .catch(function (error) {
           setLoading(false);
-          console.log(error);
+          console.log(error.response);
         });
   }
 
@@ -270,8 +273,14 @@ function Createeditvisitor() {
         <Stack.Screen
             options={{
                 headerTitle: creatoredit,
-                presentation: 'formSheet'
+                presentation: 'formSheet',
+                headerRight: () => (
+                  <>
+                    {isloading ? <ActivityIndicator size="large" color="#1782b6" /> : null}
+                  </>
+                )
             }}
+
         />
         <ScrollView style={{marginBottom: 30}}>
 

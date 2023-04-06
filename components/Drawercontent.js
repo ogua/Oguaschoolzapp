@@ -1,4 +1,4 @@
-import {View,StyleSheet } from 'react-native';
+import {View,StyleSheet, FlatList } from 'react-native';
 
 import {
     useTheme,
@@ -19,25 +19,187 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useState } from 'react';
 import { images } from './constants';
 import { useRouter } from 'expo-router';
+import Customdrawerlist from '../lists/draweritemlist';
 
  function Drawercontent(props) {
  const [ispressed, setIspressed] = useState(false);
  const [focus, setFocus] = useState();
+ const [subfocus, setsubFocus] = useState();
  const router = useRouter();
+
+ const drawerlist = [
+  {
+    key: 1,
+    name: 'Dashboard',
+    icon: 'monitor-dashboard',
+    route: 'Dashboard',
+    permission: '',
+    children: []
+  },
+  {
+    key: 2,
+    name: 'Academics',
+    icon: 'calendar-month',
+    route: 'Academics',
+    permission: '',
+    children: [
+    {
+      key: 21,
+      name: 'Academic Term',
+      icon: 'circle-outline',
+      route: 'Academicterm',
+      permission: '',
+    },
+    {
+      key: 22,
+      name: 'Academic Year',
+      icon: 'circle-outline',
+      route: 'Academicyear',
+      permission: '',
+    },
+    {
+      key: 23,
+      name: 'Academic Calendar',
+      icon: 'circle-outline',
+      route: 'Calendar',
+      permission: '',
+    },
+    {
+      key: 24,
+      name: 'Subject',
+      icon: 'circle-outline',
+      route: 'Sujects',
+      permission: '',
+    },
+    {
+      key: 25,
+      name: 'Classes',
+      icon: 'circle-outline',
+      route: 'Classroom',
+      permission: '',
+    },
+    {
+      key: 26,
+      name: 'Promote Student',
+      icon: 'circle-outline',
+      route: 'Promotestudent',
+      permission: '',
+    },
+  ]
+  },
+  {
+    key: 3,
+    name: 'Front Desk',
+    icon: 'remote-desktop',
+    route: 'Front Desk',
+    permission: '',
+    children: [
+      {
+        key: 31,
+        name: 'Enquiries',
+        icon: 'circle-outline',
+        route: 'Enquiry',
+        permission: '',
+      },
+      {
+        key: 32,
+        name: 'Visitors',
+        icon: 'circle-outline',
+        route: 'Visitors',
+        permission: '',
+      },
+      {
+        key: 33,
+        name: 'Call Logs',
+        icon: 'circle-outline',
+        route: 'Promotestudent',
+        permission: '',
+      },
+      {
+        key: 34,
+        name: 'Postal Dispatch',
+        icon: 'circle-outline',
+        route: 'Promotestudent',
+        permission: '',
+      },
+      {
+        key: 35,
+        name: 'Postal Received',
+        icon: 'circle-outline',
+        route: 'Promotestudent',
+        permission: '',
+      },
+    ]
+  },
+  {
+    key: 4,
+    name: 'Add Student',
+    icon: 'circle-outline',
+    route: 'Promotestudent',
+    permission: '',
+    children: []
+  },
+  {
+    key: 5,
+    name: 'All Students',
+    icon: 'account-group',
+    route: 'All Students',
+    permission: '',
+    children: [
+      {
+        key: 51,
+        name: 'All Students',
+        icon: 'circle-outline',
+        route: 'Promotestudent',
+        permission: '',
+      },
+      {
+        key: 52,
+        name: 'All Stopped Students',
+        icon: 'circle-outline',
+        route: 'Promotestudent',
+        permission: '',
+      },
+      {
+        key: 53,
+        name: 'All Dismissed Students',
+        icon: 'circle-outline',
+        route: 'Promotestudent',
+        permission: '',
+      },
+      {
+        key: 54,
+        name: 'All Completed Students',
+        icon: 'circle-outline',
+        route: 'Promotestudent',
+        permission: '',
+      },
+    ]
+  },
+ ];
+
+const setfocustate  = (key) => {
+  //console.log("Focus",focus);
+  if(focus > 0){
+    setFocus(0);
+  }else{
+    setFocus(key);
+  }
+}
 
     const paperTheme = useTheme();
         return(
         <View style={{flex:1}}>
             <DrawerContentScrollView {...props}>
                 <View style={styles.drawerContent}>
-                    <View style={{backgroundColor: '#4b545c',
+                    <View style={{backgroundColor: '#fff',
                     flexDirection: 'row', alignItems: 'center',padding: 10}}>
                        <Avatar.Image 
                             source={images.softwarelogo}
                             size={30}
                         />
 
-                        <Text style={{color: '#fff',fontSize: 15, marginLeft: 10}}>OSMS</Text>
+                        <Text style={{fontSize: 15, marginLeft: 10}}>OSMS</Text>
                     </View>
 
                     <View style={styles.userInfoSection}>
@@ -52,263 +214,77 @@ import { useRouter } from 'expo-router';
                         </View>
                     </View>
                    
-                    <Drawer.Section style={styles.drawerSection}>            
+                    <Drawer.Section style={styles.drawerSection}>
 
-                    <DrawerItem 
-                        focused={focus == 'Dashboard' ? true: false}
-                        icon={({color, size}) => (
-                            <Icon 
-                               name="monitor-dashboard" 
-                                color={color}
-                                size={size}
-                                />
-                            )}
-                        label="Dashboard"    
-                        onPress={() => {
-                            setFocus('Dashboard');
-                            props.navigation.navigate('Dashboard');
-                            //setIspressed(! ispressed);
-                        }}
-                    /> 
-
-
-                    {/* Academics */}
-
-                    <DrawerItem
-                        focused={focus == 'Academics' ? true: false}
-                        icon={({color, size}) => (
-                            <Icon 
-                               name="calendar-month"
-                                color={color}
-                                size={size}
-                                />
-                            )}
-                        label={({color, focused}) => (
-                            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                                <Text>Academics</Text>
-                                {focus == 'Academics' && ispressed ? (
-                                    <Ionicons name='arrow-down-circle' size={25} color={color} />
-                                ) : (
-                                    <Ionicons name='arrow-up-circle' size={25} color={color} />
+                    {drawerlist.map(item => (
+                        <>
+                          <DrawerItem 
+                            focused={focus == item.key ? true: false}
+                            icon={({color, size}) => (
+                                <Icon 
+                                  name={item.icon}
+                                    color={color}
+                                    size={size}
+                                    />
                                 )}
-                            </View>
-                        )}
-                        onPress={() => {
-                            setFocus('Academics');
-                            setIspressed(! ispressed);
-                        }}
-                    /> 
-                                   
-                   {focus == 'Academics' && ispressed && (
-                     <>
-                     <DrawerItem
-                      style={{marginLeft: 65}}
-                      label="Academic Term"
-                      onPress={() => {
-                        props.navigation.navigate('Academicterm');
-                        //router.push("/admin/Academics/academic-term");
-                      }}
-                    />
+                              label={({color, focused}) => (
+                                  <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                      <Text {...focused}>{item.name}</Text>
+                                      {item.children.length > 0 && (
+                                        <>
+                                        {focus == item.key ? (
+                                            <Ionicons name='arrow-down-circle' size={25} color={color} />
+                                        ): (
+                                          <Ionicons name='arrow-up-circle' size={25} color={color} />
+                                        )}
+                                        </>
+                                      )}
+                                  </View>
+                              )}   
+                            onPress={() => {
+                              setFocus(item.key);
+                              //setfocustate(item.key);
+                              if(item.children.length > 0){
+                              }else{
+                                setsubFocus(0);
+                                props.navigation.navigate(item.route);
+                              }
 
-                    <DrawerItem
-                      style={{marginLeft: 65}}
-                      label="Academic Year"
-                      onPress={() => {props.navigation.navigate('Academicyear')}}
-                    />
+                            }}
+                        />
 
-                    <DrawerItem
-                      style={{marginLeft: 65}}
-                      label="Academic Calendar"
-                      onPress={() => {props.navigation.navigate('Calendar')}}
-                    />
+                        {focus == item.key && (
+                          <>
+                          {item.children.map(children => (
 
-                    <DrawerItem
-                      style={{marginLeft: 65}}
-                      label="Subject"
-                      onPress={() => {props.navigation.navigate('Sujects')}}
-                    />
-
-                    <DrawerItem
-                      style={{marginLeft: 65}}
-                      label="Classes"
-                      onPress={() => {props.navigation.navigate('Classroom')}}
-                    />
-
-                    <DrawerItem
-                      style={{marginLeft: 65}}
-                      label="Promote Student"
-                      onPress={() => {props.navigation.navigate('Promotestudent')}}
-                    />
-
-
-                     </>
-                   )}
-
-
-                {/* Front Desk */}
-
-                <DrawerItem
-                        focused={focus == 'Front Desk' ? true: false}
-                        icon={({color, size}) => (
-                            <Icon 
-                               name="remote-desktop"
-                                color={color}
-                                size={size}
-                                />
-                            )}
-                        label={({color, focused}) => (
-                            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                                <Text>Front Desk</Text>
-                                {focus == 'Front Desk' && ispressed ? (
-                                    <Ionicons name='arrow-down-circle' size={25} color={color} />
-                                ) : (
-                                    <Ionicons name='arrow-up-circle' size={25} color={color} />
+                            <DrawerItem 
+                            focused={focus == item.key &&  subfocus == children.key ? true: false}
+                            icon={({color, size}) => (
+                                <Icon 
+                                  name={children.icon}
+                                    color={color}
+                                    size={size}
+                                    />
                                 )}
-                            </View>
-                        )}
-                        onPress={() => {
-                            setFocus('Front Desk');
-                            setIspressed(! ispressed);
-                        }}
-                    /> 
-                                   
-                   {focus == 'Front Desk' && ispressed && (
-                     <>
-                     <DrawerItem
-                      style={{marginLeft: 65}}
-                      label="Enquiries"
-                      onPress={() => {props.navigation.navigate('Enquiry')}}
-                    />
+                                label={({color, focused}) => (
+                                  <Text>{children.name}</Text>
+                              )}  
+                            onPress={() => {
+                                setsubFocus(children.key);
+                                props.navigation.navigate(children.route);
+                            }}
+                            />
 
-                    <DrawerItem
-                      style={{marginLeft: 65}}
-                      label="Visitors"
-                      onPress={() => {props.navigation.navigate('Visitors')}}
-                    />
+                          ))}
 
-                    <DrawerItem
-                      style={{marginLeft: 65}}
-                      label="Call Logs"
-                      onPress={() => {}}
-                    />
+                        </>
+                       )}
 
-                    <DrawerItem
-                      style={{marginLeft: 65}}
-                      label="Postal Dispatch"
-                      onPress={() => {}}
-                    />
+                        </>
 
-                    <DrawerItem
-                      style={{marginLeft: 65}}
-                      label="Postal Received"
-                      onPress={() => {}}
-                    />
-
-                     </>
-                   )}    
-
-
-                     {/* Add Student */}
-                    <DrawerItem 
-                        focused={focus == 'Add Student' ? true: false}
-                        icon={({color, size}) => (
-                            <Icon 
-                               name="account-plus-outline" 
-                                color={color}
-                                size={size}
-                                />
-                            )}
-                        label="Add Student"    
-                        onPress={() => {
-                            setFocus('Add Student');
-                           // props.navigation.navigate('Dashboard');
-                        }}
-                    /> 
-
-
-                {/* All Students */}
-
-                <DrawerItem
-                        focused={focus == 'All Students' ? true: false}
-                        icon={({color, size}) => (
-                            <Icon 
-                               name="account-group"
-                                color={color}
-                                size={size}
-                                />
-                            )}
-                        label={({color, focused}) => (
-                            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                                <Text>All Students</Text>
-                                {focus == 'All Students' && ispressed ? (
-                                    <Ionicons name='arrow-down-circle' size={25} color={color} />
-                                ) : (
-                                    <Ionicons name='arrow-up-circle' size={25} color={color} />
-                                )}
-                            </View>
-                        )}
-                        onPress={() => {
-                            setFocus('All Students');
-                            setIspressed(! ispressed);
-                        }}
-                    /> 
-                                   
-                   {focus == 'All Students' && ispressed && (
-                     <>
-                     <DrawerItem
-                      style={{marginLeft: 65}}
-                      label="All Students"
-                      onPress={() => {}}
-                    />
-
-                    <DrawerItem
-                      style={{marginLeft: 65}}
-                      label="Student ID"
-                      onPress={() => {}}
-                    />
-
-                    <DrawerItem
-                      style={{marginLeft: 65}}
-                      label="All Active Students"
-                      onPress={() => {}}
-                    />
-
-                    <DrawerItem
-                      style={{marginLeft: 65}}
-                      label="All Stopped Students"
-                      onPress={() => {}}
-                    />
-
-                    <DrawerItem
-                      style={{marginLeft: 65}}
-                      label="All Dismissed Students"
-                      onPress={() => {}}
-                    />
-
-                    <DrawerItem
-                      style={{marginLeft: 65}}
-                      label="All Completed Students"
-                      onPress={() => {}}
-                    />
-
-                     </>
-                   )}          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                        
+                    ))}
                 
-                    
 
                 <DrawerItem 
                             icon={({color, size}) => (
@@ -393,14 +369,15 @@ const styles = StyleSheet.create({
       marginTop: -4
     },
     userInfoSection: {
-      backgroundColor: '#4f5962',
-      borderBottomColor: '#fff',
-      borderBottomWidth: 0.2
+      backgroundColor: '#fff',
+      borderBottomColor: '#000',
+      borderTopWidth: 1,
+      borderBottomWidth: 1
     },
     title: {
       fontSize: 16,
       fontWeight: 'bold',
-      color:'#fff',
+      color:'#000',
     },
     caption: {
       fontSize: 14,
@@ -425,7 +402,7 @@ const styles = StyleSheet.create({
     },
     bottomDrawerSection: {
         marginBottom: 15,
-        borderTopColor: '#f4f4f4',
+        borderTopColor: '#000',
         borderTopWidth: 1
     },
     preference: {
