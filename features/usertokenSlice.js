@@ -4,20 +4,37 @@ import { tokenname } from '../components/constants'
 
 
 const initialState = {
-  usertoken: null,
+  user: null,
+  token: null,
 }
 
 export const usertokenSlice = createSlice({
   name: 'usertoken',
   initialState,
   reducers: {
-    setUsertoken: (state, action) => {
-        state.token = action.payload
+    setUsertoken: async (state, action) => {
+      await AsyncStorage.setItem("token", action.payload)
     }
   },
 })
 
 export const { setUsertoken} = usertokenSlice.actions
+
+export const gettokendata = async () => {
+  try {
+    const value = await AsyncStorage.getItem("token")
+    if(value !== null) {
+      return value
+    }
+  } catch(e) {
+      console.log('something went wrong')
+  }
+}
+
+
+
+
+
 
 export const selectusertoken = (state) => state.usertoken.usertoken
 
@@ -37,19 +54,6 @@ export const storeDataobject = async (value) => {
         console.log('something went wrong')
     }
 }
-
-
-export const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem(tokenname)
-      if(value !== null) {
-        return value
-      }
-    } catch(e) {
-        console.log('something went wrong')
-    }
-}
-
 
 export const getDataobject = async () => {
     try {

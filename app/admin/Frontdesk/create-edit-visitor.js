@@ -27,6 +27,7 @@ function Createeditvisitor() {
     
     const [creatoredit, isCreatedorEdit] = useState();
     const [isloading, setLoading] = useState(false);
+    const [issubmitting, setIssubmitting] = useState(false);
     const router = useRouter();
     const {id} = useSearchParams();
 
@@ -109,7 +110,12 @@ function Createeditvisitor() {
             return;
         }
 
-        setLoading(true);
+        if(intime == ""){
+          alert('Purpose cant be empty');
+          return;
+      }
+
+      setIssubmitting(true);
 
         const data = new FormData();
 
@@ -144,12 +150,12 @@ function Createeditvisitor() {
         })
           .then(function (response) {
             ToastAndroid.show('info saved successfully!', ToastAndroid.SHORT);
-            setLoading(false);
+            setIssubmitting(false);
             DeviceEventEmitter.emit('subject.added', {});
             router.back();
           })
           .catch(function (error) {
-            setLoading(false);
+            setIssubmitting(false);
             console.log(error);
           });
     }
@@ -165,6 +171,11 @@ function Createeditvisitor() {
           alert('Purpose cant be empty');
           return;
       }
+
+      if(intime == ""){
+        alert('Purpose cant be empty');
+        return;
+    }
 
       const data = new FormData();
 
@@ -186,10 +197,14 @@ function Createeditvisitor() {
       data.append('intime',intime);
       data.append('outtime',outtime);
       data.append('note',note);
-    
-      setLoading(true);
 
-      axios.patch(schoolzapi+'/visitors/'+id,
+      console.log(data);
+
+      //return;
+    
+      setIssubmitting(true);
+
+      axios.post(schoolzapi+'/visitors/'+id,
       data,
       {
           headers: {Accept: 'application/json',
@@ -198,12 +213,12 @@ function Createeditvisitor() {
       }
       })
         .then(function (response) {
-          setLoading(false);
+          setIssubmitting(false);
           DeviceEventEmitter.emit('subject.added', {});
           router.back();
         })
         .catch(function (error) {
-          setLoading(false);
+          setIssubmitting(false);
           console.log(error.response);
         });
   }
@@ -274,59 +289,58 @@ function Createeditvisitor() {
             options={{
                 headerTitle: creatoredit,
                 presentation: 'formSheet',
-                headerRight: () => (
-                  <>
-                    {isloading ? <ActivityIndicator size="large" color="#1782b6" /> : null}
-                  </>
-                )
+                // headerRight: () => (
+                //   <>
+                //     {isloading ? <ActivityIndicator size="large" color="#1782b6" /> : null}
+                //   </>
+                // )
             }}
 
         />
         <ScrollView style={{marginBottom: 30}}>
-
+        {isloading ? <ActivityIndicator size="large" color="#1782b6" /> : (
         <Card>
             <Card.Content>
 
+            <Text style={{fontSize: 15, fontWeight: 500}}>Full name</Text>
             <TextInput
              style={styles.Forminput}
              mode="outlined"
-              placeholder='Full Name'
               onChangeText={(e) => setName(e)}
               value={name} />
 
+<Text style={{fontSize: 15, fontWeight: 500}}>Phone number</Text>
             <TextInput
             style={styles.Forminput}
              mode="outlined"
              keyboardType="phone-pad"
-              placeholder='Phone number'
               onChangeText={(e) => setPhone(e)}
               value={phone} />
 
-
+<Text style={{fontSize: 15, fontWeight: 500}}>ID Card Number</Text>
           <TextInput
             style={styles.Forminput}
              mode="outlined"
              keyboardType="numeric"
-              placeholder='ID Card Number'
               onChangeText={(e) => setIDcard(e)}
               value={idcard} />
 
 
+<Text style={{fontSize: 15, fontWeight: 500}}>Number of persons</Text>
          <TextInput
             style={styles.Forminput}
              mode="outlined"
              keyboardType="numeric"
-              placeholder='Number of persons'
               onChangeText={(e) => setNumper(e)}
               value={numberperson} />
 
+<Text style={{fontSize: 15, fontWeight: 500}}>Purpose</Text>
           <TextInput
             style={styles.Forminput}
             mode="outlined"
             multiline={true}
             numberOfLines={5}
             keyboardType="default"
-            placeholder='Purpose'
             onChangeText={(e) => setPurpose(e)}
             value={purpose} />
 
@@ -338,13 +352,12 @@ function Createeditvisitor() {
           minutes={14}
         />
 
-
+         <Text style={{fontSize: 15, fontWeight: 500}}>In Time</Text>
          <TextInput
             style={styles.Forminput}
             mode="outlined"
             keyboardType="default"
             onFocus={()=>  setShowintime(true)}
-            placeholder='In time'
             onChangeText={(e) => setIntime(e)}
             value={intime} />
 
@@ -358,35 +371,33 @@ function Createeditvisitor() {
           minutes={14}
         />
 
-
+<Text style={{fontSize: 15, fontWeight: 500}}>Out Time</Text>
        <TextInput
             style={styles.Forminput}
             mode="outlined"
             numberOfLines={5}
             onFocus={()=>  setShowouttime(true)}
             keyboardType="default"
-            placeholder='Out Time'
             onChangeText={(e) => setOuttime(e)}
             value={outtime} />
 
-
+      <Text style={{fontSize: 15, fontWeight: 500}}>Note</Text>
         <TextInput
             style={styles.Forminput}
             mode="outlined"
             multiline={true}
             numberOfLines={5}
             keyboardType="default"
-            placeholder='Note'
             onChangeText={(e) => setNote(e)}
             value={note} />
 
 
-         <Button onPress={selectFile} uppercase={false} mode="outlined">
+         <Button icon="file" onPress={selectFile} uppercase={false} mode="outlined">
           Add Attachment
         </Button>
 
 
-        {isloading ? <ActivityIndicator size="large" color="#1782b6" /> : (
+        {issubmitting ? <ActivityIndicator size="large" color="#1782b6" /> : (
           <Button mode="contained" onPress={id == undefined ? createdata : updatedata} style={{marginTop: 20}}>
                Save
           </Button>
@@ -394,6 +405,8 @@ function Createeditvisitor() {
             
             </Card.Content>
         </Card>
+
+      )}
 
         </ScrollView>
 

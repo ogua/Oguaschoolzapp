@@ -21,17 +21,73 @@ import Classrooms from '../../components/Academics/Classrooms';
 import Promotestudent from '../../components/Academics/Promotestudent';
 import Enquiries from '../../components/Frontdesk/Enquiries';
 import Visitors from '../../components/Frontdesk/Visitors';
+import Calllogs from '../../components/Frontdesk/Calllogs';
+import Postaldispatch from '../../components/Frontdesk/Postaldispatch';
+import Postalreceived from '../../components/Frontdesk/Postalreceived';
+import Allstudents from '../../components/Studentinfo/Allstudents';
+import Addstudent from '../../components/Studentinfo/Addstudent';
+import Vehicle from '../../components/Transport/Vehicle';
+import Waypoint from '../../components/Transport/Waypoints';
+import Routes from '../../components/Transport/Route';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState } from 'react';
+import { useCallback } from 'react';
+import Fee from '../../components/Accounts/Fee';
+import Feemaster from '../../components/Accounts/Feemaster';
+import Dispatchfees from '../../components/Accounts/Dispacthfee';
+import Viewdispatched from '../../components/Accounts/Viewdispatched';
+import Editdispatched from './Accounts/edit-dispatched';
+import Alltransactions from '../../components/Accounts/Alltransactions';
+import Transactionsperday from '../../components/Accounts/Transactionperday';
+import Transactionsperterm from '../../components/Accounts/Transactionperterm';
+import Transactionspermonth from '../../components/Accounts/Transactionpermonth';
+import Feepayment from '../../components/Accounts/Feepayment';
+import Debtors from '../../components/Accounts/Debtors';
+import Receipttrack from '../../components/Accounts/Receipttrack';
+import Chartofaccount from '../../components/Accounts/Chartofaccounts';
+import Banktransaction from '../../components/Accounts/Banktransactions';
+import Vendors from '../../components/Accounts/Vendors';
 
 const Drawer = createDrawerNavigator();
 
 function Mainmenu() {
   const user = useSelector(selectuser);
-  const userinfo = getData();
+  // token = useSelector(selecttoken);
   const router = useRouter();
+  const [token, setToken] = useState();
 
-  if(user ===null){
+  const handlesetToken = async (res) => {
+    const token = await  AsyncStorage.getItem('token');
+    setToken(token);
+  };
+
+  // useEffect(
+  //   useCallback(() => {
+  //     handlesetToken()
+  //   }, [])
+  // );
+
+  // useEffect(async ()=>{
+  //   const token = await AsyncStorage.getItem('token');
+  //   setToken(JSON.parse(token));
+  // });
+
+  useEffect(() => {
+    const fetchtoken = async () => {
+      let token =  await AsyncStorage.getItem('token');
+      setToken(token)
+    }
+
+    fetchtoken();
+  }, [])
+
+  //const token = AsyncStorage.getItem('token');
+
+  if(token ===null){
     return <Redirect href="/login" />
   }
+
+  console.log("token", token);
 
     return (
     <Drawer.Navigator
@@ -45,6 +101,33 @@ function Mainmenu() {
       <Drawer.Screen name="Promotestudent" component={Promotestudent} />
       <Drawer.Screen name="Enquiry" component={Enquiries} />
       <Drawer.Screen name="Visitors" component={Visitors} />
+      <Drawer.Screen name="Calllogs" component={Calllogs} />
+      <Drawer.Screen name="Postaldispatch" component={Postaldispatch} />
+      <Drawer.Screen name="Postalreceived" component={Postalreceived} />
+      <Drawer.Screen name="Newstudent" component={Addstudent} />
+      <Drawer.Screen name="Studentlist" component={Allstudents} />
+
+      <Drawer.Screen name="Fee" component={Fee} />
+      <Drawer.Screen name="Feemaster" component={Feemaster} />
+      <Drawer.Screen name="Dispacchfees" component={Dispatchfees} />
+      <Drawer.Screen name="Viewdispatched" component={Viewdispatched} />
+      <Drawer.Screen name="Alltransactions" component={Alltransactions} />
+      <Drawer.Screen name="Transactionsperterm" component={Transactionsperterm} />
+      <Drawer.Screen name="Transactionsperday" component={Transactionsperday} />
+      <Drawer.Screen name="Transactionspermonth" component={Transactionspermonth} />
+      <Drawer.Screen name="Feepayment" component={Feepayment} />
+      <Drawer.Screen name="Debtors" component={Debtors} />
+      <Drawer.Screen name="Receipttrack" component={Receipttrack} />
+      <Drawer.Screen name="Chartofaccount" component={Chartofaccount} />
+      <Drawer.Screen name="Banktransaction" component={Banktransaction} />
+      <Drawer.Screen name="Vendors" component={Vendors} />
+      
+
+
+      <Drawer.Screen name="vehicle" component={Vehicle} />
+      <Drawer.Screen name="waypoint" component={Waypoint} />
+      <Drawer.Screen name="Routes" component={Routes} />
+      
       
       <Drawer.Screen name="TextBottomsheet" component={TextBottomsheet} />
     </Drawer.Navigator>

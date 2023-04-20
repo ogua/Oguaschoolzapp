@@ -20,6 +20,7 @@ import { useState } from 'react';
 import { images } from './constants';
 import { useRouter } from 'expo-router';
 import Customdrawerlist from '../lists/draweritemlist';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
  function Drawercontent(props) {
  const [ispressed, setIspressed] = useState(false);
@@ -27,12 +28,35 @@ import Customdrawerlist from '../lists/draweritemlist';
  const [subfocus, setsubFocus] = useState();
  const router = useRouter();
 
+ const handlelogout = async () => {
+  await AsyncStorage.removeItem('token');
+  ///console.log("token", token)
+};
+
+const setitemfocus = (itemid) => {
+
+  if(focus === itemid){
+    setFocus(111111111);
+  }else{
+    setFocus(itemid);
+  }
+
+}
+
  const drawerlist = [
   {
     key: 1,
     name: 'Dashboard',
     icon: 'monitor-dashboard',
     route: 'Dashboard',
+    permission: '',
+    children: []
+  },
+  {
+    key: 20,
+    name: 'Profile',
+    icon: 'account-outline',
+    route: 'Profile',
     permission: '',
     children: []
   },
@@ -112,21 +136,21 @@ import Customdrawerlist from '../lists/draweritemlist';
         key: 33,
         name: 'Call Logs',
         icon: 'circle-outline',
-        route: 'Promotestudent',
+        route: 'Calllogs',
         permission: '',
       },
       {
         key: 34,
         name: 'Postal Dispatch',
         icon: 'circle-outline',
-        route: 'Promotestudent',
+        route: 'Postaldispatch',
         permission: '',
       },
       {
         key: 35,
         name: 'Postal Received',
         icon: 'circle-outline',
-        route: 'Promotestudent',
+        route: 'Postalreceived',
         permission: '',
       },
     ]
@@ -134,8 +158,8 @@ import Customdrawerlist from '../lists/draweritemlist';
   {
     key: 4,
     name: 'Add Student',
-    icon: 'circle-outline',
-    route: 'Promotestudent',
+    icon: 'account',
+    route: 'Newstudent',
     permission: '',
     children: []
   },
@@ -150,7 +174,7 @@ import Customdrawerlist from '../lists/draweritemlist';
         key: 51,
         name: 'All Students',
         icon: 'circle-outline',
-        route: 'Promotestudent',
+        route: 'Studentlist',
         permission: '',
       },
       {
@@ -176,6 +200,408 @@ import Customdrawerlist from '../lists/draweritemlist';
       },
     ]
   },
+  {
+    key: 6,
+    name: 'Accounts',
+    icon: 'account-group',
+    route: 'Accounts Management',
+    permission: '',
+    children: [
+      {
+        key: 61,
+        name: 'Online Fee Payment',
+        icon: 'circle-outline',
+        route: 'All Students',
+        permission: '',
+        children: []
+      },
+      {
+        key: 62,
+        name: 'Fees',
+        icon: 'circle-outline',
+        route: 'Fee',
+        permission: '',
+        children: []
+      },
+      {
+        key: 63,
+        name: 'Fee Master',
+        icon: 'circle-outline',
+        route: 'Feemaster',
+        permission: '',
+        children: []
+      },
+      {
+        key: 64,
+        name: 'Dispatch Fees',
+        icon: 'circle-outline',
+        route: 'Dispacchfees',
+        permission: '',
+        children: []
+      },
+      {
+        key: 65,
+        name: 'View Dispatcted',
+        icon: 'circle-outline',
+        route: 'Viewdispatched',
+        permission: '',
+        children: []
+      },
+      {
+        key: 66,
+        name: 'All Transactions',
+        icon: 'circle-outline',
+        route: 'Alltransactions',
+        permission: '',
+        children: []
+      },
+      {
+        key: 67,
+        name: 'Transactions Per Term',
+        icon: 'circle-outline',
+        route: 'Transactionsperterm',
+        permission: '',
+        children: []
+      },
+      {
+        key: 68,
+        name: 'Transactions Per Day',
+        icon: 'circle-outline',
+        route: 'Transactionsperday',
+        permission: '',
+        children: []
+      },
+      {
+        key: 69,
+        name: 'Transactions Per Month',
+        icon: 'circle-outline',
+        route: 'Transactionspermonth',
+        permission: '',
+        children: []
+      },
+      {
+        key: 610,
+        name: 'Fee Payment',
+        icon: 'circle-outline',
+        route: 'Feepayment',
+        permission: '',
+        children: []
+      },
+      {
+        key: 611,
+        name: 'Debtors',
+        icon: 'circle-outline',
+        route: 'Debtors',
+        permission: '',
+        children: []
+      },
+      {
+        key: 612,
+        name: 'Receipts',
+        icon: 'circle-outline',
+        route: 'Receipttrack',
+        permission: '',
+        children: []
+      },
+      {
+        key: 613,
+        name: 'Chart of Accounts',
+        icon: 'circle-outline',
+        route: 'Chartofaccount',
+        permission: '',
+        children: []
+      },
+      {
+        key: 614,
+        name: 'Bank Transaction',
+        icon: 'circle-outline',
+        route: 'Banktransaction',
+        permission: '',
+        children: []
+      },
+      {
+        key: 615,
+        name: 'Vendors',
+        icon: 'circle-outline',
+        route: 'Vendors',
+        permission: '',
+        children: []
+      },
+      {
+        key: 616,
+        name: 'Income Expenses',
+        icon: 'circle-outline',
+        route: 'All Students',
+        permission: '',
+        children: []
+      },
+      {
+        key: 617,
+        name: 'Accounting',
+        icon: 'circle-outline',
+        route: 'All Students',
+        permission: '',
+        children: []
+      },
+      // {
+      //   key: 618,
+      //   name: 'Vendors',
+      //   icon: 'circle-outline',
+      //   route: 'All Students',
+      //   permission: '',
+      //   children: []
+      // },
+    ]
+  },
+  {
+    key: 7,
+    name: 'Human Resource',
+    icon: 'account-group',
+    route: 'Human Resource',
+    permission: '',
+    children: [
+      {
+        key: 71,
+        name: 'Staff',
+        icon: 'circle-outline',
+        route: 'All Students',
+        permission: '',
+        children: []
+      },
+      {
+        key: 72,
+        name: 'Staff Attendance',
+        icon: 'circle-outline',
+        route: 'All Students',
+        permission: '',
+        children: []
+      },
+      {
+        key: 73,
+        name: 'All Attendance',
+        icon: 'circle-outline',
+        route: 'All Students',
+        permission: '',
+        children: []
+      },
+      {
+        key: 74,
+        name: 'Payroll',
+        icon: 'circle-outline',
+        route: 'All Students',
+        permission: '',
+        children: []
+      },
+      {
+        key: 75,
+        name: 'Staff Leave',
+        icon: 'circle-outline',
+        route: 'All Students',
+        permission: '',
+        children: []
+      },
+      {
+        key: 76,
+        name: 'Teachers Review',
+        icon: 'circle-outline',
+        route: 'All Students',
+        permission: '',
+        children: []
+      }
+    ]
+  },
+  {
+    key: 8,
+    name: 'Hostel',
+    icon: 'home-city-outline',
+    route: 'All Students',
+    permission: '',
+    children: [
+    {
+      key: 81,
+      name: 'Add Hostel',
+      icon: 'circle-outline',
+      route: 'All Students',
+      permission: '',
+      children: []
+    },
+    {
+      key: 82,
+      name: 'Allocate Student',
+      icon: 'circle-outline',
+      route: 'All Students',
+      permission: '',
+      children: []
+    }
+  ]
+  },
+  {
+    key: 9,
+    name: 'Teaching Log',
+    icon: 'post',
+    route: 'All Students',
+    permission: '',
+    children: []
+  },
+  {
+    key: 10,
+    name: 'Report Signature',
+    icon: 'draw-pen',
+    route: 'All Students',
+    permission: '',
+    children: []
+  },
+  {
+    key: 11,
+    name: 'Weekly Report',
+    icon: 'chart-line',
+    route: 'All Students',
+    permission: '',
+    children: []
+  },
+  {
+    key: 12,
+    name: 'Online Quiz',
+    icon: 'cast-education',
+    route: 'All Students',
+    permission: '',
+    children: []
+  },
+  {
+    key: 13,
+    name: 'Library',
+    icon: 'library',
+    route: 'All Students',
+    permission: '',
+    children: []
+  },
+  {
+    key: 14,
+    name: 'Inventory',
+    icon: 'book-outline',
+    route: 'All Students',
+    permission: '',
+    children: []
+  },
+  {
+    key: 12,
+    name: 'Transportation',
+    icon: 'bus-school',
+    route: 'All Students',
+    permission: '',
+    children: [
+      {
+        key: 121,
+        name: 'Vehicle',
+        icon: 'circle-outline',
+        route: 'vehicle',
+        permission: '',
+        children: []
+      },
+      {
+        key: 122,
+        name: 'Waypoints',
+        icon: 'circle-outline',
+        route: 'waypoint',
+        permission: '',
+        children: []
+      },
+      {
+        key: 123,
+        name: 'Routes',
+        icon: 'circle-outline',
+        route: 'Routes',
+        permission: '',
+        children: []
+      },
+      {
+        key: 124,
+        name: 'Waypoint Transfer',
+        icon: 'circle-outline',
+        route: 'All Students',
+        permission: '',
+        children: []
+      },
+    ]
+  },
+  {
+    key: 13,
+    name: 'E Learning',
+    icon: 'video-vintage',
+    route: 'All Students',
+    permission: '',
+    children: []
+  },
+  {
+    key: 12,
+    name: 'Live Class',
+    icon: 'google-classroom',
+    route: 'All Students',
+    permission: '',
+    children: []
+  },
+  {
+    key: 13,
+    name: 'Home work',
+    icon: 'book-open-outline',
+    route: 'All Students',
+    permission: '',
+    children: []
+  },
+  {
+    key: 14,
+    name: 'Student Attendance',
+    icon: 'account-check-outline',
+    route: 'All Students',
+    permission: '',
+    children: []
+  },
+  {
+    key: 15,
+    name: 'Student Results',
+    icon: 'chart-timeline',
+    route: 'All Students',
+    permission: '',
+    children: []
+  },
+  {
+    key: 16,
+    name: 'Questionaires',
+    icon: 'help-circle-outline',
+    route: 'All Students',
+    permission: '',
+    children: []
+  },
+  {
+    key: 17,
+    name: 'Terminal Report',
+    icon: 'chart-line',
+    route: 'All Students',
+    permission: '',
+    children: []
+  },
+  {
+    key: 18,
+    name: 'Communicate',
+    icon: 'email-box',
+    route: 'All Students',
+    permission: '',
+    children: []
+  },
+  {
+    key: 19,
+    name: 'Settings',
+    icon: 'cog',
+    route: 'All Students',
+    permission: '',
+    children: []
+  },
+
+
+
+
+
+
  ];
 
 const setfocustate  = (key) => {
@@ -233,18 +659,20 @@ const setfocustate  = (key) => {
                                       {item.children.length > 0 && (
                                         <>
                                         {focus == item.key ? (
-                                            <Ionicons name='arrow-down-circle' size={25} color={color} />
+                                            <Ionicons name='arrow-down' size={25} color={color} />
                                         ): (
-                                          <Ionicons name='arrow-up-circle' size={25} color={color} />
+                                          <Ionicons name='arrow-up' size={25} color={color} />
                                         )}
                                         </>
                                       )}
                                   </View>
                               )}   
                             onPress={() => {
-                              setFocus(item.key);
+                             // setFocus(item.key);
+                              setitemfocus(item.key);
                               //setfocustate(item.key);
                               if(item.children.length > 0){
+
                               }else{
                                 setsubFocus(0);
                                 props.navigation.navigate(item.route);
@@ -286,62 +714,13 @@ const setfocustate  = (key) => {
                     ))}
                 
 
-                <DrawerItem 
-                            icon={({color, size}) => (
-                                <Icon 
-                                name="account-outline" 
-                                color={color}
-                                size={size}
-                                />
-                            )}
-                            label="Profile"
-                            onPress={() => {props.navigation.navigate('Profile')}}
-                        />
-                        <DrawerItem 
-                            icon={({color, size}) => (
-                                <Icon 
-                                name="bookmark-outline" 
-                                color={color}
-                                size={size}
-                                />
-                            )}
-                            label="Bookmarks"
-                            onPress={() => {props.navigation.navigate('BookmarkScreen')}}
-                        />
-                        <DrawerItem 
-                            icon={({color, size}) => (
-                                <Icon 
-                                name="account-check-outline" 
-                                color={color}
-                                size={size}
-                                />
-                            )}
-                            label="Settings"
-                            onPress={() => {props.navigation.navigate('SettingsScreen')}}
-                        />
-                        <DrawerItem 
-                            icon={({color, size}) => (
-                                <Icon 
-                                name="account-check-outline" 
-                                color={color}
-                                size={size}
-                                />
-                            )}
-                            label="Support"
-                            onPress={() => {props.navigation.navigate('SupportScreen')}}
-                        />
-                    </Drawer.Section>
+                
+                        
+                       
+                        
+                </Drawer.Section>
 
-                    <Drawer.Section title="Preferences">
-                        <TouchableRipple onPress={() => {toggleTheme()}}>
-                            <View style={styles.preference}>
-                                <Text>Dark Theme</Text>
-                                <View pointerEvents="none">
-                                    <Switch value={paperTheme.dark}/>
-                                </View>
-                            </View>
-                        </TouchableRipple>
-                    </Drawer.Section>
+                    
                 </View>
             </DrawerContentScrollView>
             <Drawer.Section style={styles.bottomDrawerSection}>
@@ -354,7 +733,7 @@ const setfocustate  = (key) => {
                         />
                     )}
                     label="Sign Out"
-                    onPress={() => {signOut()}}
+                    onPress={() => {handlelogout}}
                 />
             </Drawer.Section>
         </View>

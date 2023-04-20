@@ -3,5 +3,6 @@ export const tokenname = 'usertoken';
 export const images = {
     logo: require('../assets/logotrans.png'),
     logojpg: require('../assets/logo.jpg'),
-    softwarelogo: require('../assets/software.png')
+    softwarelogo: require('../assets/software.png'),
+    bus: require('../assets/bus.png')
 };

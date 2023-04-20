@@ -160,7 +160,7 @@ function Eventcalendar () {
             <Card>
                 <Card.Content>
 
-                <Button title="Pick an image from camera roll" onPress={pickimage} style={{fontSize: 20}} />
+              <Button title="Pick an image from camera roll" onPress={pickimage} style={{fontSize: 20}} />
                {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
 
 

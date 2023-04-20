@@ -18,17 +18,17 @@ function Enquirylist ({item,deletedata}) {
         <List.Item
             title={()=> (
                 <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <Ionicons name="help-circle" size={20} />
+                    <Ionicons name="help-circle" size={20} style={{marginRight: 10}} />
                     <Text style={{flex: 1, fontSize: 18}}>{item?.fullname}</Text>
                      <Text style={{fontSize: 10}}>{item?.created_at}</Text>
-                     <Ionicons name="ellipsis-vertical-sharp" size={20} />
+                     {/* <Ionicons name="ellipsis-vertical-sharp" size={20} /> */}
                 </View>
             )}
             titleEllipsizeMode="middle"
             description={()=>(
                 <>
-                <Text style={{fontSize: 12, color: '#abc'}}>{item?.gender} - {item?.location}</Text>
-                <Text style={{fontSize: 13}}>{item?.note}</Text>
+                <Text style={{fontSize: 12, color: '#abc', marginLeft: 30}}>{item?.gender} - {item?.location}</Text>
+                <Text style={{fontSize: 13, marginLeft: 30}}>{item?.note}</Text>
                 </>
             )}
             descriptionNumberOfLines={5}

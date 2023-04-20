@@ -19,6 +19,7 @@ function Createeditenquiry() {
     const [note, setNote] = useState("");
     const [creatoredit, isCreatedorEdit] = useState();
     const [isloading, setLoading] = useState(false);
+    const [issubmitting, setIssubmitting] = useState(false);
     const router = useRouter();
     const {id} = useSearchParams();
 
@@ -89,7 +90,7 @@ function Createeditenquiry() {
             return;
         }
 
-        setLoading(true);
+        setIssubmitting(true);
 
         const formdata = {
             fullname: name,
@@ -109,12 +110,12 @@ function Createeditenquiry() {
         })
           .then(function (response) {
             ToastAndroid.show('info saved successfully!', ToastAndroid.SHORT);
-            setLoading(false);
+            setIssubmitting(false);
             DeviceEventEmitter.emit('subject.added', {});
             router.back();
           })
           .catch(function (error) {
-            setLoading(false);
+            setIssubmitting(false);
             console.log(error);
           });
     }
@@ -142,7 +143,7 @@ function Createeditenquiry() {
           }
       
       
-        setLoading(true);
+      setIssubmitting(true);
 
       const formdata = {
         fullname: name,
@@ -161,12 +162,12 @@ function Createeditenquiry() {
       }
       })
         .then(function (response) {
-          setLoading(false);
+          setIssubmitting(false);
           DeviceEventEmitter.emit('subject.added', {});
           router.back();
         })
         .catch(function (error) {
-          setLoading(false);
+          setIssubmitting(false);
           console.log(error);
         });
   }
@@ -181,17 +182,19 @@ function Createeditenquiry() {
         />
         <ScrollView>
 
+        {isloading ? <ActivityIndicator size="large" color="#1782b6" /> : (
+
         <Card>
             <Card.Content>
 
+            <Text style={{fontSize: 15, fontWeight: 500}}>Full name</Text>
             <TextInput
              style={styles.Forminput}
              mode="outlined"
-              placeholder='Full Name'
               onChangeText={(e) => setName(e)}
               value={name} />
 
-
+          <Text style={{fontSize: 15, fontWeight: 500}}>Choose Gender</Text>
            <DropDownPicker
                     open={open}
                     value={gender}
@@ -199,7 +202,6 @@ function Createeditenquiry() {
                     setOpen={setOpen}
                     setValue={setValue}
                     setItems={setItems}
-                    placeholder={"Choose Gender"}
                     placeholderStyle={{
                         color: "#456A5A",
                     }}
@@ -222,54 +224,58 @@ function Createeditenquiry() {
                     }}
            />
 
+<Text style={{fontSize: 15, fontWeight: 500, marginTop: 20}}>Phone number</Text>
             <TextInput
             style={styles.Forminput}
              mode="outlined"
              keyboardType="phone-pad"
-              placeholder='Phone number'
               onChangeText={(e) => setPhone(e)}
               value={phone} />
 
 
-          <TextInput
+<Text style={{fontSize: 15, fontWeight: 500}}>Email Address</Text>
+        <TextInput
             style={styles.Forminput}
              mode="outlined"
              keyboardType="email-address"
-              placeholder='Email Address'
               onChangeText={(e) => setEmail(e)}
               value={email} />
 
-
+          
+<Text style={{fontSize: 15, fontWeight: 500}}>Address</Text>
            <TextInput
            style={styles.Forminput}
              mode="outlined"
               keyboardType="default"
-              placeholder='Address'
               onChangeText={(e) => setAddress(e)}
               value={address} /> 
 
-
+      
+<Text style={{fontSize: 15, fontWeight: 500}}>Note</Text>
           <TextInput
             style={styles.Forminput}
             mode="outlined"
             multiline={true}
             numberOfLines={5}
             keyboardType="default"
-            placeholder='Note'
             onChangeText={(e) => setNote(e)}
             value={note} /> 
 
 
 
-            {isloading ? <ActivityIndicator size="large" color="#1782b6" /> : (
-               
+            
+            {issubmitting ? <ActivityIndicator size="large" color="#1782b6" /> : (
                 <Button mode="contained" onPress={id == undefined ? createdata : updatedata} style={{marginTop: 20}}>
                 Save
                 </Button>
-              )}
+
+                )}
+              
             
             </Card.Content>
         </Card>
+
+        )}
 
         </ScrollView>
 

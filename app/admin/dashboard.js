@@ -16,11 +16,8 @@ function Dashboard() {
     const [expectedfees, Setexpectedfees] = useState("");
 
     useEffect(()=>{
-
         loaddata();
-
     },[]);
-
 
     const loaddata = () => {
         axios.get(schoolzapi+'/dashboard',
@@ -84,7 +81,7 @@ function Dashboard() {
                 </TouchableOpacity>
 
             <TouchableOpacity style={[{marginTop: 20}]}>
-                <View style={{backgroundColor: '#fff',padding: 10, flexDirection: 'row',
+                <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row',
                  alignItems: 'center'}}>
                     <View style={{backgroundColor: '#28a745', padding: 10}}>
                         <Ionicons name="send-sharp" color="#fff" size={30} />
@@ -97,7 +94,7 @@ function Dashboard() {
             </TouchableOpacity>
 
             <TouchableOpacity style={[{marginTop: 20}]}>
-                <View style={{backgroundColor: '#fff',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#17a2b8', padding: 10}}>
                         <Ionicons name="send-sharp" color="#fff" size={30} />
                     </View>
@@ -113,7 +110,7 @@ function Dashboard() {
             </TouchableOpacity>
 
             <TouchableOpacity style={[{marginTop: 20}]}>
-                <View style={{backgroundColor: '#fff',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#28a745', padding: 10}}>
                         <Ionicons name="person-circle-outline" color="#fff" size={30} />
                     </View>
@@ -125,7 +122,7 @@ function Dashboard() {
             </TouchableOpacity>
 
             <TouchableOpacity style={[{marginTop: 20}]}>
-                <View style={{backgroundColor: '#fff',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#17a2b8', padding: 10}}>
                         <Ionicons name="person-circle-outline" color="#fff" size={30} />
                     </View>
@@ -137,7 +134,7 @@ function Dashboard() {
             </TouchableOpacity>
 
             <TouchableOpacity style={[{marginTop: 20}]}>
-                <View style={{backgroundColor: '#fff',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#28a745', padding: 10}}>
                         <Ionicons name="cash-outline" color="#fff" size={30} />
                     </View>
@@ -149,7 +146,7 @@ function Dashboard() {
             </TouchableOpacity>
 
             <TouchableOpacity style={[{marginTop: 20}]}>
-                <View style={{backgroundColor: '#fff',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#17a2b8', padding: 10}}>
                         <Ionicons name="cash-outline" color="#fff" size={30} />
                     </View>
@@ -161,7 +158,7 @@ function Dashboard() {
             </TouchableOpacity>
 
             <TouchableOpacity style={[{marginTop: 20}]}>
-                <View style={{backgroundColor: '#fff',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#28a745', padding: 10}}>
                         <Ionicons name="cash-outline" color="#fff" size={30} />
                     </View>
@@ -173,7 +170,7 @@ function Dashboard() {
             </TouchableOpacity>
 
             <TouchableOpacity style={[{marginTop: 20}]}>
-                <View style={{backgroundColor: '#fff',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#17a2b8', padding: 10}}>
                         <Ionicons name="cash-outline" color="#fff" size={30} />
                     </View>
@@ -185,7 +182,7 @@ function Dashboard() {
             </TouchableOpacity>
 
             <TouchableOpacity style={[{marginTop: 20}]}>
-                <View style={{backgroundColor: '#fff',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#28a745', padding: 10}}>
                         <Ionicons name="cash-outline" color="#fff" size={30} />
                     </View>
@@ -197,7 +194,7 @@ function Dashboard() {
             </TouchableOpacity>
 
             <TouchableOpacity style={[{marginTop: 20}]}>
-                <View style={{backgroundColor: '#fff',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#17a2b8', padding: 10}}>
                         <Ionicons name="cash-outline" color="#fff" size={30} />
                     </View>
@@ -209,7 +206,7 @@ function Dashboard() {
             </TouchableOpacity>
 
             <TouchableOpacity style={[{marginTop: 20}]}>
-                <View style={{backgroundColor: '#fff',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#28a745', padding: 10}}>
                         <Ionicons name="checkbox-outline" color="#fff" size={30} />
                     </View>
@@ -221,9 +218,9 @@ function Dashboard() {
             </TouchableOpacity>
 
             <TouchableOpacity style={[{marginTop: 20}]}>
-                <View style={{backgroundColor: '#fff',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
-                    <View style={{backgroundColor: '#17a2b8', padding: 10}}>
-                        <Ionicons name="remove" color="#fff" size={30} />
+                <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
+                    <View style={{backgroundColor: '#fff', padding: 10}}>
+                        <Ionicons name="remove" color="#17a2b8" size={30} />
                     </View>
                     <View style={{marginLeft: 10}}>
                         
@@ -263,10 +260,12 @@ const styles = StyleSheet.create({
     color: '#fff', fontSize: 15
  },
  smstexth1:{
-    fontSize: 25
+    fontSize: 25,
+    color: '#fff'
  },
  smstexth2:{
-    fontSize: 15
+    fontSize: 15,
+    color: '#fff'
  }
 
     

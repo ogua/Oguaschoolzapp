@@ -3,7 +3,7 @@ import { Redirect, Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, SafeAreaView,
    StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { Button, Card, List, Modal, Portal, Switch, TextInput, Provider } from 'react-native-paper';
+import { Button, Card, List, Modal, Portal, Switch, TextInput, Provider, Dialog } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { schoolzapi } from '../../../components/constants';
 import { selecttoken } from '../../../features/userinfoSlice';
@@ -13,6 +13,8 @@ import { useCallback } from 'react';
 import * as Animatable from 'react-native-animatable';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { LocaleConfig, Calendar } from "react-native-calendars";
+
 
 function Createacademicterm() {
 
@@ -27,6 +29,15 @@ function Createacademicterm() {
     const [isSwitchOn, setIsSwitchOn] = useState(false);
     const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
     const router = useRouter();
+    const [showdialogstart, setShowdialogstart] = useState(false);
+    const [showdialogend, setShowdialogend] = useState(false);
+    const [selecteddate, setSelecteddate] = useState(false);
+    const [selecteddatend, setSelecteddatend] = useState(false);
+    const hideDialog = () => setShowdialog(false);
+    const hideDialogend = () => setSelecteddatend(false);
+
+
+
 
     const [visible, setVisible] = useState(false);
     const hideModal = () => setVisible(false);
@@ -40,15 +51,18 @@ function Createacademicterm() {
       setVisible(false);
     };
 
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
-  const [items, setItems] = useState([
-    { label: "전체 공개", value: "전체 공개" },
-    { label: "맞팔로우 공개", value: "맞팔로우 공개" },
-    { label: "나만 보기", value: "나만 보기" },
-  ]);
+    const [openterm, setOpenterm] = useState(false);
+    const [term, setterm] = useState();
+    const [termitem, settermitems] = useState([]);
 
     useEffect(()=> {
+
+      loaddata();
+
+    },[]);
+
+
+    function loaddata(){
 
       setLoading(true);
 
@@ -58,9 +72,8 @@ function Createacademicterm() {
             Authorization: "Bearer "+token
         }
         })
-          .then(function (response) {
-            setTerm(response.data.data);
-            setLoading(false);
+          .then(function (response) {            
+            loadsterm(response.data.data);
           })
           .catch(function (error) {
             setLoading(false);
@@ -68,14 +81,28 @@ function Createacademicterm() {
           
       });
 
-    },[]);
+    }
+
+
+    const loadsterm = (data) => {
+            
+      const mddatas = data;
+      
+      let mdata = [];
+
+       mddatas.map(item =>  mdata.push({ label: item?.term, value: item?.id}))
+      
+       settermitems(mdata);
+
+       setLoading(false);
+  }
 
 
     const createdata = () => {
 
         setLoading(true);
 
-        if (termselected.length == 0 ) {
+        if (term.length == 0 ) {
 
           Alert.alert('Alert!', 'Term cant be empty.', [
               {text: 'Okay'}
@@ -111,7 +138,7 @@ function Createacademicterm() {
 
 
       const formdata = {
-            semester: termid,
+            semester: term,
             fromdate: startdate,
             todate: enddate,
             status: isSwitchOn ? 1 : 0
@@ -167,7 +194,7 @@ function Createacademicterm() {
       <SafeAreaView>
         <Stack.Screen
             options={{
-                headerTitle: 'New',
+                headerTitle: 'New Academic Term',
                 presentation: 'formSheet'
             }}
         />
@@ -177,65 +204,110 @@ function Createacademicterm() {
             <Animatable.View
              animation="bounceIn"
             >
-            
-            {rendermodel()}
 
-            <TouchableOpacity onPress={showModal} style={{marginBottom:10, borderColor: '#ccc', padding: 10, backgroundColor: '#fff'}}>
-              <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                  <Text>{termselected == "" ? `Select Academic Term` : termselected}</Text>
-                  <Ionicons  name="arrow-down"  size={20}/>
-              </View>
-              
-            </TouchableOpacity>
+                    <DropDownPicker
+                        open={openterm}
+                        value={term}
+                        items={termitem}
+                        setOpen={setOpenterm}
+                        setValue={setterm}
+                        setItems={settermitems}
+                       // placeholder={"Disability"}
+                        placeholderStyle={{
+                            color: "#456A5A",
+                        }}
+                        listMode="MODAL"
+                        dropDownContainerStyle={{
+                            borderWidth: 0,
+                            borderRadius: 30,
+                            backgroundColor: "#fff"
+                        }}
+                        labelStyle={{
+                            color: "#456A5A",
+                        }}
+                        listItemLabelStyle={{
+                            color: "#456A5A",
+                        }}
+                        style={{
+                            borderWidth: 1,
+                            //backgroundColor: "#F5F7F6",
+                            marginTop: 10,
+                            marginBottom: 20,
+                            minHeight: 40,
+                        }}
+                  />
+          
 
-            <DropDownPicker
-      open={open}
-      value={value}
-      items={items}
-      setOpen={setOpen}
-      setValue={setValue}
-      setItems={setItems}
-      placeholder={"공개범위"}
-      placeholderStyle={{
-        color: "#456A5A",
-      }}
-      listMode="SCROLLVIEW"
-      dropDownContainerStyle={{
-        borderWidth: 0,
-        borderRadius: 30,
-        backgroundColor: "#F5F7F6",
-      }}
-      labelStyle={{
-        color: "#456A5A",
-      }}
-      listItemLabelStyle={{
-        color: "#456A5A",
-      }}
-      style={{
-        borderWidth: 0,
-        borderRadius: 30,
-        backgroundColor: "#F5F7F6",
-        minHeight: 30,
-      }}
-    />
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text>Start Date </Text>
+              <Button icon="calendar-range" onPress={() => setShowdialogstart(true)}> select Date</Button>
+          </View>
+
+          <Portal>
+                <Dialog visible={showdialogstart} onDismiss={hideDialog}>
+                    <Dialog.Content>
+
+                    <Calendar
+                       visible={true}
+                        onDayPress={(day) => {
+                            setSelecteddate(day.dateString);
+                            setstartdate(day.dateString);
+                            setShowdialogstart(false);
+                        }}
+                        markedDates={{
+                            [selecteddate]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}
+                        }}
+                        enableSwipeMonths={true}
+                    />
+
+                    </Dialog.Content>
+                    <Dialog.Actions>
+                        <Button onPress={hideDialog}>Cancel</Button>
+                    </Dialog.Actions>
+                </Dialog>
+             </Portal>
 
 
-
-            <DatePickerInput
-                locale="en"
-                label="Start Date"
+            <TextInput
                 value={startdate}
                 onChange={(d) => setstartdate(d)}
-                inputMode="end"
+                mode="outlined"
                 style={{marginBottom: 20}}
             />
 
-            <DatePickerInput
-                locale="en"
-                label="Start Date"
+
+           <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text>End Date </Text>
+              <Button icon="calendar-range" onPress={() => setShowdialogend(true)}> select Date</Button>
+          </View>
+
+          <Portal>
+                <Dialog visible={showdialogend} onDismiss={hideDialogend}>
+                    <Dialog.Content>
+
+                    <Calendar
+                       visible={true}
+                        onDayPress={(day) => {
+                            setSelecteddatend(day.dateString);
+                            setenddate(day.dateString);
+                            setShowdialogend(false);
+                        }}
+                        markedDates={{
+                            [selecteddatend]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}
+                        }}
+                        enableSwipeMonths={true}
+                    />
+
+                    </Dialog.Content>
+                    <Dialog.Actions>
+                        <Button onPress={hideDialogend}>Cancel</Button>
+                    </Dialog.Actions>
+                </Dialog>
+             </Portal>
+            <TextInput
+                mode="outlined"
                 value={enddate}
                 onChange={(d) => setenddate(d)}
-                inputMode="start"
             /> 
 
             <View style={{flexDirection: 'row',justifyContent: 'flex-end', alignItems: 'center', marginTop: 10}}>

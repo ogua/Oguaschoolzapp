@@ -8,7 +8,8 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser, setToken, setRoles,  setUserpermission, setPermissions, setMenu, setCurrency } from '../../features/userinfoSlice';
 import { selectuser } from '../../features/userinfoSlice';
-import { storeData, getData } from '../../features/usertokenSlice';
+import { storeData, removeusertoken, gettokendata, selectusertoken } from '../../features/usertokenSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function login() {
     
@@ -21,17 +22,26 @@ function login() {
     const dispatch = useDispatch();
     const user = useSelector(selectuser);
 
-    if(user !== null){
-        //return <Redirect href="/admin" />
-        router.replace("/admin");
-    }
+    //console.log("user",user);
+
+    // if(user !== null){
+    //     router.replace("/admin");
+    // }
 
     useEffect(()=> {
         emailref.current.focus();
-        console.log('login component');
     },[]);
 
-    const Userlogin = () => {
+    const cleartoken = async () => {
+        //AsyncStorage.clear()
+        //await AsyncStorage.setItem("user", "ogua lamere")
+        const jsonValue = await AsyncStorage.getItem("user")
+        console.log("user 1",jsonValue)
+        console.log("user 2",user)
+        console.log("user 3",JSON.parse(user))
+    }
+
+    const Userlogin = async () => {
 
         Setsubmiitting(true);
 
@@ -45,7 +55,7 @@ function login() {
         {
             headers: {Accept: 'application/json'}
         })
-          .then(function (response) {
+          .then(async (response) => {
 
             console.log(response.data);
 
@@ -58,17 +68,19 @@ function login() {
                 if (Platform.OS != "web") {
                     ToastAndroid.show('Login successful!', ToastAndroid.SHORT);
                 }else{
-                    alert('Login successful!');
+                    //alert('Login successful!');
                 }
-                
-                Setsubmiitting(false);
+
+                await AsyncStorage.setItem('token', response.data.token);
+               
                 dispatch(setUser(response.data.user));
                 dispatch(setToken(response.data.token));
                 dispatch(setRoles(response.data.roles));
                 dispatch(setUserpermission(response.data.userpermission));
                 dispatch(setPermissions(response.data.permissions));
                 dispatch(setCurrency(response.data.currency));
-                storeData(response.data.token);
+
+                Setsubmiitting(false);
                 router.push('admin');
 
             }
@@ -116,7 +128,7 @@ function login() {
                     {issumit ? <ActivityIndicator size="large" color="#fff" /> : <Text style={styles.loginbtntext}>Login</Text>}
                 </TouchableOpacity>
 
-                <Text style={styles.forgotpassword}>Forgot Password ?</Text>
+                <Text style={styles.forgotpassword} onPress={cleartoken}>Forgot Password ?</Text>
                 
                 <TouchableOpacity style={styles.loginwithgoogle}>
                     <Text style={styles.logingoogletext}>
