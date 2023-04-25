@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
+import React, { Component, useCallback } from 'react'
 import { Stack, useRouter } from 'expo-router';
 import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
    ScrollView, StyleSheet, Text, TouchableOpacity, 
-   View, DeviceEventEmitter, Alert } from 'react-native'
+   View, DeviceEventEmitter, Alert, Dimensions } from 'react-native'
 import { useEffect } from 'react';
 import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar } from 'react-native-paper';
 import { useState } from 'react';
@@ -12,14 +12,16 @@ import { useSelector } from 'react-redux';
 import * as Imagepicker from 'expo-image-picker';
 import { schoolzapi } from '../constants';
 import { selecttoken } from '../../features/userinfoSlice';
-import Feelistitem from '../../lists/Feelist';
-import { ActivityIndicator } from 'react-native';
+import Elearninglist from '../../lists/elearninglist';
+import ZoomUs from "react-native-zoom-us";
+import Zoom from './Zoom';
 
-function Fee () {
+
+function Zoommeetings () {
 
     const token = useSelector(selecttoken);
     const [search, setSearch] = useState();
-    const [isloading, setLoading] = useState(true);
+    const [isloading, setLoading] = useState(false);
     const [data, setData] = useState([]);
     const [filterdata, setFilterdata] = useState([]);
     const router = useRouter();
@@ -29,23 +31,26 @@ function Fee () {
     const hideDialog = () => setShowdialog(false);
     const [showsnakbar, setShowsnakbar] = useState(false);
 
+    const SCREEN_HEIGHT = Dimensions.get("window").height;
+    const SCREEN_WIDTH = Dimensions.get("window").width;
+    const [videoid, setvideoid] = useState("");
 
-    useEffect(()=> {
+    
+
+    // useEffect(()=> {
       
-      DeviceEventEmitter.addListener("subject.added", (event)=>{
-        console.log('how many time');
-        loaddata();
-        DeviceEventEmitter.removeAllListeners("event.test");
-      });
+    //   DeviceEventEmitter.addListener("subject.added", (event)=>{
+    //     console.log('how many time');
+    //     loaddata();
+    //     DeviceEventEmitter.removeAllListeners("event.test");
+    //   });
 
-       loaddata();
-
-    },[]);
+    // },[]);
 
 
     const loaddata = () => {
         setLoading(true);
-        axios.get(schoolzapi+'/schoolfees',
+        axios.get(schoolzapi+'/online-learning',
         {
             headers: {Accept: 'application/json',
             Authorization: "Bearer "+token
@@ -55,54 +60,14 @@ function Fee () {
             console.log(response.data.data);
             setData(response.data.data);
             setFilterdata(response.data.data);
+            setvideoid(data[0].linkid);
             setLoading(false);
           })
           .catch(function (error) {
             setLoading(false);
-            console.log(error);
+            console.log(error.response);
           });
     }
-
-
-    const updatedatastatus = (id,status,title) => {
-
-          return Alert.alert(
-            "Are your sure?",
-            "Are you sure you want to activate "+title+" status",
-            [
-              {
-                text: "No",
-              },
-              {
-                text: "Yes Activate",
-                onPress: () => {
-                    setLoading(true);
-
-                    const formdata = {
-                      status: status
-                    }
-              
-                    axios.post(schoolzapi+'/schoolfees-update-status/'+id,
-                    formdata,
-                    {
-                        headers: {Accept: 'application/json',
-                        Authorization: "Bearer "+token
-                    }
-                    })
-                      .then(function (response) {
-                        console.log(response.data);
-                        loaddata();
-                        //setLoading(false);
-                      })
-                      .catch(function (error) {
-                        setLoading(false);
-                        console.log(error);
-                      });
-                },
-              },
-            ]
-          );
-      }
 
 
     const deletedata = (id,delname) => {
@@ -118,7 +83,7 @@ function Fee () {
                 text: "Yes Delete",
                 onPress: () => {
                     setLoading(true);
-                    axios.delete(schoolzapi+'/schoolfees/'+id,
+                    axios.delete(schoolzapi+'/online-learning/'+id,
                     {
                         headers: {Accept: 'application/json',
                         Authorization: "Bearer "+token
@@ -128,8 +93,8 @@ function Fee () {
                             const newData = data.filter((item) => item.id != id);
                             setFilterdata(newData);
                             setData(newData);
-                           // loaddata();
-                            setLoading(false);
+                            loaddata();
+                            //setLoading(false);
                         })
                         .catch(function (error) {
                         setLoading(false);
@@ -147,8 +112,8 @@ function Fee () {
           if (text) {
               
             const newData = data.filter(function (item) {
-              const itemData = item.title
-                ? item.title.toUpperCase()
+              const itemData = item.name
+                ? item.name.toUpperCase()
                 : ''.toUpperCase();
               const textData = text.toUpperCase();
               return itemData.indexOf(textData) > -1;
@@ -161,54 +126,82 @@ function Fee () {
           }
       };
 
+
+
+        const [playing, setPlaying] = useState(false);
+
+        const onStateChange = useCallback((state) => {
+            if (state === "ended") {
+            setPlaying(false);
+             alert("video has finished playing!");
+            }
+        }, []);
+
+        const togglePlaying = useCallback(() => {
+            setPlaying((prev) => !prev);
+        }, []);
+
+
+        const setplayervideoid = (vid) => {
+            setvideoid(vid);
+            console.log(vid);
+        }
+
+        // https://us04web.zoom.us/j/73982275063?pwd=VVuxLevqmy73bJTO0Gv9RQF9rmD9D6.1
+
+        const joinAMeeting = async() => {
+            const meeting = await ZoomUs.joinMeeting({
+              userName: 'Ogua Ahmed',
+              meetingNumber: 73982275063,
+              password: VVuxLevqmy73bJTO0Gv9RQF9rmD9D6
+            });
+          
+            console.log('meetng joined ', meeting);
+          };
+
     return (
       <Provider>
       <SafeAreaView>
         <Stack.Screen options={{
-            headerTitle: 'Fees'
+            headerTitle: 'Zoom Meetings',
+            headerRight: () => (
+                <View>
+                     <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>
+                         <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/transport/create-edit-routes')}>
+                             <Ionicons name='add-circle' size={22} color="#17a2b8"/>
+                             <Text style={{fontSize: 18}}>New</Text> 
+                         </TouchableOpacity>
+                     </View>
+                 </View>
+            )
         }}
         />
+
+        
+
 
         <ScrollView
         refreshControl={
             <RefreshControl refreshing={isloading} onRefresh={loaddata} />
         }
         >
-          
-        {isloading ? null : (
-          <>
-           <View style={{marginVertical: 20}}>
-                <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>
-                    
-                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/Accounts/create-edit-fee')}>
-                        <Ionicons name='add-circle' size={22} color="#17a2b8"/>
-                        <Text style={{fontSize: 18}}>New</Text>
-                    </TouchableOpacity>
-                </View>
+            <View style={{flex: 1, justifyContent: 'center'}}>
+               <Zoom />
             </View>
-
-            <Searchbar
-                placeholder='Search....'
-                mode="outlined"
-                onChangeText={(text) => searchFilterFunction(text)}
-                value={search}
-            />
             
             <Card>
                 <Card.Content>
                 <FlatList
                     data={filterdata}
-                    renderItem={({item})=> <Feelistitem updatedatastatus={updatedatastatus} item={item} deletedata={deletedata} /> }
+                    renderItem={({item})=> <Elearninglist item={item} deletedata={deletedata} setvideoid={setplayervideoid} /> }
                     ItemSeparatorComponent={()=> <View style={styles.separator} />}
                       contentContainerStyle={{
-                         marginBottom: 10
+                         marginBottom: 20
                     }}
                     keyExtractor={item => item.id}
                 />
                 </Card.Content>
-            </Card>
-            </>        
-          )}
+            </Card> 
 
         </ScrollView>
       </SafeAreaView>
@@ -216,7 +209,7 @@ function Fee () {
     )
 }
 
-export default Fee;
+export default Zoommeetings;
 
 const styles = StyleSheet.create({
 

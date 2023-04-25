@@ -4,26 +4,42 @@ import { useState } from 'react';
 import { ActivityIndicator, Alert, DeviceEventEmitter, PermissionsAndroid, SafeAreaView, ScrollView, StyleSheet, Text, ToastAndroid, View } from 'react-native'
 import { Avatar, Button, Card, TextInput } from 'react-native-paper';
 import { useSelector } from 'react-redux';
-import { schoolzapi } from '../../../components/constants';
-import { selecttoken } from '../../../features/userinfoSlice';
 import { useEffect } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { TimePickerModal } from 'react-native-paper-dates';
 import { useCallback } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
+import { selecttoken } from '../../../features/userinfoSlice';
+import { schoolzapi } from '../../../components/constants';
 
-function Createeditvehicle() {
+function Createeditelearning() {
 
     const token = useSelector(selecttoken);
     const [Name, setName] = useState("");
-    const [Model, setModel] = useState("");
-    const [capacity, setcapacity] = useState("");
-    const [Number, setNumber] = useState("");
+    const [link, setlink] = useState("");
+    const [outcome, setoutcome] = useState("");
+    const [documents, setdocuments] = useState("");
     const [file, setFile] = useState(null);
+    const [img, setImg] = useState(null);
 
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([]);
+
+    const [intime, setIntime] = useState("");
+    const [showintime, setShowintime] = useState(false);
+    const onDismissintime = useCallback(() => {
+        setShowintime(false)
+    }, [setShowintime]);
+
+    const onConfirmintime = useCallback(
+        ({ hours, minutes }) => {
+         setShowintime(false);
+         setIntime(hours+':'+minutes);
+        },
+        [setShowintime]
+    );
+
     
     const [creatoredit, isCreatedorEdit] = useState();
     const [isloading, setLoading] = useState(false);
@@ -36,71 +52,55 @@ function Createeditvehicle() {
     useEffect(()=>{
       DeviceEventEmitter.removeAllListeners("event.test");
 
-      loadonlystaff();
+      loadstudentclass();
 
       if(id == undefined){
-        isCreatedorEdit('New Vehicle');
+        isCreatedorEdit('E-learning');
+        
       }else{
         loaddataedit();
-        isCreatedorEdit('Edit Vehicle');
+        isCreatedorEdit('Edit E-learning');
       }
 
     },[]);
 
 
-    function getstaffinfo() {
-
-        return axios.get(schoolzapi+'/staff',
-        {
-            headers: {Accept: 'application/json',
-            Authorization: "Bearer "+token
-        }
-        });
-    }
-      
-      function getvehicleinfo() {
-
-        return axios.get(schoolzapi+'/vehicle/show/'+id,
-        {
-            headers: {Accept: 'application/json',
-            Authorization: "Bearer "+token
-        }
-        });
-      }
-
 
       const loaddataedit = () => {
         setLoading(true);
         
-        Promise.all([getstaffinfo(), getvehicleinfo()])
+        axios.get(schoolzapi+'/online-learning/show/'+id,
+        {
+            headers: {Accept: 'application/json',
+            Authorization: "Bearer "+token
+        }
+        })
         .then(function (results) {
             setLoading(false);
-            const staff = results[0];
-            const vehicle = results[1];
 
-            loaddropdown(staff.data.data);
-
-            setName(vehicle.data.data.name);
-            setModel(vehicle.data.data.model);
-            setNumber(vehicle.data.data.no);
-            setcapacity(vehicle.data.data.capacity);
-            setValue(parseInt(vehicle.data.data.assignedto));
+            //console.log(results);
+            setValue(parseInt(results.data.data.stclassid));
+            setImg(results.data.data.pic);
+            setName(results.data.data.title);
+            setlink(results.data.data.link);
+            setdocuments(results.data.data.desc);
+            setoutcome(results.data.data.outcome);
+            setIntime(results.data.data.duration);
 
         }).catch(function(error){
             setLoading(false);
-            const acct = error[0];
-            const studeclass = error[1];
+            console.log(error);
             
         });
     }
 
 
 
-    const loadonlystaff = () => {
+    const loadstudentclass = () => {
       
       setLoading(true);
 
-      axios.get(schoolzapi+'/staff',
+      axios.get(schoolzapi+'/student-classes',
       {
           headers: {Accept: 'application/json',
           Authorization: "Bearer "+token
@@ -114,7 +114,7 @@ function Createeditvehicle() {
         })
         .catch(function (error) {
           setLoading(false);
-          console.log(error);
+          console.log("error",error.response);
         });
     }
 
@@ -125,7 +125,7 @@ function Createeditvehicle() {
         
         let mdata = [];
   
-         mddatas.map(item =>  mdata.push({ label: item?.fullname, value: item?.id}))
+         mddatas.map(item =>  mdata.push({ label: item?.name, value: item?.id}))
         
         setItems(mdata);
   
@@ -134,29 +134,29 @@ function Createeditvehicle() {
 
     const createdata = () => {
 
-        if(Name == ""){
-          alert('Name cant be empty');
-          return;
-        }
-
-        if(Model == ""){
-            alert('Model cant be empty');
-            return;
-        }
-
-        if(capacity == ""){
-          alert('Capacity cant be empty');
-          return;
-        }
-
-        if(Number == ""){
-          alert('Vehicle Number cant be empty');
-          return;
-        }
-
         if(value == ""){
-            alert('Assigned To cant be empty');
+          alert('Student class cant be empty');
+          return;
+        }
+
+        if(Name == ""){
+            alert('Video Title cant be empty');
             return;
+        }
+
+        if(link == ""){
+          alert('Sharable Link cant be empty');
+          return;
+        }
+
+        if(outcome == ""){
+            alert('Outcome cant be empty');
+            return;
+        }
+
+        if(intime == ""){
+          alert('Duration cant be empty');
+          return;
         }
 
         setIssubmitting(true);
@@ -173,13 +173,14 @@ function Createeditvehicle() {
 
         }
 
-        data.append('name',Name);
-        data.append('model',Model);
-        data.append('no',Number);
-        data.append('capacity',capacity);
-        data.append('assignedto',value);
+        data.append('stclass',value);
+        data.append('link',link);
+        data.append('title',Name);
+        data.append('outcome',outcome);
+        data.append('document',documents);
+        data.append('duration',intime);
 
-        axios.post(schoolzapi+'/vehicle',
+        axios.post(schoolzapi+'/online-learning',
         data,
         {
             headers: {Accept: 'application/json',
@@ -201,30 +202,30 @@ function Createeditvehicle() {
 
     const updatedata = () => {
 
-        if(Name == ""){
-            alert('Name cant be empty');
-            return;
-          }
-  
-          if(Model == ""){
-              alert('Model cant be empty');
-              return;
-          }
-  
-          if(capacity == ""){
-            alert('Capacity cant be empty');
-            return;
-          }
-  
-          if(Number == ""){
-            alert('Vehicle Number cant be empty');
-            return;
-          }
-  
-          if(value == ""){
-              alert('Assigned To cant be empty');
-              return;
-          }
+      if(value == ""){
+        alert('Student class cant be empty');
+        return;
+      }
+
+      if(Name == ""){
+          alert('Video Title cant be empty');
+          return;
+      }
+
+      if(link == ""){
+        alert('Sharable Link cant be empty');
+        return;
+      }
+
+      if(outcome == ""){
+          alert('Outcome cant be empty');
+          return;
+      }
+
+      if(intime == ""){
+        alert('Duration cant be empty');
+        return;
+      }
 
       setIssubmitting(true);
 
@@ -240,13 +241,14 @@ function Createeditvehicle() {
 
       }
 
-      data.append('name',Name);
-      data.append('model',Model);
-      data.append('no',Number);
-        data.append('capacity',capacity);
-        data.append('assignedto',value);
+      data.append('stclass',value);
+      data.append('link',link);
+      data.append('title',Name);
+      data.append('outcome',outcome);
+      data.append('document',documents);
+      data.append('duration',intime);
     
-      axios.post(schoolzapi+'/vehicle/'+id,
+      axios.post(schoolzapi+'/online-learning/'+id,
       data,
       {
           headers: {Accept: 'application/json',
@@ -316,6 +318,7 @@ function Createeditvehicle() {
           console.log('res : ' + JSON.stringify(result));
           // Setting the state to show single file attributes
           setFile(result);
+          setImg(result.uri);
         }
       }
     } catch (err) {
@@ -344,48 +347,17 @@ function Createeditvehicle() {
         <Card>
         <Card.Content>
 
-        <View style={{flexDirection: 'row',alignItems: 'center',  marginTop: 20, marginLeft: 10}}>
+        <View style={{flexDirection: 'row',alignItems: 'center',  marginVertical: 20}}>
                     
-            {file && <Avatar.Image 
-                 source={{ uri: file.uri }}
+            {img && <Avatar.Image 
+                 source={{ uri: img }}
                  size={100}
             /> }
                     
-            <Button mode="text" style={{fontSize: 20}} onPress={selectFile}>Pick Image</Button>
+            <Button mode="text" style={{fontSize: 20}} onPress={selectFile}>Video Art Work</Button>
         </View>
 
-        <Text style={{fontSize: 15, fontWeight: 500}}>Name </Text>
-        <TextInput
-        style={styles.Forminput}
-        mode="outlined"
-        onChangeText={(e) => setName(e)}
-        value={Name} />
-
-
-        <Text style={{fontSize: 15, fontWeight: 500}}>Model</Text>
-        <TextInput
-        style={styles.Forminput}
-        mode="outlined"
-        onChangeText={(e) => setModel(e)}
-        value={Model} />
-
-
-        <Text style={{fontSize: 15, fontWeight: 500}}>Number</Text>
-        <TextInput
-        style={styles.Forminput}
-        mode="outlined"
-        onChangeText={(e) => setNumber(e)}
-        value={Number} />
-
-
-        <Text style={{fontSize: 15, fontWeight: 500}}>Capacity</Text>
-        <TextInput
-        style={styles.Forminput}
-        mode="outlined"
-        onChangeText={(e) => setcapacity(e)}
-        value={capacity} />
-
-
+        <Text style={{fontSize: 15, fontWeight: 500}}>Student Class</Text>
               <DropDownPicker
                     open={open}
                     value={value}
@@ -393,7 +365,7 @@ function Createeditvehicle() {
                     setOpen={setOpen}
                     setValue={setValue}
                     setItems={setItems}
-                    placeholder={"Assign Vehicle To"}
+                    placeholder={""}
                     placeholderStyle={{
                         color: "#456A5A",
                     }}
@@ -413,12 +385,64 @@ function Createeditvehicle() {
                         borderWidth: 1,
                         //backgroundColor: "#F5F7F6",
                         minHeight: 40,
-                        marginTop: 20
+                        marginBottom: 20
                     }}
                     />
 
-        
+        <Text style={{fontSize: 15, fontWeight: 500}}>Video Title </Text>
+        <TextInput
+        style={styles.Forminput}
+        mode="outlined"
+        onChangeText={(e) => setName(e)}
+        value={Name} />
 
+
+        <Text style={{fontSize: 15, fontWeight: 500}}>Sharable Link</Text>
+        <TextInput
+        style={styles.Forminput}
+        keyboardType="url"
+        mode="outlined"
+        onChangeText={(e) => setlink(e)}
+        value={link} />
+
+
+        <Text style={{fontSize: 15, fontWeight: 500}}>Study Documents</Text>
+        <TextInput
+        style={styles.Forminput}
+        multiline={true}
+        numberOfLines={4}
+        mode="outlined"
+        onChangeText={(e) => setdocuments(e)}
+        value={documents} />
+
+
+        <Text style={{fontSize: 15, fontWeight: 500}}>Outcome</Text>
+        <TextInput
+        style={styles.Forminput}
+        multiline={true}
+        numberOfLines={4}
+        mode="outlined"
+        onChangeText={(e) => setoutcome(e)}
+        value={outcome} />
+
+<TimePickerModal
+          visible={showintime}
+          onDismiss={onDismissintime}
+          onConfirm={onConfirmintime}
+          hours={12}
+          minutes={14}
+        />
+
+         <Text style={{fontSize: 15, fontWeight: 500}}>Duration</Text>
+         <TextInput
+            style={styles.Forminput}
+            mode="outlined"
+            keyboardType="default"
+            onFocus={()=>  setShowintime(true)}
+            onChangeText={(e) => setIntime(e)}
+            value={intime} />
+
+           
 
         {issubmitting ? <ActivityIndicator size="large" color="#1782b6" /> : (
         <Button mode="contained" onPress={id == undefined ? createdata : updatedata} style={{marginTop: 20}}>
@@ -437,7 +461,7 @@ function Createeditvehicle() {
     )
 }
 
-export default Createeditvehicle;
+export default Createeditelearning;
 
 const styles = StyleSheet.create({
     Forminput: {

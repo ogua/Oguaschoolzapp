@@ -12,22 +12,35 @@ import { useSelector } from 'react-redux';
 import * as Imagepicker from 'expo-image-picker';
 import { schoolzapi } from '../constants';
 import { selecttoken } from '../../features/userinfoSlice';
-import Feelistitem from '../../lists/Feelist';
-import { ActivityIndicator } from 'react-native';
+import Visitorslist from '../../lists/Visitorslist';
+import Studentlist from '../../lists/Studentlist';
+import Normallist from '../../lists/Normallist';
+import Hostellist from '../../lists/hostellist';
 
-function Fee () {
+function Hostel () {
 
     const token = useSelector(selecttoken);
     const [search, setSearch] = useState();
     const [isloading, setLoading] = useState(true);
     const [data, setData] = useState([]);
     const [filterdata, setFilterdata] = useState([]);
+    const [studentclass, setStudentclass] = useState([]);
     const router = useRouter();
     const [visible, setVisible] = useState(0);
     const [showdialog, setShowdialog] = useState(false);
     const showDialog = () => setShowdialog(true);
     const hideDialog = () => setShowdialog(false);
     const [showsnakbar, setShowsnakbar] = useState(false);
+    const [active, setActive] = useState("");
+
+    const [floor, setfloor] = useState([
+        {id: 1, name: 'First Floor'},
+        {id: 2, name: 'Second Floor'},
+        {id: 3, name: 'Third Floor'},
+        {id: 4, name: 'Fourth Floor	'},
+        {id: 5, name: 'Fifth Floor'},
+    ]);
+
 
 
     useEffect(()=> {
@@ -45,64 +58,27 @@ function Fee () {
 
     const loaddata = () => {
         setLoading(true);
-        axios.get(schoolzapi+'/schoolfees',
+        
+        axios.get(schoolzapi+'/student-classes',
         {
             headers: {Accept: 'application/json',
             Authorization: "Bearer "+token
         }
         })
-          .then(function (response) {
-            console.log(response.data.data);
-            setData(response.data.data);
-            setFilterdata(response.data.data);
+        .then(function (results) {
             setLoading(false);
-          })
-          .catch(function (error) {
+
+            setData(acct.data.data);
+            setFilterdata(acct.data.data);
+            
+
+        }).catch(function(error){
             setLoading(false);
-            console.log(error);
-          });
+            const acct = error[0];
+            const studeclass = error[1];
+            
+        });
     }
-
-
-    const updatedatastatus = (id,status,title) => {
-
-          return Alert.alert(
-            "Are your sure?",
-            "Are you sure you want to activate "+title+" status",
-            [
-              {
-                text: "No",
-              },
-              {
-                text: "Yes Activate",
-                onPress: () => {
-                    setLoading(true);
-
-                    const formdata = {
-                      status: status
-                    }
-              
-                    axios.post(schoolzapi+'/schoolfees-update-status/'+id,
-                    formdata,
-                    {
-                        headers: {Accept: 'application/json',
-                        Authorization: "Bearer "+token
-                    }
-                    })
-                      .then(function (response) {
-                        console.log(response.data);
-                        loaddata();
-                        //setLoading(false);
-                      })
-                      .catch(function (error) {
-                        setLoading(false);
-                        console.log(error);
-                      });
-                },
-              },
-            ]
-          );
-      }
 
 
     const deletedata = (id,delname) => {
@@ -118,7 +94,7 @@ function Fee () {
                 text: "Yes Delete",
                 onPress: () => {
                     setLoading(true);
-                    axios.delete(schoolzapi+'/schoolfees/'+id,
+                    axios.delete(schoolzapi+'/student-info/'+id,
                     {
                         headers: {Accept: 'application/json',
                         Authorization: "Bearer "+token
@@ -128,8 +104,8 @@ function Fee () {
                             const newData = data.filter((item) => item.id != id);
                             setFilterdata(newData);
                             setData(newData);
-                           // loaddata();
-                            setLoading(false);
+                            loaddata();
+                            //setLoading(false);
                         })
                         .catch(function (error) {
                         setLoading(false);
@@ -147,8 +123,8 @@ function Fee () {
           if (text) {
               
             const newData = data.filter(function (item) {
-              const itemData = item.title
-                ? item.title.toUpperCase()
+              const itemData = item.fullname
+                ? item.fullname.toUpperCase()
                 : ''.toUpperCase();
               const textData = text.toUpperCase();
               return itemData.indexOf(textData) > -1;
@@ -159,56 +135,101 @@ function Fee () {
             setFilterdata(data);
             setSearch(text);
           }
-      };
+    };
+
+
+    const checkclassselected = (id) => {
+
+      if(active == id){
+        setActive("All");
+        searchFilterclassFunction("All");
+      }else{
+        setActive(id);
+        searchFilterclassFunction(id);
+      }
+    }
+
+
+    const hostelfoor = (item) => (
+        <>
+        <TouchableOpacity style={{backgroundColor: `${active == item.id ? `#1782b6` : `#fff` }`, borderRadius: 30, marginTop: 10, marginRight: 20}}
+        onPress={()=> {
+            checkclassselected(item.id);
+        }}
+        >
+        <List.Item
+            title={item?.name}
+            titleStyle={{color: `${active == item.id ? `#fff` : `#000` }`}}
+            titleEllipsizeMode="middle"/>
+        </TouchableOpacity>
+        </>
+    );
+
+    const searchFilterclassFunction = (text) => {
+        
+        if (text) {
+            if(text == "All"){
+
+              setFilterdata(data);
+
+            }else{
+              const newData = data.filter(item => item.currentlevel == text);
+              setFilterdata(newData);
+            }
+          //setSearch(text);
+        } else {
+          setFilterdata(data);
+          //setSearch(text);
+        }
+  };
 
     return (
       <Provider>
       <SafeAreaView>
-        <Stack.Screen options={{
-            headerTitle: 'Fees'
-        }}
+        <Stack.Screen
+         options={{
+          headerTitle: 'Hostels'
+         }}
         />
+
+       <Searchbar
+            placeholder='Search....'
+            mode="outlined"
+            onChangeText={(text) => searchFilterFunction(text)}
+            value={search}
+        />
+
+        <View>
+           <FlatList
+                data={floor}
+                renderItem={({item})=> hostelfoor(item) }
+                contentContainerStyle={{
+                    paddingHorizontal: 20,
+                    paddingBottom: 10,
+                }}
+                keyExtractor={item => item.id}
+                horizontal
+            />
+        </View>
 
         <ScrollView
         refreshControl={
             <RefreshControl refreshing={isloading} onRefresh={loaddata} />
         }
         >
-          
-        {isloading ? null : (
-          <>
-           <View style={{marginVertical: 20}}>
-                <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>
-                    
-                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/Accounts/create-edit-fee')}>
-                        <Ionicons name='add-circle' size={22} color="#17a2b8"/>
-                        <Text style={{fontSize: 18}}>New</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-            <Searchbar
-                placeholder='Search....'
-                mode="outlined"
-                onChangeText={(text) => searchFilterFunction(text)}
-                value={search}
-            />
-            
-            <Card>
+                <Card>
                 <Card.Content>
                 <FlatList
                     data={filterdata}
-                    renderItem={({item})=> <Feelistitem updatedatastatus={updatedatastatus} item={item} deletedata={deletedata} /> }
+                    renderItem={({item})=> <Hostellist item={item} deletedata={deletedata} studentclasslist={studentclass} /> }
                     ItemSeparatorComponent={()=> <View style={styles.separator} />}
                       contentContainerStyle={{
-                         marginBottom: 10
+                        marginBottom: 200
                     }}
                     keyExtractor={item => item.id}
                 />
                 </Card.Content>
-            </Card>
-            </>        
-          )}
+            </Card> 
 
         </ScrollView>
       </SafeAreaView>
@@ -216,7 +237,7 @@ function Fee () {
     )
 }
 
-export default Fee;
+export default Hostel;
 
 const styles = StyleSheet.create({
 

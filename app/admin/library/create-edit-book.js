@@ -12,18 +12,23 @@ import { TimePickerModal } from 'react-native-paper-dates';
 import { useCallback } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
 
-function Createeditvehicle() {
+function Createeditbook() {
 
     const token = useSelector(selecttoken);
     const [Name, setName] = useState("");
-    const [Model, setModel] = useState("");
-    const [capacity, setcapacity] = useState("");
-    const [Number, setNumber] = useState("");
+    const [isbn, setisbn] = useState("");
+    const [author, setauthor] = useState("");
+    const [publisher, setpublisher] = useState("");
     const [file, setFile] = useState(null);
+    const [img, setImg] = useState(null);
 
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([]);
+
+    const [quanity, setquanity] = useState("");
+    const [price, setprice] = useState("");
+    const [note, setnote] = useState("");
     
     const [creatoredit, isCreatedorEdit] = useState();
     const [isloading, setLoading] = useState(false);
@@ -36,71 +41,55 @@ function Createeditvehicle() {
     useEffect(()=>{
       DeviceEventEmitter.removeAllListeners("event.test");
 
-      loadonlystaff();
+      loadsubject();
 
       if(id == undefined){
-        isCreatedorEdit('New Vehicle');
+        isCreatedorEdit('New Book');
+        
       }else{
         loaddataedit();
-        isCreatedorEdit('Edit Vehicle');
+        isCreatedorEdit('Edit Book');
       }
 
     },[]);
 
 
-    function getstaffinfo() {
-
-        return axios.get(schoolzapi+'/staff',
-        {
-            headers: {Accept: 'application/json',
-            Authorization: "Bearer "+token
-        }
-        });
-    }
-      
-      function getvehicleinfo() {
-
-        return axios.get(schoolzapi+'/vehicle/show/'+id,
-        {
-            headers: {Accept: 'application/json',
-            Authorization: "Bearer "+token
-        }
-        });
-      }
-
 
       const loaddataedit = () => {
         setLoading(true);
         
-        Promise.all([getstaffinfo(), getvehicleinfo()])
+        axios.get(schoolzapi+'/books/show/'+id,
+        {
+            headers: {Accept: 'application/json',
+            Authorization: "Bearer "+token
+        }
+        })
         .then(function (results) {
             setLoading(false);
-            const staff = results[0];
-            const vehicle = results[1];
-
-            loaddropdown(staff.data.data);
-
-            setName(vehicle.data.data.name);
-            setModel(vehicle.data.data.model);
-            setNumber(vehicle.data.data.no);
-            setcapacity(vehicle.data.data.capacity);
-            setValue(parseInt(vehicle.data.data.assignedto));
+            setImg(results.data.data.file);
+            setName(results.data.data.title);
+            setisbn(results.data.data.isbnnumber);
+            setpublisher(results.data.data.publisher);
+            setauthor(results.data.data.authour);
+            setValue(parseInt(results.data.data.subjectid));
+            setquanity(results.data.data.qty);
+            setprice(results.data.data.price);
+            setnote(results.data.data.description);
 
         }).catch(function(error){
             setLoading(false);
-            const acct = error[0];
-            const studeclass = error[1];
+            console.log(error);
             
         });
     }
 
 
 
-    const loadonlystaff = () => {
+    const loadsubject = () => {
       
       setLoading(true);
 
-      axios.get(schoolzapi+'/staff',
+      axios.get(schoolzapi+'/subject',
       {
           headers: {Accept: 'application/json',
           Authorization: "Bearer "+token
@@ -125,7 +114,7 @@ function Createeditvehicle() {
         
         let mdata = [];
   
-         mddatas.map(item =>  mdata.push({ label: item?.fullname, value: item?.id}))
+         mddatas.map(item =>  mdata.push({ label: item?.name, value: item?.id}))
         
         setItems(mdata);
   
@@ -135,28 +124,33 @@ function Createeditvehicle() {
     const createdata = () => {
 
         if(Name == ""){
-          alert('Name cant be empty');
+          alert('Book Title cant be empty');
           return;
         }
 
-        if(Model == ""){
-            alert('Model cant be empty');
+        if(isbn == ""){
+            alert('Isbn cant be empty');
             return;
         }
 
-        if(capacity == ""){
-          alert('Capacity cant be empty');
+        if(author == ""){
+          alert('Author cant be empty');
           return;
         }
 
-        if(Number == ""){
-          alert('Vehicle Number cant be empty');
+        if(publisher == ""){
+          alert('Publisher cant be empty');
           return;
         }
 
         if(value == ""){
-            alert('Assigned To cant be empty');
+            alert('Subject cant be empty');
             return;
+        }
+
+        if(quanity == ""){
+          alert('Quantity cant be empty');
+          return;
         }
 
         setIssubmitting(true);
@@ -174,12 +168,15 @@ function Createeditvehicle() {
         }
 
         data.append('name',Name);
-        data.append('model',Model);
-        data.append('no',Number);
-        data.append('capacity',capacity);
-        data.append('assignedto',value);
+        data.append('isbn',isbn);
+        data.append('publisher',publisher);
+        data.append('author',author);
+        data.append('subject',value);
+        data.append('qty',quanity);
+        data.append('price',price);
+        data.append('note',note);
 
-        axios.post(schoolzapi+'/vehicle',
+        axios.post(schoolzapi+'/books',
         data,
         {
             headers: {Accept: 'application/json',
@@ -201,30 +198,35 @@ function Createeditvehicle() {
 
     const updatedata = () => {
 
-        if(Name == ""){
-            alert('Name cant be empty');
-            return;
-          }
-  
-          if(Model == ""){
-              alert('Model cant be empty');
-              return;
-          }
-  
-          if(capacity == ""){
-            alert('Capacity cant be empty');
-            return;
-          }
-  
-          if(Number == ""){
-            alert('Vehicle Number cant be empty');
-            return;
-          }
-  
-          if(value == ""){
-              alert('Assigned To cant be empty');
-              return;
-          }
+      if(Name == ""){
+        alert('Book Title cant be empty');
+        return;
+      }
+
+      if(isbn == ""){
+          alert('Isbn cant be empty');
+          return;
+      }
+
+      if(author == ""){
+        alert('Author cant be empty');
+        return;
+      }
+
+      if(publisher == ""){
+        alert('Publisher cant be empty');
+        return;
+      }
+
+      if(value == ""){
+          alert('Subject cant be empty');
+          return;
+      }
+
+      if(quanity == ""){
+        alert('Quantity cant be empty');
+        return;
+      }
 
       setIssubmitting(true);
 
@@ -240,13 +242,16 @@ function Createeditvehicle() {
 
       }
 
-      data.append('name',Name);
-      data.append('model',Model);
-      data.append('no',Number);
-        data.append('capacity',capacity);
-        data.append('assignedto',value);
+        data.append('name',Name);
+        data.append('isbn',isbn);
+        data.append('publisher',publisher);
+        data.append('author',author);
+        data.append('subject',value);
+        data.append('qty',quanity);
+        data.append('price',price);
+        data.append('note',note);
     
-      axios.post(schoolzapi+'/vehicle/'+id,
+      axios.post(schoolzapi+'/books/'+id,
       data,
       {
           headers: {Accept: 'application/json',
@@ -316,6 +321,7 @@ function Createeditvehicle() {
           console.log('res : ' + JSON.stringify(result));
           // Setting the state to show single file attributes
           setFile(result);
+          setImg(result.uri);
         }
       }
     } catch (err) {
@@ -344,17 +350,17 @@ function Createeditvehicle() {
         <Card>
         <Card.Content>
 
-        <View style={{flexDirection: 'row',alignItems: 'center',  marginTop: 20, marginLeft: 10}}>
+        <View style={{flexDirection: 'row',alignItems: 'center',  marginVertical: 20}}>
                     
-            {file && <Avatar.Image 
-                 source={{ uri: file.uri }}
+            {img && <Avatar.Image 
+                 source={{ uri: img }}
                  size={100}
             /> }
                     
-            <Button mode="text" style={{fontSize: 20}} onPress={selectFile}>Pick Image</Button>
+            <Button mode="text" style={{fontSize: 20}} onPress={selectFile}>Pick Book Pickart</Button>
         </View>
 
-        <Text style={{fontSize: 15, fontWeight: 500}}>Name </Text>
+        <Text style={{fontSize: 15, fontWeight: 500}}>Book Title </Text>
         <TextInput
         style={styles.Forminput}
         mode="outlined"
@@ -362,30 +368,30 @@ function Createeditvehicle() {
         value={Name} />
 
 
-        <Text style={{fontSize: 15, fontWeight: 500}}>Model</Text>
+        <Text style={{fontSize: 15, fontWeight: 500}}>ISBN publisher</Text>
         <TextInput
         style={styles.Forminput}
         mode="outlined"
-        onChangeText={(e) => setModel(e)}
-        value={Model} />
+        onChangeText={(e) => setisbn(e)}
+        value={isbn} />
 
 
-        <Text style={{fontSize: 15, fontWeight: 500}}>Number</Text>
+        <Text style={{fontSize: 15, fontWeight: 500}}>Publisher</Text>
         <TextInput
         style={styles.Forminput}
         mode="outlined"
-        onChangeText={(e) => setNumber(e)}
-        value={Number} />
+        onChangeText={(e) => setpublisher(e)}
+        value={publisher} />
 
 
-        <Text style={{fontSize: 15, fontWeight: 500}}>Capacity</Text>
+        <Text style={{fontSize: 15, fontWeight: 500}}>Author</Text>
         <TextInput
         style={styles.Forminput}
         mode="outlined"
-        onChangeText={(e) => setcapacity(e)}
-        value={capacity} />
+        onChangeText={(e) => setauthor(e)}
+        value={author} />
 
-
+           <Text style={{fontSize: 15, fontWeight: 500}}>Subject</Text>
               <DropDownPicker
                     open={open}
                     value={value}
@@ -393,7 +399,7 @@ function Createeditvehicle() {
                     setOpen={setOpen}
                     setValue={setValue}
                     setItems={setItems}
-                    placeholder={"Assign Vehicle To"}
+                    placeholder={""}
                     placeholderStyle={{
                         color: "#456A5A",
                     }}
@@ -413,12 +419,37 @@ function Createeditvehicle() {
                         borderWidth: 1,
                         //backgroundColor: "#F5F7F6",
                         minHeight: 40,
-                        marginTop: 20
+                        marginBottom: 20
                     }}
                     />
 
-        
+<Text style={{fontSize: 15, fontWeight: 500}}>Quantity</Text>
+        <TextInput
+        style={styles.Forminput}
+        keyboardType="numeric"
+        mode="outlined"
+        onChangeText={(e) => setquanity(e)}
+        value={quanity} />
 
+
+<Text style={{fontSize: 15, fontWeight: 500}}>Price</Text>
+        <TextInput
+        style={styles.Forminput}
+        keyboardType="numeric"
+        mode="outlined"
+        onChangeText={(e) => setprice(e)}
+        value={price} />
+
+
+
+<Text style={{fontSize: 15, fontWeight: 500}}>Note</Text>
+        <TextInput
+        style={styles.Forminput}
+        multiline={true}
+        numberOfLines={5}
+        mode="outlined"
+        onChangeText={(e) => setnote(e)}
+        value={note} />
 
         {issubmitting ? <ActivityIndicator size="large" color="#1782b6" /> : (
         <Button mode="contained" onPress={id == undefined ? createdata : updatedata} style={{marginTop: 20}}>
@@ -437,7 +468,7 @@ function Createeditvehicle() {
     )
 }
 
-export default Createeditvehicle;
+export default Createeditbook;
 
 const styles = StyleSheet.create({
     Forminput: {

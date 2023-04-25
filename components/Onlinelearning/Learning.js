@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
+import React, { Component, useCallback } from 'react'
 import { Stack, useRouter } from 'expo-router';
 import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
    ScrollView, StyleSheet, Text, TouchableOpacity, 
-   View, DeviceEventEmitter, Alert } from 'react-native'
+   View, DeviceEventEmitter, Alert, Dimensions } from 'react-native'
 import { useEffect } from 'react';
 import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar } from 'react-native-paper';
 import { useState } from 'react';
@@ -12,10 +12,14 @@ import { useSelector } from 'react-redux';
 import * as Imagepicker from 'expo-image-picker';
 import { schoolzapi } from '../constants';
 import { selecttoken } from '../../features/userinfoSlice';
-import Feelistitem from '../../lists/Feelist';
-import { ActivityIndicator } from 'react-native';
+import Routelist from '../../lists/Routelist';
+import YoutubeIframe from 'react-native-youtube-iframe';
+import Elearninglist from '../../lists/elearninglist';
+import { SwipeListView } from 'react-native-swipe-list-view';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-function Fee () {
+
+function Onlinelearning () {
 
     const token = useSelector(selecttoken);
     const [search, setSearch] = useState();
@@ -29,6 +33,10 @@ function Fee () {
     const hideDialog = () => setShowdialog(false);
     const [showsnakbar, setShowsnakbar] = useState(false);
 
+    const SCREEN_HEIGHT = Dimensions.get("window").height;
+    const SCREEN_WIDTH = Dimensions.get("window").width;
+    const [videoid, setvideoid] = useState("");
+    
 
     useEffect(()=> {
       
@@ -45,7 +53,7 @@ function Fee () {
 
     const loaddata = () => {
         setLoading(true);
-        axios.get(schoolzapi+'/schoolfees',
+        axios.get(schoolzapi+'/online-learning',
         {
             headers: {Accept: 'application/json',
             Authorization: "Bearer "+token
@@ -55,54 +63,14 @@ function Fee () {
             console.log(response.data.data);
             setData(response.data.data);
             setFilterdata(response.data.data);
+            setvideoid(data[0].linkid);
             setLoading(false);
           })
           .catch(function (error) {
             setLoading(false);
-            console.log(error);
+            console.log(error.response);
           });
     }
-
-
-    const updatedatastatus = (id,status,title) => {
-
-          return Alert.alert(
-            "Are your sure?",
-            "Are you sure you want to activate "+title+" status",
-            [
-              {
-                text: "No",
-              },
-              {
-                text: "Yes Activate",
-                onPress: () => {
-                    setLoading(true);
-
-                    const formdata = {
-                      status: status
-                    }
-              
-                    axios.post(schoolzapi+'/schoolfees-update-status/'+id,
-                    formdata,
-                    {
-                        headers: {Accept: 'application/json',
-                        Authorization: "Bearer "+token
-                    }
-                    })
-                      .then(function (response) {
-                        console.log(response.data);
-                        loaddata();
-                        //setLoading(false);
-                      })
-                      .catch(function (error) {
-                        setLoading(false);
-                        console.log(error);
-                      });
-                },
-              },
-            ]
-          );
-      }
 
 
     const deletedata = (id,delname) => {
@@ -118,7 +86,7 @@ function Fee () {
                 text: "Yes Delete",
                 onPress: () => {
                     setLoading(true);
-                    axios.delete(schoolzapi+'/schoolfees/'+id,
+                    axios.delete(schoolzapi+'/online-learning/'+id,
                     {
                         headers: {Accept: 'application/json',
                         Authorization: "Bearer "+token
@@ -129,7 +97,7 @@ function Fee () {
                             setFilterdata(newData);
                             setData(newData);
                            // loaddata();
-                            setLoading(false);
+                            //setLoading(false);
                         })
                         .catch(function (error) {
                         setLoading(false);
@@ -147,8 +115,8 @@ function Fee () {
           if (text) {
               
             const newData = data.filter(function (item) {
-              const itemData = item.title
-                ? item.title.toUpperCase()
+              const itemData = item.name
+                ? item.name.toUpperCase()
                 : ''.toUpperCase();
               const textData = text.toUpperCase();
               return itemData.indexOf(textData) > -1;
@@ -161,54 +129,86 @@ function Fee () {
           }
       };
 
+
+
+        const [playing, setPlaying] = useState(false);
+
+        const onStateChange = useCallback((state) => {
+            if (state === "ended") {
+            setPlaying(false);
+             alert("video has finished playing!");
+            }
+        }, []);
+
+        const togglePlaying = useCallback(() => {
+            setPlaying((prev) => !prev);
+        }, []);
+
+
+        const setplayervideoid = (vid) => {
+            setvideoid(vid);
+            console.log(vid);
+        }
+
     return (
       <Provider>
       <SafeAreaView>
         <Stack.Screen options={{
-            headerTitle: 'Fees'
+            headerTitle: 'Online Learning',
+            headerRight: () => (
+                <View>
+                     <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>
+                         <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/elearning/create-edit-e-learning')}>
+                             <Ionicons name='add-circle' size={22} color="#17a2b8"/>
+                             <Text style={{fontSize: 18}}>New</Text> 
+                         </TouchableOpacity>
+                     </View>
+                 </View>
+            )
         }}
         />
+
+        
+
 
         <ScrollView
         refreshControl={
             <RefreshControl refreshing={isloading} onRefresh={loaddata} />
         }
         >
-          
-        {isloading ? null : (
-          <>
-           <View style={{marginVertical: 20}}>
-                <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>
-                    
-                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/Accounts/create-edit-fee')}>
-                        <Ionicons name='add-circle' size={22} color="#17a2b8"/>
-                        <Text style={{fontSize: 18}}>New</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+            <View style={{flex: 1, justifyContent: 'center'}}>
 
-            <Searchbar
-                placeholder='Search....'
-                mode="outlined"
-                onChangeText={(text) => searchFilterFunction(text)}
-                value={search}
+
+            {videoid && (
+
+            <YoutubeIframe
+            height={200}
+            width={SCREEN_WIDTH}
+            play={playing}
+            videoId={videoid}
+            onChangeState={onStateChange}
+            style={{backgroundColor: '#000'}}
             />
+
+            )}
+
+        
+            </View>
             
             <Card>
                 <Card.Content>
+            
                 <FlatList
                     data={filterdata}
-                    renderItem={({item})=> <Feelistitem updatedatastatus={updatedatastatus} item={item} deletedata={deletedata} /> }
-                    ItemSeparatorComponent={()=> <View style={styles.separator} />}
+                    renderItem={({item})=> <Elearninglist item={item} deletedata={deletedata} setvideoid={setplayervideoid} /> }
+                    //ItemSeparatorComponent={()=> <View style={styles.separator} />}
                       contentContainerStyle={{
-                         marginBottom: 10
+                         marginBottom: 20
                     }}
                     keyExtractor={item => item.id}
                 />
                 </Card.Content>
-            </Card>
-            </>        
-          )}
+            </Card> 
 
         </ScrollView>
       </SafeAreaView>
@@ -216,7 +216,7 @@ function Fee () {
     )
 }
 
-export default Fee;
+export default Onlinelearning;
 
 const styles = StyleSheet.create({
 
@@ -229,5 +229,13 @@ const styles = StyleSheet.create({
       margin: 0,
       height: '100%',
       width: '100%'
-  }
+  },
+  rowBack: {
+    alignItems: 'center',
+    backgroundColor: '#ccc',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 30
+  },
 });

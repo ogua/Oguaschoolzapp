@@ -47,6 +47,16 @@ import Receipttrack from '../../components/Accounts/Receipttrack';
 import Chartofaccount from '../../components/Accounts/Chartofaccounts';
 import Banktransaction from '../../components/Accounts/Banktransactions';
 import Vendors from '../../components/Accounts/Vendors';
+import Incomeexpense from '../../components/Accounts/Icomeexpense';
+import Teachinglogs from '../../components/Teachinglogs';
+import Terninalreportsignature from '../../components/Terminalreportsignature';
+import Books from '../../components/library/Books';
+import Issuebooks from '../../components/library/Issuebook';
+import Studentattendance from '../../components/Attendance/Studentattendance';
+import Onlinelearning from '../../components/Onlinelearning/Learning';
+import Zoommeetings from '../../components/Zoom/Zoommetting';
+import Totalattendance from '../../components/Attendance/Totalattendance';
+import Hostel from '../../components/Hostel/Hostel';
 
 const Drawer = createDrawerNavigator();
 
@@ -72,22 +82,27 @@ function Mainmenu() {
   //   setToken(JSON.parse(token));
   // });
 
-  useEffect(() => {
-    const fetchtoken = async () => {
-      let token =  await AsyncStorage.getItem('token');
-      setToken(token)
-    }
+  // useEffect(() => {
+  //   const fetchtoken = async () => {
+  //     let token =  await AsyncStorage.getItem('token');
+  //     setToken(token)
+  //   }
 
-    fetchtoken();
-  }, [])
+  //   fetchtoken();
+  // }, [])
+
+  // const curtoken = handlesetToken;
+
+  // console.log("token",curtoken);
+
 
   //const token = AsyncStorage.getItem('token');
 
-  if(token ===null){
-    return <Redirect href="/login" />
-  }
+  // if(token ===null){
+  //   return <Redirect href="/login" />
+  // }
 
-  console.log("token", token);
+  // console.log("token", token);
 
     return (
     <Drawer.Navigator
@@ -121,6 +136,23 @@ function Mainmenu() {
       <Drawer.Screen name="Chartofaccount" component={Chartofaccount} />
       <Drawer.Screen name="Banktransaction" component={Banktransaction} />
       <Drawer.Screen name="Vendors" component={Vendors} />
+      <Drawer.Screen name="Incomeexpense" component={Incomeexpense} />
+      <Drawer.Screen name="Teachinglogs" component={Teachinglogs} />
+      <Drawer.Screen name="Terninalreportsignature" component={Terninalreportsignature} />
+      <Drawer.Screen name="Books" component={Books} />
+      <Drawer.Screen name="Issuebooks" component={Issuebooks} />
+
+
+      <Drawer.Screen name="Onlinelearning" component={Onlinelearning} />
+      <Drawer.Screen name="Zoommeetings" component={Zoommeetings} />
+
+
+      <Drawer.Screen name="Studentattendance" component={Studentattendance} />
+      <Drawer.Screen name="Totalattendance" component={Totalattendance} />
+
+      <Drawer.Screen name="Hostel" component={Hostel} />
+      
+      
       
 
 

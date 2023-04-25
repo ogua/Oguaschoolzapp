@@ -10,12 +10,12 @@ import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import * as Imagepicker from 'expo-image-picker';
-import { schoolzapi } from '../constants';
-import { selecttoken } from '../../features/userinfoSlice';
-import Feelistitem from '../../lists/Feelist';
-import { ActivityIndicator } from 'react-native';
+import { selecttoken } from '../features/userinfoSlice';
+import { schoolzapi } from './constants';
+import Teachingloglist from '../lists/Teachinglolist';
+import Terminalsiglist from '../lists/Terminalsignatures';
 
-function Fee () {
+function Terninalreportsignature () {
 
     const token = useSelector(selecttoken);
     const [search, setSearch] = useState();
@@ -28,7 +28,7 @@ function Fee () {
     const showDialog = () => setShowdialog(true);
     const hideDialog = () => setShowdialog(false);
     const [showsnakbar, setShowsnakbar] = useState(false);
-
+    
 
     useEffect(()=> {
       
@@ -45,7 +45,7 @@ function Fee () {
 
     const loaddata = () => {
         setLoading(true);
-        axios.get(schoolzapi+'/schoolfees',
+        axios.get(schoolzapi+'/terminal-report-signatures',
         {
             headers: {Accept: 'application/json',
             Authorization: "Bearer "+token
@@ -64,47 +64,6 @@ function Fee () {
     }
 
 
-    const updatedatastatus = (id,status,title) => {
-
-          return Alert.alert(
-            "Are your sure?",
-            "Are you sure you want to activate "+title+" status",
-            [
-              {
-                text: "No",
-              },
-              {
-                text: "Yes Activate",
-                onPress: () => {
-                    setLoading(true);
-
-                    const formdata = {
-                      status: status
-                    }
-              
-                    axios.post(schoolzapi+'/schoolfees-update-status/'+id,
-                    formdata,
-                    {
-                        headers: {Accept: 'application/json',
-                        Authorization: "Bearer "+token
-                    }
-                    })
-                      .then(function (response) {
-                        console.log(response.data);
-                        loaddata();
-                        //setLoading(false);
-                      })
-                      .catch(function (error) {
-                        setLoading(false);
-                        console.log(error);
-                      });
-                },
-              },
-            ]
-          );
-      }
-
-
     const deletedata = (id,delname) => {
 
         return Alert.alert(
@@ -118,7 +77,7 @@ function Fee () {
                 text: "Yes Delete",
                 onPress: () => {
                     setLoading(true);
-                    axios.delete(schoolzapi+'/schoolfees/'+id,
+                    axios.delete(schoolzapi+'/terminal-report-signatures/'+id,
                     {
                         headers: {Accept: 'application/json',
                         Authorization: "Bearer "+token
@@ -128,8 +87,8 @@ function Fee () {
                             const newData = data.filter((item) => item.id != id);
                             setFilterdata(newData);
                             setData(newData);
-                           // loaddata();
-                            setLoading(false);
+                            loaddata();
+                            //setLoading(false);
                         })
                         .catch(function (error) {
                         setLoading(false);
@@ -142,63 +101,35 @@ function Fee () {
 
     }
   
-      const searchFilterFunction = (text) => {
-  
-          if (text) {
-              
-            const newData = data.filter(function (item) {
-              const itemData = item.title
-                ? item.title.toUpperCase()
-                : ''.toUpperCase();
-              const textData = text.toUpperCase();
-              return itemData.indexOf(textData) > -1;
-            });
-            setFilterdata(newData);
-            setSearch(text);
-          } else {
-            setFilterdata(data);
-            setSearch(text);
-          }
-      };
 
     return (
       <Provider>
       <SafeAreaView>
         <Stack.Screen options={{
-            headerTitle: 'Fees'
+            headerTitle: 'Terminal Report Signatures'
         }}
         />
-
-        <ScrollView
+        <ScrollView style={{backgroundColor: '#fff'}}
         refreshControl={
             <RefreshControl refreshing={isloading} onRefresh={loaddata} />
         }
         >
-          
         {isloading ? null : (
-          <>
            <View style={{marginVertical: 20}}>
                 <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>
                     
-                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/Accounts/create-edit-fee')}>
+                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/custom/create-edit-terminal-sig')}>
                         <Ionicons name='add-circle' size={22} color="#17a2b8"/>
-                        <Text style={{fontSize: 18}}>New</Text>
+                        <Text style={{fontSize: 18}}>New</Text> 
                     </TouchableOpacity>
                 </View>
-            </View>
-
-            <Searchbar
-                placeholder='Search....'
-                mode="outlined"
-                onChangeText={(text) => searchFilterFunction(text)}
-                value={search}
-            />
+            </View>)}
             
             <Card>
                 <Card.Content>
                 <FlatList
                     data={filterdata}
-                    renderItem={({item})=> <Feelistitem updatedatastatus={updatedatastatus} item={item} deletedata={deletedata} /> }
+                    renderItem={({item})=> <Terminalsiglist item={item} deletedata={deletedata} /> }
                     ItemSeparatorComponent={()=> <View style={styles.separator} />}
                       contentContainerStyle={{
                          marginBottom: 10
@@ -206,9 +137,7 @@ function Fee () {
                     keyExtractor={item => item.id}
                 />
                 </Card.Content>
-            </Card>
-            </>        
-          )}
+            </Card> 
 
         </ScrollView>
       </SafeAreaView>
@@ -216,7 +145,7 @@ function Fee () {
     )
 }
 
-export default Fee;
+export default Terninalreportsignature;
 
 const styles = StyleSheet.create({
 

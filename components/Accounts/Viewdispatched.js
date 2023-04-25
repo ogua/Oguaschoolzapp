@@ -165,8 +165,8 @@ function Viewdispatched () {
         >
         <List.Item
             title={item?.name}
-            titleStyle={{color: `${active == item.id ? `#fff` : `#000` }`}}
-            titleEllipsizeMode="middle"/>
+            titleStyle={{color: `${active == item.id ? `#fff` : `#000` }`,fontSize: 15}}
+            titleEllipsizeMode="tail"/>
         </TouchableOpacity>
         </>
     );

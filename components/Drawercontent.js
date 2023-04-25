@@ -53,7 +53,7 @@ const setitemfocus = (itemid) => {
     children: []
   },
   {
-    key: 20,
+    key: 22,
     name: 'Profile',
     icon: 'account-outline',
     route: 'Profile',
@@ -331,18 +331,19 @@ const setitemfocus = (itemid) => {
         key: 616,
         name: 'Income Expenses',
         icon: 'circle-outline',
-        route: 'All Students',
+        route: 'Incomeexpense',
         permission: '',
         children: []
       },
-      {
-        key: 617,
-        name: 'Accounting',
-        icon: 'circle-outline',
-        route: 'All Students',
-        permission: '',
-        children: []
-      },
+      // {
+      //   key: 617,
+      //   name: 'Accounting',
+      //   icon: 'circle-outline',
+      //   route: 'All Students',
+      //   permission: '',
+      //   children: []
+      // },
+      
       // {
       //   key: 618,
       //   name: 'Vendors',
@@ -421,7 +422,7 @@ const setitemfocus = (itemid) => {
       key: 81,
       name: 'Add Hostel',
       icon: 'circle-outline',
-      route: 'All Students',
+      route: 'Hostel',
       permission: '',
       children: []
     },
@@ -439,7 +440,7 @@ const setitemfocus = (itemid) => {
     key: 9,
     name: 'Teaching Log',
     icon: 'post',
-    route: 'All Students',
+    route: 'Teachinglogs',
     permission: '',
     children: []
   },
@@ -447,7 +448,7 @@ const setitemfocus = (itemid) => {
     key: 10,
     name: 'Report Signature',
     icon: 'draw-pen',
-    route: 'All Students',
+    route: 'Terninalreportsignature',
     permission: '',
     children: []
   },
@@ -473,7 +474,23 @@ const setitemfocus = (itemid) => {
     icon: 'library',
     route: 'All Students',
     permission: '',
-    children: []
+    children: [
+      {
+        key: 31,
+        name: 'Books',
+        icon: 'circle-outline',
+        route: 'Books',
+        permission: '',
+        children: []
+      },{
+        key: 32,
+        name: 'Issue Books',
+        icon: 'circle-outline',
+        route: 'Issuebooks',
+        permission: '',
+        children: []
+      },
+    ]
   },
   {
     key: 14,
@@ -525,10 +542,10 @@ const setitemfocus = (itemid) => {
     ]
   },
   {
-    key: 13,
+    key: 20,
     name: 'E Learning',
     icon: 'video-vintage',
-    route: 'All Students',
+    route: 'Onlinelearning',
     permission: '',
     children: []
   },
@@ -536,12 +553,12 @@ const setitemfocus = (itemid) => {
     key: 12,
     name: 'Live Class',
     icon: 'google-classroom',
-    route: 'All Students',
+    route: 'Zoommeetings',
     permission: '',
     children: []
   },
   {
-    key: 13,
+    key: 21,
     name: 'Home work',
     icon: 'book-open-outline',
     route: 'All Students',
@@ -552,9 +569,26 @@ const setitemfocus = (itemid) => {
     key: 14,
     name: 'Student Attendance',
     icon: 'account-check-outline',
-    route: 'All Students',
+    route: 'Studentattendance',
     permission: '',
-    children: []
+    children: [
+      {
+        key: 141,
+        name: 'Record Attendance',
+        icon: 'circle-outline',
+        route: 'Studentattendance',
+        permission: '',
+        children: []
+      },
+      {
+        key: 142,
+        name: 'Total Attendance',
+        icon: 'circle-outline',
+        route: 'Totalattendance',
+        permission: '',
+        children: []
+      },
+    ]
   },
   {
     key: 15,
