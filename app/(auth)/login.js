@@ -1,4 +1,4 @@
-import { Redirect, Stack, useRouter } from 'expo-router';
+import { Redirect, Stack, useFocusEffect, useRouter } from 'expo-router';
 import { ActivityIndicator, Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, 
     TextInput, ToastAndroid, View } from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -6,10 +6,11 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser, setToken, setRoles,  setUserpermission, setPermissions, setMenu, setCurrency } from '../../features/userinfoSlice';
+import { setUser, setToken, setRoles,  setUserpermission, setPermissions, setMenu, setCurrency, selecttoken } from '../../features/userinfoSlice';
 import { selectuser } from '../../features/userinfoSlice';
 import { storeData, removeusertoken, gettokendata, selectusertoken } from '../../features/usertokenSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { showMessage } from "react-native-flash-message";
 
 function login() {
     
@@ -21,16 +22,24 @@ function login() {
     const router = useRouter();
     const dispatch = useDispatch();
     const user = useSelector(selectuser);
+    const token = useSelector(selecttoken);
 
     //console.log("user",user);
 
-    // if(user !== null){
-    //     router.replace("/admin");
-    // }
+    
 
     useEffect(()=> {
         emailref.current.focus();
     },[]);
+
+    useFocusEffect(() => {
+        if(user !== null){
+            router.replace("/admin/admin-drawer");
+        }    
+    });
+
+
+    
 
     const cleartoken = async () => {
         //AsyncStorage.clear()
@@ -65,13 +74,13 @@ function login() {
                 Setsubmiitting(false);
             }else{
                 
-                if (Platform.OS != "web") {
-                    ToastAndroid.show('Login successful!', ToastAndroid.SHORT);
-                }else{
-                    //alert('Login successful!');
-                }
+                showMessage({
+                    message: 'Login Successfully!',
+                    type: 'danger',
+                    position: 'bottom',
+                });
 
-                await AsyncStorage.setItem('token', response.data.token);
+              //  await AsyncStorage.setItem('token', response.data.token);
                
                 dispatch(setUser(response.data.user));
                 dispatch(setToken(response.data.token));
@@ -81,7 +90,7 @@ function login() {
                 dispatch(setCurrency(response.data.currency));
 
                 Setsubmiitting(false);
-                router.push('admin');
+                router.push('/admin/admin-drawer');
 
             }
 
@@ -112,7 +121,7 @@ function login() {
                     <Text>Email or Student ID</Text>
                     <View style={styles.inputextcontainer}>
                         <Ionicons name="mail" style={styles.formgroundinputicon} size={20} color="#fff" />
-                       <TextInput ref={emailref} name="email"  onChangeText={ (e) => setemail(e) } style={styles.formgroundinput} id="email" placeholder='Enter Email or Student ID' />
+                       <TextInput ref={emailref} name="email" onChangeText={ (e) => setemail(e) } style={styles.formgroundinput} id="email" placeholder='Enter Email or Student ID' />
                     </View>
                 </View>
 

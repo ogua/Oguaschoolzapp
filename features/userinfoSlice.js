@@ -35,10 +35,13 @@ export const userinfoSlice = createSlice({
     setCurrency: (state, action) => {
       state.currency = action.payload
   },
+  logout: (state) => {
+    state.user = null
+  },
   },
 })
 
-export const { setUser, setToken, setRoles,  setUserpermission, setPermissions, setMenu, setCurrency} = userinfoSlice.actions
+export const { setUser, setToken, setRoles,  setUserpermission, setPermissions, setMenu, setCurrency, logout} = userinfoSlice.actions
 
 export const selectuser = (state) => state.userinfo.user
 export const selecttoken = (state) => state.userinfo.token

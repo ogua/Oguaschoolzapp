@@ -32,6 +32,7 @@
     "react-native-collapsing-toolbar": "^1.0.0-beta.10",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-encrypted-storage": "^4.0.3",
+    "react-native-flash-message": "^0.4.1",
     "react-native-gesture-handler": "~2.9.0",
     "react-native-google-places-autocomplete": "^2.5.1",
     "react-native-image-crop-picker": "^0.39.0",

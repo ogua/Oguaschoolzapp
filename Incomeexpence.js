@@ -109,4 +109,4 @@ const styles = StyleSheet.create({
         color: '#9BC90D',
         fontSize: 20
     }
-});`
+});

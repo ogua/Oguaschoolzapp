@@ -57,6 +57,7 @@ import Onlinelearning from '../../components/Onlinelearning/Learning';
 import Zoommeetings from '../../components/Zoom/Zoommetting';
 import Totalattendance from '../../components/Attendance/Totalattendance';
 import Hostel from '../../components/Hostel/Hostel';
+import Allocatestudent from '../../components/Hostel/Allocatestudent';
 
 const Drawer = createDrawerNavigator();
 
@@ -65,11 +66,6 @@ function Mainmenu() {
   // token = useSelector(selecttoken);
   const router = useRouter();
   const [token, setToken] = useState();
-
-  const handlesetToken = async (res) => {
-    const token = await  AsyncStorage.getItem('token');
-    setToken(token);
-  };
 
   // useEffect(
   //   useCallback(() => {
@@ -151,6 +147,7 @@ function Mainmenu() {
       <Drawer.Screen name="Totalattendance" component={Totalattendance} />
 
       <Drawer.Screen name="Hostel" component={Hostel} />
+      <Drawer.Screen name="Allocatestudent" component={Allocatestudent} />
       
       
       

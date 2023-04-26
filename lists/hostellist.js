@@ -12,40 +12,33 @@ function Hostellist ({item,deletedata}) {
     return (
         <>
         <TouchableOpacity style={{backgroundColor: '#fff', padding: 10}}
-        onPress={() => setVisible(! visible)}
+        onPress={() => router.push(`/admin/hostel/hostel-info?id=${item?.id}`)}
         >
 
         <List.Item
             title={()=> (
                 <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <Ionicons name="help-circle" size={20} style={{marginRight: 10}} />
-                    <Text style={{flex: 1, fontSize: 18}}>{item?.fullname}</Text>
-                     <Text style={{fontSize: 10}}>{item?.created_at}</Text>
+                    <Ionicons name="home-outline" size={20} style={{marginRight: 10}} />
+                    <Text style={{flex: 1, fontSize: 18}}>{item?.name}</Text>
+                     <Text style={{fontSize: 10}}>{item?.hostype}</Text>
                      {/* <Ionicons name="ellipsis-vertical-sharp" size={20} /> */}
                 </View>
             )}
             titleEllipsizeMode="middle"
             description={()=>(
                 <>
-                <Text style={{fontSize: 12, color: '#abc', marginLeft: 30}}>{item?.gender} - {item?.location}</Text>
                 <Text style={{fontSize: 13, marginLeft: 30}}>{item?.note}</Text>
                 </>
             )}
             descriptionNumberOfLines={5}
-            //left={props => <Ionicons name="help-circle" {...props} size={20} />}
-            //right={props => <Ionicons name="ellipsis-vertical-sharp" {...props} size={20} />}
         />
             
         </TouchableOpacity>
 
-        {visible && (
-            <View style={{backgroundColor: '#fff', borderBottomColor: '#000', borderBottomWidth: 1 }}>
-                <Menu.Item disabled={item.phone == "" ? true: false} style={{marginLeft: 10}} leadingIcon="phone" title="Call" onPress={() => Linking.openURL(`tel:${item?.phone}`)} />
-                <Menu.Item disabled={item.email == "" ? true: false} style={{marginLeft: 10}} leadingIcon="email-box" title="Send Mail" onPress={() => Linking.openURL(`mailto:${item?.email}`)} />
-                <Menu.Item style={{marginLeft: 10}} leadingIcon="square-edit-outline" onPress={()=> router.push(`/admin/Frontdesk/create-edit-enquirey?id=${item?.id}`)} title="Edit" />
-                <Menu.Item style={{marginLeft: 10}} leadingIcon="delete-forever-outline" title="Delete" onPress={()=> deletedata(item?.id,item?.fullname)} />
-            </View>
-        )}
+        <View style={{flexDirection: 'row', justifyContent: 'flex-end', backgroundColor: '#fff'}}>
+            <Button onPress={()=> deletedata(item?.id,item?.name)}>Delete</Button>
+            <Button onPress={()=> router.push(`/admin/hostel/create-edit-hostel?id=${item?.id}`)}>Edit</Button>
+        </View>
         </>
     )
 }

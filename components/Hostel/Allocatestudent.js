@@ -15,9 +15,10 @@ import { selecttoken } from '../../features/userinfoSlice';
 import Visitorslist from '../../lists/Visitorslist';
 import Studentlist from '../../lists/Studentlist';
 import Normallist from '../../lists/Normallist';
-import Hostellist from '../../lists/hostellist';
+import Dispatchedfeelist from '../../lists/Dispatchedfeelist';
+import Roomsallocatedlist from '../../lists/Roomsallocatedlist';
 
-function Hostel () {
+function Allocatestudent () {
 
     const token = useSelector(selecttoken);
     const [search, setSearch] = useState();
@@ -33,20 +34,9 @@ function Hostel () {
     const [showsnakbar, setShowsnakbar] = useState(false);
     const [active, setActive] = useState("");
 
-    const [floor, setfloor] = useState([
-        {id: 1, name: 'First Floor'},
-        {id: 2, name: 'Second Floor'},
-        {id: 3, name: 'Third Floor'},
-        {id: 4, name: 'Fourth Floor	'},
-        {id: 5, name: 'Fifth Floor'},
-    ]);
-
-
-
     useEffect(()=> {
       
       DeviceEventEmitter.addListener("subject.added", (event)=>{
-        console.log('how many time');
         loaddata();
         DeviceEventEmitter.removeAllListeners("event.test");
       });
@@ -55,11 +45,10 @@ function Hostel () {
 
     },[]);
 
-
     const loaddata = () => {
         setLoading(true);
         
-        axios.get(schoolzapi+'/hostel',
+        axios.get(schoolzapi+'/hostel-allocated',
         {
             headers: {Accept: 'application/json',
             Authorization: "Bearer "+token
@@ -67,10 +56,8 @@ function Hostel () {
         })
         .then(function (results) {
             setLoading(false);
-
             setData(results.data.data);
             setFilterdata(results.data.data);
-            
 
         }).catch(function(error){
             setLoading(false);
@@ -93,7 +80,46 @@ function Hostel () {
                 text: "Yes Delete",
                 onPress: () => {
                     setLoading(true);
-                    axios.delete(schoolzapi+'/hostel/'+id,
+                    axios.delete(schoolzapi+'/hostel-allocated/'+id,
+                    {
+                        headers: {Accept: 'application/json',
+                        Authorization: "Bearer "+token
+                    }
+                    })
+                        .then(function (response) {
+                            const newData = data.filter((item) => item.id != id);
+                            setFilterdata(newData);
+                            setData(newData);
+                            //loaddata();
+                            setLoading(false);
+                        })
+                        .catch(function (error) {
+                        setLoading(false);
+                        console.log(error);
+                        });
+                },
+              },
+            ]
+          );
+
+    }
+
+
+
+    const releasebed = (id,delname,fullname) => {
+
+        return Alert.alert(
+            "Are your sure?",
+            "Are you sure you want to release bed "+delname+" allocated to "+fullname,
+            [
+              {
+                text: "No",
+              },
+              {
+                text: "Yes Release",
+                onPress: () => {
+                    setLoading(true);
+                    axios.delete(schoolzapi+'/hostel-allocated/'+id,
                     {
                         headers: {Accept: 'application/json',
                         Authorization: "Bearer "+token
@@ -122,8 +148,8 @@ function Hostel () {
           if (text) {
               
             const newData = data.filter(function (item) {
-              const itemData = item.name
-                ? item.name.toUpperCase()
+              const itemData = item.fullname
+                ? item.fullname.toUpperCase()
                 : ''.toUpperCase();
               const textData = text.toUpperCase();
               return itemData.indexOf(textData) > -1;
@@ -149,7 +175,7 @@ function Hostel () {
     }
 
 
-    const hostelfoor = (item) => (
+    const stclasslist = (item) => (
         <>
         <TouchableOpacity style={{backgroundColor: `${active == item.id ? `#1782b6` : `#fff` }`, borderRadius: 30, marginTop: 10, marginRight: 20}}
         onPress={()=> {
@@ -158,8 +184,8 @@ function Hostel () {
         >
         <List.Item
             title={item?.name}
-            titleStyle={{color: `${active == item.id ? `#fff` : `#000` }`}}
-            titleEllipsizeMode="middle"/>
+            titleStyle={{color: `${active == item.id ? `#fff` : `#000` }`,fontSize: 15}}
+            titleEllipsizeMode="tail"/>
         </TouchableOpacity>
         </>
     );
@@ -167,18 +193,22 @@ function Hostel () {
     const searchFilterclassFunction = (text) => {
         
         if (text) {
+            setLoading(true);
             if(text == "All"){
 
               setFilterdata(data);
 
             }else{
-              const newData = data.filter(item => item.currentlevel == text);
+              const newData = data.filter(item => item.stclassid == text);
               setFilterdata(newData);
             }
           //setSearch(text);
+          setLoading(false);
         } else {
+            setLoading(true);
           setFilterdata(data);
           //setSearch(text);
+          setLoading(false);
         }
   };
 
@@ -186,20 +216,21 @@ function Hostel () {
       <Provider>
       <SafeAreaView>
         <Stack.Screen
-         options={{
-          headerTitle: 'Hostels',
-          headerRight: () => (
-            <View>
-                 <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>
-                     <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/hostel/create-edit-hostel')}>
-                         <Ionicons name='add-circle' size={22} color="#17a2b8"/>
-                         <Text style={{fontSize: 18}}>New</Text> 
-                     </TouchableOpacity>
-                 </View>
-             </View>
-        )
-         }}
+        options={{
+            headerTitle: 'Rooms & Beds Allocated'
+           }}
         />
+
+         {isloading ? null : (
+           <View style={{marginVertical: 20}}>
+                <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>
+                    
+                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/hostel/create-edit-allocate-student')}>
+                        <Ionicons name='add-circle' size={22} color="#17a2b8"/>
+                        <Text style={{fontSize: 18}}>Allocate Student</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>)}
 
        <Searchbar
             placeholder='Search....'
@@ -212,13 +243,12 @@ function Hostel () {
         refreshControl={
             <RefreshControl refreshing={isloading} onRefresh={loaddata} />
         }
-        >
+        > 
                 <Card>
                 <Card.Content>
                 <FlatList
                     data={filterdata}
-                    renderItem={({item})=> <Hostellist item={item} deletedata={deletedata} studentclasslist={studentclass} /> }
-                    ItemSeparatorComponent={()=> <View style={styles.separator} />}
+                    renderItem={({item})=> <Roomsallocatedlist item={item} deletedata={deletedata} studentclasslist={studentclass} releasebed={releasebed} /> }
                       contentContainerStyle={{
                         marginBottom: 200
                     }}
@@ -233,7 +263,7 @@ function Hostel () {
     )
 }
 
-export default Hostel;
+export default Allocatestudent;
 
 const styles = StyleSheet.create({
 

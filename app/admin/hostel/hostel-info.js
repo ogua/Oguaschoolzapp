@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useRouter, useSearchParams } from 'expo-router';
 import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
    ScrollView, StyleSheet, Text, TouchableOpacity, 
    View, DeviceEventEmitter, Alert } from 'react-native'
@@ -9,15 +9,12 @@ import { useState } from 'react';
 import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
-import * as Imagepicker from 'expo-image-picker';
-import { schoolzapi } from '../constants';
-import { selecttoken } from '../../features/userinfoSlice';
-import Visitorslist from '../../lists/Visitorslist';
-import Studentlist from '../../lists/Studentlist';
-import Normallist from '../../lists/Normallist';
-import Hostellist from '../../lists/hostellist';
+import { selecttoken } from '../../../features/userinfoSlice';
+import { schoolzapi } from '../../../components/constants';
+import Hostellist from '../../../lists/hostellist';
+import Hostelroomslist from '../../../lists/Hostelrooms';
 
-function Hostel () {
+function HostelInfo () {
 
     const token = useSelector(selecttoken);
     const [search, setSearch] = useState();
@@ -32,6 +29,9 @@ function Hostel () {
     const hideDialog = () => setShowdialog(false);
     const [showsnakbar, setShowsnakbar] = useState(false);
     const [active, setActive] = useState("");
+    const [hostelname, sethostelname] = useState("");
+    const [hostelid, sethostelid] = useState("");
+    const {id} = useSearchParams();
 
     const [floor, setfloor] = useState([
         {id: 1, name: 'First Floor'},
@@ -59,7 +59,7 @@ function Hostel () {
     const loaddata = () => {
         setLoading(true);
         
-        axios.get(schoolzapi+'/hostel',
+        axios.get(schoolzapi+'/hostel/show/'+id,
         {
             headers: {Accept: 'application/json',
             Authorization: "Bearer "+token
@@ -68,9 +68,10 @@ function Hostel () {
         .then(function (results) {
             setLoading(false);
 
-            setData(results.data.data);
-            setFilterdata(results.data.data);
-            
+            setData(results.data.data.rooms);
+            setFilterdata(results.data.data.rooms);
+            sethostelname(results.data.data.name);
+            sethostelid(results.data.data.id);
 
         }).catch(function(error){
             setLoading(false);
@@ -93,7 +94,7 @@ function Hostel () {
                 text: "Yes Delete",
                 onPress: () => {
                     setLoading(true);
-                    axios.delete(schoolzapi+'/hostel/'+id,
+                    axios.delete(schoolzapi+'/hostel-rooms/'+id,
                     {
                         headers: {Accept: 'application/json',
                         Authorization: "Bearer "+token
@@ -103,7 +104,7 @@ function Hostel () {
                             const newData = data.filter((item) => item.id != id);
                             setFilterdata(newData);
                             setData(newData);
-                            //loaddata();
+                           // loaddata();
                             setLoading(false);
                         })
                         .catch(function (error) {
@@ -122,8 +123,8 @@ function Hostel () {
           if (text) {
               
             const newData = data.filter(function (item) {
-              const itemData = item.name
-                ? item.name.toUpperCase()
+              const itemData = item.floor
+                ? item.floor.toUpperCase()
                 : ''.toUpperCase();
               const textData = text.toUpperCase();
               return itemData.indexOf(textData) > -1;
@@ -151,14 +152,14 @@ function Hostel () {
 
     const hostelfoor = (item) => (
         <>
-        <TouchableOpacity style={{backgroundColor: `${active == item.id ? `#1782b6` : `#fff` }`, borderRadius: 30, marginTop: 10, marginRight: 20}}
+        <TouchableOpacity style={{backgroundColor: `${active == item.name ? `#1782b6` : `#fff` }`, borderRadius: 30, marginTop: 10, marginRight: 20}}
         onPress={()=> {
-            checkclassselected(item.id);
+            checkclassselected(item.name);
         }}
         >
         <List.Item
             title={item?.name}
-            titleStyle={{color: `${active == item.id ? `#fff` : `#000` }`}}
+            titleStyle={{color: `${active == item.name ? `#fff` : `#000` }`}}
             titleEllipsizeMode="middle"/>
         </TouchableOpacity>
         </>
@@ -172,7 +173,7 @@ function Hostel () {
               setFilterdata(data);
 
             }else{
-              const newData = data.filter(item => item.currentlevel == text);
+              const newData = data.filter(item => item.floor == text);
               setFilterdata(newData);
             }
           //setSearch(text);
@@ -187,11 +188,18 @@ function Hostel () {
       <SafeAreaView>
         <Stack.Screen
          options={{
-          headerTitle: 'Hostels',
+          headerTitle: hostelname,
+          headerLeft: () => (
+            <>
+              <TouchableOpacity onPress={() => router.back()} style={{marginRight: 15}}>
+                <Ionicons name="close-circle-outline" size={30} />
+              </TouchableOpacity>
+            </>
+          ),
           headerRight: () => (
             <View>
                  <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>
-                     <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/hostel/create-edit-hostel')}>
+                     <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/hostel/create-edit-hostel-room?hosid='+hostelid)}>
                          <Ionicons name='add-circle' size={22} color="#17a2b8"/>
                          <Text style={{fontSize: 18}}>New</Text> 
                      </TouchableOpacity>
@@ -201,12 +209,18 @@ function Hostel () {
          }}
         />
 
-       <Searchbar
-            placeholder='Search....'
-            mode="outlined"
-            onChangeText={(text) => searchFilterFunction(text)}
-            value={search}
-        />
+        <View>
+           <FlatList
+                data={floor}
+                renderItem={({item})=> hostelfoor(item) }
+                contentContainerStyle={{
+                    paddingHorizontal: 20,
+                    paddingBottom: 10,
+                }}
+                keyExtractor={item => item.id}
+                horizontal
+            />
+        </View>
 
         <ScrollView
         refreshControl={
@@ -217,7 +231,7 @@ function Hostel () {
                 <Card.Content>
                 <FlatList
                     data={filterdata}
-                    renderItem={({item})=> <Hostellist item={item} deletedata={deletedata} studentclasslist={studentclass} /> }
+                    renderItem={({item})=> <Hostelroomslist item={item} deletedata={deletedata} studentclasslist={studentclass} hostelid={id} /> }
                     ItemSeparatorComponent={()=> <View style={styles.separator} />}
                       contentContainerStyle={{
                         marginBottom: 200
@@ -233,7 +247,7 @@ function Hostel () {
     )
 }
 
-export default Hostel;
+export default HostelInfo;
 
 const styles = StyleSheet.create({
 

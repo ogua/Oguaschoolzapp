@@ -18,20 +18,35 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useState } from 'react';
 import { images } from './constants';
-import { useRouter } from 'expo-router';
-import Customdrawerlist from '../lists/draweritemlist';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Redirect, useRouter } from 'expo-router';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout, selectuser } from '../features/userinfoSlice';
+import { showMessage } from "react-native-flash-message";
+
 
  function Drawercontent(props) {
  const [ispressed, setIspressed] = useState(false);
  const [focus, setFocus] = useState();
  const [subfocus, setsubFocus] = useState();
+ const user = useSelector(selectuser);
  const router = useRouter();
+ const dispatch = useDispatch();
 
- const handlelogout = async () => {
-  await AsyncStorage.removeItem('token');
-  ///console.log("token", token)
-};
+ const handlelogout = () => {
+  
+  console.log('working');
+
+  dispatch(logout());
+    showMessage({
+      message: 'Logout Successfully!',
+      type: 'danger',
+      position: 'bottom',
+  });
+
+  router.push("/login");
+ // return <Redirect href="/login" />;
+ };
+
 
 const setitemfocus = (itemid) => {
 
@@ -430,7 +445,7 @@ const setitemfocus = (itemid) => {
       key: 82,
       name: 'Allocate Student',
       icon: 'circle-outline',
-      route: 'All Students',
+      route: 'Allocatestudent',
       permission: '',
       children: []
     }
@@ -767,7 +782,7 @@ const setfocustate  = (key) => {
                         />
                     )}
                     label="Sign Out"
-                    onPress={() => {handlelogout}}
+                    onPress={() => {handlelogout()}}
                 />
             </Drawer.Section>
         </View>
