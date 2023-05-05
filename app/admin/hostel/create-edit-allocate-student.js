@@ -17,7 +17,7 @@ import { TouchableOpacity } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { LocaleConfig, Calendar } from "react-native-calendars";
-
+import { showMessage } from "react-native-flash-message";
 
 
 function Createeditallocatestudent() {
@@ -59,6 +59,7 @@ function Createeditallocatestudent() {
     const [link, setlink] = useState("");
     const router = useRouter();
     const {id} = useSearchParams();
+    
 
     useEffect(()=>{
       DeviceEventEmitter.removeAllListeners("event.test");
@@ -96,8 +97,6 @@ function Createeditallocatestudent() {
         }
         });
       }
-
-
 
     const loaddata = () => {
         setLoading(true);
@@ -241,24 +240,76 @@ function Createeditallocatestudent() {
     }
 
 
+    const loadeditbed = () => {
 
-
-    const loadedit = () => {
       setLoading(true);
+
+      if(hostel == ""){
+          alert('Hostel cant be empty');
+          return;
+      }
+
+      if(floor == ""){
+          alert('Floor cant be empty');
+          return;
+      }
+
+      const formdata = {
+          hostel: hostel,
+          floor: floor,
+          room: room,
+          student: student
+      }
       
-      axios.get(schoolzapi+'/bank-transactions/show/'+id,
+      axios.post(schoolzapi+'/hostel-allocated-fetch-all-beds',
+      formdata,
       {
           headers: {Accept: 'application/json',
           Authorization: "Bearer "+token
       }
       }).then(function (results) {
 
-        // console.log(results.data.data.hostel);
-          setstudent(parseInt(results.data.data.hostel));
-          sethostel(parseInt(results.data.data.hostel));
-          setfloor(parseInt(results.data.data.hostel));
-          setroom(parseInt(results.data.data.hostel));
-          setbed(parseInt(results.data.data.hostel));
+        // console.log(results.data.available);
+        loadeditbeds(results.data.available);
+          
+      }).catch(function(error){
+          setLoading(false);
+          console.log(error);
+      });
+  }
+
+  const loadeditbeds = (data) => {
+          
+      const mddatas = data;
+      
+      let mdata = [];
+
+       mddatas.map(item =>  mdata.push({ label: `Bed `+item, value: item}))
+      
+       setbedItems(mdata);
+
+       setLoading(false);
+  }
+
+
+
+
+    const loadedit = () => {
+      setLoading(true);
+      
+      axios.get(schoolzapi+'/hostel-allocated/show/'+id,
+      {
+          headers: {Accept: 'application/json',
+          Authorization: "Bearer "+token
+      }
+      }).then(function (results) {
+
+          //console.log(results.data.data);
+          setstudent(parseInt(results.data.data.studentid));
+          sethostel(parseInt(results.data.data.hostelid));
+          setfloor(results.data.data.floor);
+          setroom(results.data.data.roomno);
+          setbed(results.data.data.bed);
           setLoading(false);
           
       }).catch(function(error){
@@ -270,64 +321,45 @@ function Createeditallocatestudent() {
 
     const createdata = () => {
 
-        if(trandate == ""){
-          alert('Transaction Date cant be empty');
-          return;
-        }
-
         if(student == ""){
-          alert('Transaction Type cant be empty');
+          alert('Student name cant be empty');
           return;
         }
 
-        if(tranref == ""){
-          alert('Reference cant be empty');
+        if(hostel == ""){
+          alert('Hostel cant be empty');
           return;
         }
 
-        if(payee == ""){
-          alert('Payee cant be empty');
+        if(floor == ""){
+          alert('Floor cant be empty');
           return;
         }
 
-        if(amount == ""){
-          alert('Amount cant be empty');
+        if(room == ""){
+          alert('Room cant be empty');
           return;
         }
 
-        if(currency == ""){
-          alert('Currency cant be empty');
+        if(bed == ""){
+          alert('Available Bed cant be empty');
           return;
         }
   
       setIssubmitting(true);
 
-      const data = new FormData();
-
-      if(file != null){
-
-        data.append('doc', {
-          uri: file.uri,
-          name: file.name,
-          type: file.mimeType
-        });
-
+      const FormData = {
+        student,
+        hostel,
+        floor,
+        room,
+        bed
       }
-//1598
-      data.append('trandate',trandate);
-      data.append('student',student);
-      data.append('cheque',cheque);
-      data.append('currency',currency);
-      data.append('tranref',tranref);
-      data.append('amount',amount);
-      data.append('hostel',hostel);
-      data.append('payee',payee);
 
-        axios.post(link,
-        data,
+        axios.post(schoolzapi+'/hostel-allocated',
+        FormData,
         {
             headers: {Accept: 'application/json',
-            'Content-Type': 'multipart/form-data',
             Authorization: "Bearer "+token
         }
         })
@@ -338,7 +370,13 @@ function Createeditallocatestudent() {
             if( response.data.error !== undefined){
                 alert(response.data.error);
             }else{
-                ToastAndroid.show('info saved successfully!', ToastAndroid.SHORT);
+
+              showMessage({
+                message: 'Info recorded Successfully!',
+                type: "success",
+                position: 'bottom',
+              });
+
                 DeviceEventEmitter.emit('subject.added', {});
                 router.back();
             }
@@ -353,38 +391,45 @@ function Createeditallocatestudent() {
 
     const updatedata = () => {
 
-      if(trandate == ""){
-        alert('Account Title cant be empty');
-        return;
-      }
-
       if(student == ""){
-        alert('Account Type cant be empty');
+        alert('Student name cant be empty');
         return;
       }
 
-
-      setIssubmitting(true);
-
-      const formdata = {
-       trandate,
-       student,
-       hostel,
-       tranref,
-       cheque,
-       payee,
-       currency,
-       amount,
-       address,
-       phone
-
+      if(hostel == ""){
+        alert('Hostel cant be empty');
+        return;
       }
+
+      if(floor == ""){
+        alert('Floor cant be empty');
+        return;
+      }
+
+      if(room == ""){
+        alert('Room cant be empty');
+        return;
+      }
+
+      if(bed == ""){
+        alert('Available Bed cant be empty');
+        return;
+      }
+
+    setIssubmitting(true);
+
+    const FormData = {
+      student,
+      hostel,
+      floor,
+      room,
+      bed
+    }
     
-      axios.post(schoolzapi+'/bank-transactions/'+id,
-      formdata,
+      axios.patch(schoolzapi+'/hostel-allocated/'+id,
+      FormData,
       {
           headers: {Accept: 'application/json',
-          'Content-Type': 'multipart/form-data',
           Authorization: "Bearer "+token
       }
       })
@@ -394,7 +439,13 @@ function Createeditallocatestudent() {
           if( response.data.error !== undefined){
             alert(response.data.error);
           }else{
-              ToastAndroid.show('info saved successfully!', ToastAndroid.SHORT);
+
+            showMessage({
+              message: 'Info recorded Successfully!',
+              type: "success",
+              position: 'bottom',
+            });
+
               DeviceEventEmitter.emit('subject.added', {});
               router.back();
           }
@@ -544,7 +595,7 @@ function Createeditallocatestudent() {
                     />
 
 <Text style={{fontSize: 15, fontWeight: 500}}>Room</Text>
-               <DropDownPicker
+{id == undefined ? ( <DropDownPicker
                     open={openroom}
                     value={room}
                     items={roomitems}
@@ -575,10 +626,40 @@ function Createeditallocatestudent() {
                         marginTop: 10,
                         marginBottom: 20
                     }}
-                    />
+                    />) : ( <DropDownPicker
+                      open={openroom}
+                      value={room}
+                      items={roomitems}
+                      setOpen={setOpenroom}
+                      setValue={setroom}
+                      onChangeValue={loadeditbed}
+                      setItems={setroomItems}
+                      placeholder={""}
+                      placeholderStyle={{
+                          color: "#456A5A",
+                      }}
+                      listMode="MODAL"
+                      dropDownContainerStyle={{
+                          borderWidth: 0,
+                          borderRadius: 30,
+                          backgroundColor: "#fff"
+                      }}
+                      labelStyle={{
+                          color: "#000",
+                      }}
+                      listItemLabelStyle={{
+                          color: "#456A5A",
+                      }}
+                      style={{
+                          borderWidth: 1,
+                          //backgroundColor: "#F5F7F6",
+                          minHeight: 50,
+                          marginTop: 10,
+                          marginBottom: 20
+                      }}
+                      />)}                                 
 
-
-<Text style={{fontSize: 15, fontWeight: 500}}>Available Bed</Text>
+   <Text style={{fontSize: 15, fontWeight: 500}}>Available Bed</Text>
                <DropDownPicker
                     open={openbed}
                     value={bed}

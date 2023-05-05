@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { ActivityIndicator, Linking, ToastAndroid, TouchableOpacity, View } from "react-native";
-import { Avatar, Button, Card, Dialog, Divider, List, Menu, Portal, Snackbar, Text } from "react-native-paper";
+import { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, Linking, ToastAndroid, TouchableOpacity, View, StyleSheet } from "react-native";
+import { Avatar, Button, Card, Dialog, Divider, List, Menu, Portal, Snackbar, Text, TextInput } from "react-native-paper";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from "expo-router";
 import { useSelector } from "react-redux";
@@ -9,82 +9,37 @@ import RadioGroup from 'react-native-radio-buttons-group';
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import axios from "axios";
 import { schoolzapi } from "../components/constants";
+import { TimePickerModal } from 'react-native-paper-dates';
 import { showMessage } from "react-native-flash-message";
 
 
-function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
+function Allstaffattendancelist ({item,saveattendance,attdate,studentclass}) {
 
     const [visible, setVisible] = useState(false);
     const token = useSelector(selecttoken);
     const currency = useSelector(selectcurrency);
     const [issubmitting, setissubmitting] = useState(false);
+    const [attendance, setattendance] = useState("");
     const router = useRouter();
-    
-    const [radioButtons, setRadioButtons] = useState([
-        {
-            id: '1',
-            label: 'Present',
-            value: 'P'
-        },
-        {
-            id: '2',
-            label: 'Absent',
-            value: 'A'
-        }
-    ]);
 
-    function onPressRadioButton(radioButtonsArray) {
-        setRadioButtons(radioButtonsArray);
-    }
+    const [intime, setIntime] = useState("");
+    const [outtime, setOuttime] = useState("");
 
-    function savestudentattendance(radioButtonsArray,studentid,radioprops){
-        
-        setissubmitting(true);
-
-        const formdata = {
-            studentid,
-            radioprops,
-            attdate,
-            studentclass
-        }
-
-        axios.post(schoolzapi+'/save-attendance',
-        formdata,
-        {
-            headers: {Accept: 'application/json',
-            Authorization: "Bearer "+token
-        }
-        })
-        .then(function (response) {
-            setissubmitting(false);
-            showMessage({
-                message: 'Attendance recorded Successfully!',
-                type: "success",
-                position: 'bottom',
-              });
-        })
-        .catch(function (error) {
-            //setRadioButtons(radioButtonsArray);
-            setissubmitting(false);
-            alert("Failed something went wrong");
-        });        
-    }
 
     useEffect(() => {
         
         
         if(item?.attendance !== null){
 
-            if(item?.attendance?.attendance == "P"){
-                radioButtons[0].selected = true;
+            if(item?.attendance == "P"){
+                setattendance('Present');
             }else{
-                radioButtons[1].selected = true;
+                setattendance('Absent');
             }
 
         }else{
 
-            radioButtons[0].selected = false;
-            radioButtons[1].selected = false;
+            setattendance('Absent');
         }
     },[]);
 
@@ -106,24 +61,24 @@ function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
             />
             <Card.Content>
 
-                {/* <Text>{item?.attendance?.date}</Text> */}
-
             
-            {issubmitting ? <ActivityIndicator size="large" /> : (
 
-            <RadioGroup 
-                radioButtons={radioButtons}
-                layout='row'
-                  // onPress={onPressRadioButton}  
+          <Text style={{color: attendance == 'Present' ? 'blue' : 'red'}}>{attendance}</Text>
 
-                onPress={(radioButtonsArray) => {
-                const newData = radioButtonsArray.filter((item) => item.selected);
-                const selected = newData[0].value;
-                savestudentattendance(radioButtonsArray,item?.id,selected);
-                }} 
+        <View style={{flexDirection: 'row', justifyContent: "flex-start", marginTop: 20}}>
 
-          />
-            )}
+
+        <View style={{marginRight: 30}}>
+        <Text>In Time: {item?.intime}</Text>
+        </View>
+
+      <View>
+        <Text>Out Time: {item?.outtime}</Text>
+      </View>
+
+       </View>
+
+       <Text>Date: {item?.date}</Text>
             
             </Card.Content>
             
@@ -143,4 +98,10 @@ function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
     )
 }
 
-export default Recordattendancelist;
+export default Allstaffattendancelist;
+
+const styles = StyleSheet.create({
+    Forminput: {
+        marginBottom: 20
+    }
+});

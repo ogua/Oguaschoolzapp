@@ -388,7 +388,7 @@ const setitemfocus = (itemid) => {
         key: 72,
         name: 'Staff Attendance',
         icon: 'circle-outline',
-        route: 'All Students',
+        route: 'Staffattendance',
         permission: '',
         children: []
       },
@@ -396,7 +396,7 @@ const setitemfocus = (itemid) => {
         key: 73,
         name: 'All Attendance',
         icon: 'circle-outline',
-        route: 'All Students',
+        route: 'Allstaffattendance',
         permission: '',
         children: []
       },
@@ -404,7 +404,7 @@ const setitemfocus = (itemid) => {
         key: 74,
         name: 'Payroll',
         icon: 'circle-outline',
-        route: 'All Students',
+        route: 'Allpayroll',
         permission: '',
         children: []
       },
@@ -412,7 +412,7 @@ const setitemfocus = (itemid) => {
         key: 75,
         name: 'Staff Leave',
         icon: 'circle-outline',
-        route: 'All Students',
+        route: 'Leave',
         permission: '',
         children: []
       },
@@ -476,10 +476,10 @@ const setitemfocus = (itemid) => {
     children: []
   },
   {
-    key: 12,
+    key: 1112,
     name: 'Online Quiz',
     icon: 'cast-education',
-    route: 'All Students',
+    route: 'Listexams',
     permission: '',
     children: []
   },
@@ -491,14 +491,14 @@ const setitemfocus = (itemid) => {
     permission: '',
     children: [
       {
-        key: 31,
+        key: 131,
         name: 'Books',
         icon: 'circle-outline',
         route: 'Books',
         permission: '',
         children: []
       },{
-        key: 32,
+        key: 132,
         name: 'Issue Books',
         icon: 'circle-outline',
         route: 'Issuebooks',
@@ -576,7 +576,7 @@ const setitemfocus = (itemid) => {
     key: 21,
     name: 'Home work',
     icon: 'book-open-outline',
-    route: 'All Students',
+    route: 'Listhomework',
     permission: '',
     children: []
   },

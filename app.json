@@ -5,6 +5,11 @@
       "bundler": "metro"
     },
     "name": "OguaSchoolz",
-    "slug": "OguaSchoolz"
+    "slug": "OguaSchoolz",
+    "splash": {
+      "image": "./assets/soft.png",
+      "backgroundColor": "#ccc",
+      "resizeMode": "contain"
+    }
   }
 }

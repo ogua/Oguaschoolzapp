@@ -9,10 +9,9 @@ import RadioGroup from 'react-native-radio-buttons-group';
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import axios from "axios";
 import { schoolzapi } from "../components/constants";
-import { showMessage } from "react-native-flash-message";
 
 
-function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
+function AssignmentsubList ({item,saveattendance,attdate,studentclass}) {
 
     const [visible, setVisible] = useState(false);
     const token = useSelector(selecttoken);
@@ -57,11 +56,8 @@ function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
         })
         .then(function (response) {
             setissubmitting(false);
-            showMessage({
-                message: 'Attendance recorded Successfully!',
-                type: "success",
-                position: 'bottom',
-              });
+            //setRadioButtons(radioButtonsArray);
+            ToastAndroid.show('Attendance Recorded successfully!', ToastAndroid.SHORT);
         })
         .catch(function (error) {
             //setRadioButtons(radioButtonsArray);
@@ -88,14 +84,28 @@ function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
         }
     },[]);
 
+    const buttonshow = () =>{
+        if(item?.assignment !== null){
+            if(item?.assignment?.score == ""){
+                return <Button>Download Assignment</Button>;
+            }else{
+                return <Text style={{color: 'red'}}>Score {item?.assignment?.score}</Text>
+            }
+        }else{
+            return <Text style={{color: 'red'}}>NOT SUMITTED</Text>;
+        }
+    }
+
     return (
         <>
-        <TouchableWithoutFeedback style={{backgroundColor: '#fff', padding: 10}}
+        <TouchableOpacity style={{backgroundColor: '#fff', padding: 10}}
+       // onPress={() => router.push(`/admin/Attendance/view-student-attendance?id=${item?.student_id}`)}
         >
 
-        <Card style={{backgroundColor: item.retuneddate ? `#17a2b8` : '#fff'}}>
+        <Card style={{backgroundColor: item.assignment !== null ? `#17a2b8` : '#fff'}}>
             <Card.Title title={`${item?.fullname.toUpperCase()}`}
-            left={() => (
+           titleStyle={{color: item.assignment !== null && `#fff`}}
+           left={() => (   
 
                 <Avatar.Image 
                      source={{uri: item.pic}}
@@ -104,32 +114,14 @@ function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
                 
                 )}  
             />
-            <Card.Content>
+                                
 
-                {/* <Text>{item?.attendance?.date}</Text> */}
-
-            
-            {issubmitting ? <ActivityIndicator size="large" /> : (
-
-            <RadioGroup 
-                radioButtons={radioButtons}
-                layout='row'
-                  // onPress={onPressRadioButton}  
-
-                onPress={(radioButtonsArray) => {
-                const newData = radioButtonsArray.filter((item) => item.selected);
-                const selected = newData[0].value;
-                savestudentattendance(radioButtonsArray,item?.id,selected);
-                }} 
-
-          />
-            )}
-            
+             <Card.Content>
+                {buttonshow()}
             </Card.Content>
-            
         </Card>
             
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
 
         {visible && (
             <View style={{backgroundColor: '#fff', borderBottomColor: '#000', borderBottomWidth: 1 }}>
@@ -143,4 +135,4 @@ function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
     )
 }
 
-export default Recordattendancelist;
+export default AssignmentsubList;

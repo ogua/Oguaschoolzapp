@@ -34,7 +34,7 @@ function login() {
 
     useFocusEffect(() => {
         if(user !== null){
-            router.replace("/admin/admin-drawer");
+            router.replace("/admin/");
         }    
     });
 
@@ -76,7 +76,7 @@ function login() {
                 
                 showMessage({
                     message: 'Login Successfully!',
-                    type: 'danger',
+                    type: "success",
                     position: 'bottom',
                 });
 
@@ -90,7 +90,7 @@ function login() {
                 dispatch(setCurrency(response.data.currency));
 
                 Setsubmiitting(false);
-                router.push('/admin/admin-drawer');
+                router.push('/admin/');
 
             }
 

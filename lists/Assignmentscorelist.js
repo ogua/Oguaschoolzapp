@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Linking, ToastAndroid, TouchableOpacity, View } from "react-native";
-import { Avatar, Button, Card, Dialog, Divider, List, Menu, Portal, Snackbar, Text } from "react-native-paper";
+import { Avatar, Button, Card, Dialog, Divider, List, Menu, Portal, Snackbar, Text, TextInput } from "react-native-paper";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from "expo-router";
 import { useSelector } from "react-redux";
@@ -12,43 +12,38 @@ import { schoolzapi } from "../components/constants";
 import { showMessage } from "react-native-flash-message";
 
 
-function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
+function Assignmentscorelist ({item,saveattendance,attdate,studentclass,assigmtid}) {
 
     const [visible, setVisible] = useState(false);
     const token = useSelector(selecttoken);
     const currency = useSelector(selectcurrency);
     const [issubmitting, setissubmitting] = useState(false);
+    const [score, setscore] = useState(0);
     const router = useRouter();
-    
-    const [radioButtons, setRadioButtons] = useState([
-        {
-            id: '1',
-            label: 'Present',
-            value: 'P'
-        },
-        {
-            id: '2',
-            label: 'Absent',
-            value: 'A'
+
+
+    useEffect(() => {
+        
+        if(item?.assignment !== null){
+            setscore(item?.assignment.score);
+        }else{
+            setscore(0);
         }
-    ]);
 
-    function onPressRadioButton(radioButtonsArray) {
-        setRadioButtons(radioButtonsArray);
-    }
+    },[]);
+    
 
-    function savestudentattendance(radioButtonsArray,studentid,radioprops){
+    function savescore(score,studentid,assignmentid){
         
         setissubmitting(true);
 
         const formdata = {
+            score,
             studentid,
-            radioprops,
-            attdate,
-            studentclass
+            assignmentid
         }
 
-        axios.post(schoolzapi+'/save-attendance',
+        axios.post(schoolzapi+'/homework-enter-score',
         formdata,
         {
             headers: {Accept: 'application/json',
@@ -58,44 +53,28 @@ function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
         .then(function (response) {
             setissubmitting(false);
             showMessage({
-                message: 'Attendance recorded Successfully!',
+                message: 'Score recorded Successfully!',
                 type: "success",
                 position: 'bottom',
-              });
+            });
         })
         .catch(function (error) {
-            //setRadioButtons(radioButtonsArray);
+            console.log(error);
             setissubmitting(false);
-            alert("Failed something went wrong");
+           // alert("Failed something went wrong");
         });        
     }
 
-    useEffect(() => {
-        
-        
-        if(item?.attendance !== null){
-
-            if(item?.attendance?.attendance == "P"){
-                radioButtons[0].selected = true;
-            }else{
-                radioButtons[1].selected = true;
-            }
-
-        }else{
-
-            radioButtons[0].selected = false;
-            radioButtons[1].selected = false;
-        }
-    },[]);
 
     return (
         <>
-        <TouchableWithoutFeedback style={{backgroundColor: '#fff', padding: 10}}
+        <TouchableOpacity style={{backgroundColor: '#fff', padding: 10}}
+       // onPress={() => router.push(`/admin/Attendance/view-student-attendance?id=${item?.student_id}`)}
         >
 
-        <Card style={{backgroundColor: item.retuneddate ? `#17a2b8` : '#fff'}}>
+        <Card>
             <Card.Title title={`${item?.fullname.toUpperCase()}`}
-            left={() => (
+           left={() => (   
 
                 <Avatar.Image 
                      source={{uri: item.pic}}
@@ -104,32 +83,27 @@ function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
                 
                 )}  
             />
-            <Card.Content>
+             <Card.Content>
+                <View>
+                    <TextInput
+                       label="Enter Score"
+                       mode="outlined"
+                       keyboardType="numeric"
+                       value={score}
+                       onChangeText={(e) => setscore(e)}
+                     />
 
-                {/* <Text>{item?.attendance?.date}</Text> */}
-
-            
-            {issubmitting ? <ActivityIndicator size="large" /> : (
-
-            <RadioGroup 
-                radioButtons={radioButtons}
-                layout='row'
-                  // onPress={onPressRadioButton}  
-
-                onPress={(radioButtonsArray) => {
-                const newData = radioButtonsArray.filter((item) => item.selected);
-                const selected = newData[0].value;
-                savestudentattendance(radioButtonsArray,item?.id,selected);
-                }} 
-
-          />
-            )}
-            
+                     {issubmitting ? <ActivityIndicator size="large" /> : (
+                        <Button onPress={()=> savescore(score,item?.student_id,assigmtid)}>
+                            {item?.assignment !== null ? `Save` : `NOT SUBMITTED`}
+                        </Button>
+                     )}
+                     
+                </View>
             </Card.Content>
-            
         </Card>
             
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
 
         {visible && (
             <View style={{backgroundColor: '#fff', borderBottomColor: '#000', borderBottomWidth: 1 }}>
@@ -143,4 +117,4 @@ function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
     )
 }
 
-export default Recordattendancelist;
+export default Assignmentscorelist;

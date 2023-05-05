@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { ActivityIndicator, Linking, ToastAndroid, TouchableOpacity, View } from "react-native";
-import { Avatar, Button, Card, Dialog, Divider, List, Menu, Portal, Snackbar, Text } from "react-native-paper";
+import { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, Linking, ToastAndroid, TouchableOpacity, View, StyleSheet } from "react-native";
+import { Avatar, Button, Card, Dialog, Divider, List, Menu, Portal, Snackbar, Text, TextInput } from "react-native-paper";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from "expo-router";
 import { useSelector } from "react-redux";
@@ -9,16 +9,49 @@ import RadioGroup from 'react-native-radio-buttons-group';
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import axios from "axios";
 import { schoolzapi } from "../components/constants";
+import { TimePickerModal } from 'react-native-paper-dates';
 import { showMessage } from "react-native-flash-message";
 
 
-function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
+function Recordstaffattendancelist ({item,saveattendance,attdate,studentclass}) {
 
     const [visible, setVisible] = useState(false);
     const token = useSelector(selecttoken);
     const currency = useSelector(selectcurrency);
     const [issubmitting, setissubmitting] = useState(false);
+    const [attendance, setattendance] = useState("");
     const router = useRouter();
+
+    const [intime, setIntime] = useState("");
+    const [outtime, setOuttime] = useState("");
+
+    const [showintime, setShowintime] = useState(false);
+    const onDismissintime = useCallback(() => {
+        setShowintime(false)
+    }, [setShowintime]);
+
+    const onConfirmintime = useCallback(
+        ({ hours, minutes }) => {
+         setShowintime(false);
+         setIntime(hours+':'+minutes);
+        },
+        [setShowintime]
+    );
+
+
+    const [showouttime, setShowouttime] = useState(false);
+    const onDismissouttime = useCallback(() => {
+        setShowouttime(false)
+    }, [setShowouttime]);
+
+    const onConfirmouttime = useCallback(
+        ({ hours, minutes }) => {
+         setShowouttime(false);
+         setOuttime(hours+':'+minutes);
+        },
+        [setShowouttime]
+    );
+
     
     const [radioButtons, setRadioButtons] = useState([
         {
@@ -33,22 +66,19 @@ function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
         }
     ]);
 
-    function onPressRadioButton(radioButtonsArray) {
-        setRadioButtons(radioButtonsArray);
-    }
-
-    function savestudentattendance(radioButtonsArray,studentid,radioprops){
+    function savestudentattendance(staffid){
         
         setissubmitting(true);
 
         const formdata = {
-            studentid,
-            radioprops,
-            attdate,
-            studentclass
+            staffid,
+            attendance,
+            intime,
+            outtime,
+            attdate
         }
 
-        axios.post(schoolzapi+'/save-attendance',
+        axios.post(schoolzapi+'/save-staff-attendance',
         formdata,
         {
             headers: {Accept: 'application/json',
@@ -81,10 +111,16 @@ function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
                 radioButtons[1].selected = true;
             }
 
+            setIntime(item?.attendance?.intime);
+            setOuttime(item?.attendance?.outtime);
+
         }else{
 
             radioButtons[0].selected = false;
             radioButtons[1].selected = false;
+
+            setIntime("");
+            setOuttime("");
         }
     },[]);
 
@@ -106,11 +142,6 @@ function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
             />
             <Card.Content>
 
-                {/* <Text>{item?.attendance?.date}</Text> */}
-
-            
-            {issubmitting ? <ActivityIndicator size="large" /> : (
-
             <RadioGroup 
                 radioButtons={radioButtons}
                 layout='row'
@@ -119,11 +150,63 @@ function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
                 onPress={(radioButtonsArray) => {
                 const newData = radioButtonsArray.filter((item) => item.selected);
                 const selected = newData[0].value;
-                savestudentattendance(radioButtonsArray,item?.id,selected);
-                }} 
+                setattendance(selected);
+            }} 
 
           />
-            )}
+
+        <View style={{flexDirection: 'row', justifyContent: "flex-start", marginTop: 20}}>
+
+        <TimePickerModal
+          visible={showintime}
+          onDismiss={onDismissintime}
+          onConfirm={onConfirmintime}
+          hours={12}
+          minutes={14}
+        />  
+
+        <View style={{marginRight: 30}}>
+        <Text>In Time</Text>
+         <TextInput
+            title="In Time"
+            style={styles.Forminput}
+            mode="outlined"
+            onFocus={()=>  setShowintime(true)}
+            onChangeText={(e) => setIntime(e)}
+            value={intime} /></View>
+
+
+
+      <TimePickerModal
+          visible={showouttime}
+          onDismiss={onDismissouttime}
+          onConfirm={onConfirmouttime}
+          hours={12}
+          minutes={14}
+        />
+
+      <View>
+        <Text>Out Time</Text>
+       <TextInput
+            title="Out Time"
+            style={styles.Forminput}
+            mode="outlined"
+            numberOfLines={5}
+            onFocus={()=>  setShowouttime(true)}
+            keyboardType="default"
+            onChangeText={(e) => setOuttime(e)}
+            value={outtime} />
+    </View>
+
+       </View>
+
+     {issubmitting ? (
+        <ActivityIndicator size="large" />
+     ) : (
+        <Button onPress={()=> savestudentattendance(item.id)} mode="contained">Save</Button>
+     )}
+       
+            
             
             </Card.Content>
             
@@ -143,4 +226,10 @@ function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
     )
 }
 
-export default Recordattendancelist;
+export default Recordstaffattendancelist;
+
+const styles = StyleSheet.create({
+    Forminput: {
+        marginBottom: 20
+    }
+});
