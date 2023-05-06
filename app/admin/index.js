@@ -64,6 +64,7 @@ import Allstaffattendance from '../../components/Staff/Allattendance';
 import Leave from '../../components/Staff/Leave';
 import Listexams from '../../components/Exams/Listexams';
 import Allpayroll from '../../components/Staff/Payroll';
+import Normalreport from '../../components/Terminalreport/Normalreport';
 
 const Drawer = createDrawerNavigator();
 
@@ -140,6 +141,9 @@ function Maindashboard() {
       <Drawer.Screen name="vehicle" component={Vehicle} />
       <Drawer.Screen name="waypoint" component={Waypoint} />
       <Drawer.Screen name="Routes" component={Routes} />
+
+
+      <Drawer.Screen name="Normalreport" component={Normalreport} />
       
       
       <Drawer.Screen name="TextBottomsheet" component={TextBottomsheet} />

@@ -187,7 +187,7 @@ function Allpayroll () {
             />
         </View>
 
-             <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginVertical: 20, marginRight: 20}}>
+             <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginVertical: 10, marginRight: 20}}>
                      <Button  onPress={()=> router.push('/admin/staff/record-staff-payroll')}>Record Payroll</Button>
               </View>
 

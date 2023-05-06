@@ -30,9 +30,11 @@ function Payrollgeneratelist ({item,saveattendance,attdate,studentclass,month,ye
     const [openleavestatus, setOpenleavestatus] = useState(false);
     const [leavestatus, setleavestatus] = useState("");
     const [leavestatusitems, setleavestatusItems] = useState([
-      { label: 'Processing', value: 0},
-      { label: 'Approve Leave', value: 1},
-      { label: 'Reject Leave', value: 2}
+      { label: 'Momo', value: 'Momo'},
+      {label: 'Cash', value: 'Cash'},
+      { label: 'Bank', value: 'Bank'},
+      { label: 'Cheque', value: 'Cheque'},
+      { label: 'Credit card', value: 'Credit card'}
     ]);
 
     const [modalvisibility, setvisibility] = useState(false);
@@ -43,13 +45,13 @@ function Payrollgeneratelist ({item,saveattendance,attdate,studentclass,month,ye
                 
     },[]);
 
-    const payrollpay = (id,leavetatus) => {
+    const payrollpay = (id,paystatus) => {
         setLoading(true);
   
         const formdata = {
-          id,leavetatus
+          id,paystatus
         }
-        axios.post(schoolzapi+'/staff-approve-leave',
+        axios.post(schoolzapi+'/staff-payroll-update-payment',
         formdata,
         {
             headers: {Accept: 'application/json',
@@ -60,7 +62,7 @@ function Payrollgeneratelist ({item,saveattendance,attdate,studentclass,month,ye
                 setvisibility(false);
                 setLoading(false);
                 showMessage({
-                  message: 'Info updated Successfully!',
+                  message: 'Payment Info updated Successfully!',
                   type: "success",
                   position: 'bottom',
                 });
@@ -81,53 +83,17 @@ function Payrollgeneratelist ({item,saveattendance,attdate,studentclass,month,ye
             if(item?.payroll.status == "Generated"){
 
                 return (
-                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <View>
                       <Button mode="text" onPress={() => router.push('/admin/staff/generate-payroll?userid='+item?.user_id+'&month='+month+"&year="+year)}>View</Button>
-                      <Button onPress={() => setvisibility(true)}>Pay</Button>
-                    </View>
-                );
-            }
-
-            if(item?.payroll.status == "Paid"){
-                return <Button mode="contained">Paid</Button>;
-            }
-
-        }else{
-
-            return <Button mode="text" onPress={() => router.push('/admin/staff/generate-payroll?userid='+item?.user_id+'&month='+month+"&year="+year)}>Generate</Button>;
-        }
-    }
-
-
-
-    return (
-        <View>
-        <View style={styles.centeredView}>
-            <Modal
-            animationType="slide"
-            transparent={false}
-            visible={modalvisibility}
-            presentationStyle="overFullScreen"
-            >
-                <View style={styles.modalcontainer}>
-                    <View style={styles.modalheader}>
-                      <Text style={{fontSize: 25}}>Payroll</Text>
-                      <Pressable style={styles.closebtn} onPress={() => setvisibility(false)}>
-                         <Text><Ionicons name="close-circle" size={30} color="#abc" /> </Text>
-                      </Pressable>
-                    </View>
-                    
-                    <View style={styles.modalbody}>
-
-                <Text style={{marginTop: 20}}>Mode of payment</Text>
-                <DropDownPicker
+                      <View style={{marginTop: 20}}>
+                      <DropDownPicker
                     open={openleavestatus}
                     value={leavestatus}
                     items={leavestatusitems}
                     setOpen={setOpenleavestatus}
                     setValue={setleavestatus}
                     setItems={setleavestatusItems}
-                    placeholder={""}
+                    placeholder={"Select Mode of Payment"}
                     placeholderStyle={{
                         color: "#456A5A",
                     }}
@@ -150,22 +116,39 @@ function Payrollgeneratelist ({item,saveattendance,attdate,studentclass,month,ye
                     }}
                   />
 
-                       {isloading ? 
-                       <ActivityIndicator size="large" style={{marginTop: 20}} /> :
-                        <Button mode="contained" style={{marginTop: 20}} onPress={()=>{
+                  {isloading ? <ActivityIndicator size="large" /> : (
+                        <Button onPress={() => {
 
                             if(leavestatus == ""){
                                 return;
                             }
-
-                            payrollpay(item?.id,leavestatus);
-                       }}>
-                         Save Payroll
-                       </Button>}
+        
+                            payrollpay(item?.payroll.id,leavestatus);
+                         }}>Pay</Button>
+                  )}
+                  
+                      </View>
                     </View>
-                </View>
-            </Modal>
-        </View>
+                );
+            }
+
+            if(item?.payroll.status == "Paid"){
+                return (
+                   <><Button mode="contained">Paid</Button>
+                    <Button mode="text" onPress={() => router.push('/admin/staff/generate-payroll?userid='+item?.user_id+'&month='+month+"&year="+year)}>View</Button></>
+                );
+            }
+
+        }else{
+
+            return <Button mode="text" onPress={() => router.push('/admin/staff/generate-payroll?userid='+item?.user_id+'&month='+month+"&year="+year)}>Generate</Button>;
+        }
+    }
+
+
+
+    return (
+        <>
         <TouchableWithoutFeedback style={{backgroundColor: '#fff', padding: 10}}
         >
 
@@ -198,7 +181,7 @@ function Payrollgeneratelist ({item,saveattendance,attdate,studentclass,month,ye
                 <Menu.Item style={{marginLeft: 10}} leadingIcon="refresh" title={`${item.retuneddate ? `Revert If Not returned` : `Returned`}`} onPress={()=> item.retuneddate ? booknotreturned(item?.id,item?.title) : bookreturned(item?.id,item?.title)} />
             </View>
         )}
-        </View>
+        </>
     )
 }
 

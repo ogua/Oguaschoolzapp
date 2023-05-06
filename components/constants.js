@@ -1,4 +1,5 @@
-export const schoolzapi = "http://192.168.43.132/api";
+//export const schoolzapi = "http://192.168.43.132/api";
+export const schoolzapi = "https:oguaschoolz/api";
 export const tokenname = 'usertoken';
 export const images = {
     logo: require('../assets/logotrans.png'),

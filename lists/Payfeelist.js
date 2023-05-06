@@ -40,9 +40,9 @@ function Payfeelist ({item,deletedata,payfees,feeisloading}) {
             </View>
             <View style={{marginTop: 10}}>
                 <TextInput
+                  label="Payable"
                    keyboardType="numeric"
                    mode="outlined"
-                    placeholder="Payable"
                     value={paynow}
                     onChangeText={(e) => setpaynow(e)}
                 />

@@ -20,7 +20,7 @@ import { useState } from 'react';
 import { images } from './constants';
 import { Redirect, useRouter } from 'expo-router';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout, selectuser } from '../features/userinfoSlice';
+import { logout, selectpermissions, selectuser, selectuserpermission } from '../features/userinfoSlice';
 import { showMessage } from "react-native-flash-message";
 
 
@@ -31,11 +31,10 @@ import { showMessage } from "react-native-flash-message";
  const user = useSelector(selectuser);
  const router = useRouter();
  const dispatch = useDispatch();
+ const permission = useSelector(selectuserpermission);
 
  const handlelogout = () => {
   
-  console.log('working');
-
   dispatch(logout());
     showMessage({
       message: 'Logout Successfully!',
@@ -47,6 +46,7 @@ import { showMessage } from "react-native-flash-message";
  // return <Redirect href="/login" />;
  };
 
+ //console.log("permission",permission);
 
 const setitemfocus = (itemid) => {
 
@@ -64,7 +64,8 @@ const setitemfocus = (itemid) => {
     name: 'Dashboard',
     icon: 'monitor-dashboard',
     route: 'Dashboard',
-    permission: '',
+    permission: 'viewdashboard',
+    role: 'Administrator',
     children: []
   },
   {
@@ -73,6 +74,7 @@ const setitemfocus = (itemid) => {
     icon: 'account-outline',
     route: 'Profile',
     permission: '',
+    role: '',
     children: []
   },
   {
@@ -80,49 +82,56 @@ const setitemfocus = (itemid) => {
     name: 'Academics',
     icon: 'calendar-month',
     route: 'Academics',
-    permission: '',
+    permission: 'viewacademics',
+    role: '',
     children: [
     {
       key: 21,
       name: 'Academic Term',
       icon: 'circle-outline',
       route: 'Academicterm',
-      permission: '',
+      permission: 'viewacademics',
+      role: '',
     },
     {
       key: 22,
       name: 'Academic Year',
       icon: 'circle-outline',
       route: 'Academicyear',
-      permission: '',
+      permission: 'viewacademics',
+      role: '',
     },
     {
       key: 23,
       name: 'Academic Calendar',
       icon: 'circle-outline',
       route: 'Calendar',
-      permission: '',
+      permission: 'viewacademics',
+      role: '',
     },
     {
       key: 24,
       name: 'Subject',
       icon: 'circle-outline',
       route: 'Sujects',
-      permission: '',
+      permission: 'viewacademics',
+      role: '',
     },
     {
       key: 25,
       name: 'Classes',
       icon: 'circle-outline',
       route: 'Classroom',
-      permission: '',
+      permission: 'viewacademics',
+      role: '',
     },
     {
       key: 26,
       name: 'Promote Student',
       icon: 'circle-outline',
       route: 'Promotestudent',
-      permission: '',
+      permission: 'viewacademics',
+      role: '',
     },
   ]
   },
@@ -131,42 +140,48 @@ const setitemfocus = (itemid) => {
     name: 'Front Desk',
     icon: 'remote-desktop',
     route: 'Front Desk',
-    permission: '',
+    permission: 'viewfrontdesk',
+    role: '',
     children: [
       {
         key: 31,
         name: 'Enquiries',
         icon: 'circle-outline',
         route: 'Enquiry',
-        permission: '',
+        permission: 'viewfrontdesk',
+        role: '',
       },
       {
         key: 32,
         name: 'Visitors',
         icon: 'circle-outline',
         route: 'Visitors',
-        permission: '',
+        permission: 'viewfrontdesk',
+        role: '',
       },
       {
         key: 33,
         name: 'Call Logs',
         icon: 'circle-outline',
         route: 'Calllogs',
-        permission: '',
+        permission: 'viewfrontdesk',
+        role: '',
       },
       {
         key: 34,
         name: 'Postal Dispatch',
         icon: 'circle-outline',
         route: 'Postaldispatch',
-        permission: '',
+        permission: 'viewfrontdesk',
+        role: '',
       },
       {
         key: 35,
         name: 'Postal Received',
         icon: 'circle-outline',
         route: 'Postalreceived',
-        permission: '',
+        permission: 'viewfrontdesk',
+        role: '',
       },
     ]
   },
@@ -175,7 +190,8 @@ const setitemfocus = (itemid) => {
     name: 'Add Student',
     icon: 'account',
     route: 'Newstudent',
-    permission: '',
+    permission: 'viewadmission',
+    role: '',
     children: []
   },
   {
@@ -183,35 +199,40 @@ const setitemfocus = (itemid) => {
     name: 'All Students',
     icon: 'account-group',
     route: 'All Students',
-    permission: '',
+    permission: 'viewallstudents',
+    role: '',
     children: [
       {
         key: 51,
         name: 'All Students',
         icon: 'circle-outline',
         route: 'Studentlist',
-        permission: '',
+        permission: 'viewallstudents',
+        role: '',
       },
       {
         key: 52,
         name: 'All Stopped Students',
         icon: 'circle-outline',
         route: 'Promotestudent',
-        permission: '',
+        permission: 'viewallstudents',
+        role: '',
       },
       {
         key: 53,
         name: 'All Dismissed Students',
         icon: 'circle-outline',
         route: 'Promotestudent',
-        permission: '',
+        permission: 'viewallstudents',
+        role: '',
       },
       {
         key: 54,
         name: 'All Completed Students',
         icon: 'circle-outline',
         route: 'Promotestudent',
-        permission: '',
+        permission: 'viewallstudents',
+        role: '',
       },
     ]
   },
@@ -220,14 +241,16 @@ const setitemfocus = (itemid) => {
     name: 'Accounts',
     icon: 'account-group',
     route: 'Accounts Management',
-    permission: '',
+    permission: 'viewaccountmanagement',
+    role: '',
     children: [
       {
         key: 61,
         name: 'Online Fee Payment',
         icon: 'circle-outline',
         route: 'All Students',
-        permission: '',
+        permission: 'viewonlinefeepayment',
+        role: '',
         children: []
       },
       {
@@ -235,7 +258,8 @@ const setitemfocus = (itemid) => {
         name: 'Fees',
         icon: 'circle-outline',
         route: 'Fee',
-        permission: '',
+        permission: 'viewfees',
+        role: '',
         children: []
       },
       {
@@ -243,7 +267,8 @@ const setitemfocus = (itemid) => {
         name: 'Fee Master',
         icon: 'circle-outline',
         route: 'Feemaster',
-        permission: '',
+        permission: 'viewfeemaster',
+        role: '',
         children: []
       },
       {
@@ -251,7 +276,8 @@ const setitemfocus = (itemid) => {
         name: 'Dispatch Fees',
         icon: 'circle-outline',
         route: 'Dispacchfees',
-        permission: '',
+        permission: 'viewdispatchfees',
+        role: '',
         children: []
       },
       {
@@ -259,7 +285,8 @@ const setitemfocus = (itemid) => {
         name: 'View Dispatcted',
         icon: 'circle-outline',
         route: 'Viewdispatched',
-        permission: '',
+        permission: 'viewviewdispatchedfees',
+        role: '',
         children: []
       },
       {
@@ -267,7 +294,8 @@ const setitemfocus = (itemid) => {
         name: 'All Transactions',
         icon: 'circle-outline',
         route: 'Alltransactions',
-        permission: '',
+        permission: 'viewtransactions',
+        role: '',
         children: []
       },
       {
@@ -275,7 +303,8 @@ const setitemfocus = (itemid) => {
         name: 'Transactions Per Term',
         icon: 'circle-outline',
         route: 'Transactionsperterm',
-        permission: '',
+        permission: 'viewtransactions',
+        role: '',
         children: []
       },
       {
@@ -283,7 +312,8 @@ const setitemfocus = (itemid) => {
         name: 'Transactions Per Day',
         icon: 'circle-outline',
         route: 'Transactionsperday',
-        permission: '',
+        permission: 'viewtransactions',
+        role: '',
         children: []
       },
       {
@@ -291,7 +321,8 @@ const setitemfocus = (itemid) => {
         name: 'Transactions Per Month',
         icon: 'circle-outline',
         route: 'Transactionspermonth',
-        permission: '',
+        permission: 'viewtransactions',
+        role: '',
         children: []
       },
       {
@@ -299,7 +330,8 @@ const setitemfocus = (itemid) => {
         name: 'Fee Payment',
         icon: 'circle-outline',
         route: 'Feepayment',
-        permission: '',
+        permission: 'viewfeepayment',
+        role: '',
         children: []
       },
       {
@@ -307,7 +339,8 @@ const setitemfocus = (itemid) => {
         name: 'Debtors',
         icon: 'circle-outline',
         route: 'Debtors',
-        permission: '',
+        permission: 'viewdebtors',
+        role: '',
         children: []
       },
       {
@@ -315,7 +348,8 @@ const setitemfocus = (itemid) => {
         name: 'Receipts',
         icon: 'circle-outline',
         route: 'Receipttrack',
-        permission: '',
+        permission: 'viewreceipts',
+        role: '',
         children: []
       },
       {
@@ -323,7 +357,8 @@ const setitemfocus = (itemid) => {
         name: 'Chart of Accounts',
         icon: 'circle-outline',
         route: 'Chartofaccount',
-        permission: '',
+        permission: 'viewchartofaccounts',
+        role: '',
         children: []
       },
       {
@@ -331,7 +366,8 @@ const setitemfocus = (itemid) => {
         name: 'Bank Transaction',
         icon: 'circle-outline',
         route: 'Banktransaction',
-        permission: '',
+        permission: 'viewbanktransactions',
+        role: '',
         children: []
       },
       {
@@ -339,7 +375,8 @@ const setitemfocus = (itemid) => {
         name: 'Vendors',
         icon: 'circle-outline',
         route: 'Vendors',
-        permission: '',
+        permission: 'viewvendors',
+        role: '',
         children: []
       },
       {
@@ -347,7 +384,8 @@ const setitemfocus = (itemid) => {
         name: 'Income Expenses',
         icon: 'circle-outline',
         route: 'Incomeexpense',
-        permission: '',
+        permission: 'viewincomeexpense',
+        role: '',
         children: []
       },
       // {
@@ -356,6 +394,7 @@ const setitemfocus = (itemid) => {
       //   icon: 'circle-outline',
       //   route: 'All Students',
       //   permission: '',
+      //role: '',
       //   children: []
       // },
       
@@ -365,6 +404,7 @@ const setitemfocus = (itemid) => {
       //   icon: 'circle-outline',
       //   route: 'All Students',
       //   permission: '',
+      //role: '',
       //   children: []
       // },
     ]
@@ -374,14 +414,16 @@ const setitemfocus = (itemid) => {
     name: 'Human Resource',
     icon: 'account-group',
     route: 'Human Resource',
-    permission: '',
+    permission: 'viewhumanresource',
+    role: '',
     children: [
       {
         key: 71,
         name: 'Staff',
         icon: 'circle-outline',
         route: 'All Students',
-        permission: '',
+        permission: 'viewstaff',
+        role: '',
         children: []
       },
       {
@@ -389,7 +431,8 @@ const setitemfocus = (itemid) => {
         name: 'Staff Attendance',
         icon: 'circle-outline',
         route: 'Staffattendance',
-        permission: '',
+        permission: 'viewstaffattendance',
+        role: '',
         children: []
       },
       {
@@ -397,7 +440,8 @@ const setitemfocus = (itemid) => {
         name: 'All Attendance',
         icon: 'circle-outline',
         route: 'Allstaffattendance',
-        permission: '',
+        permission: 'viewallattendance',
+        role: '',
         children: []
       },
       {
@@ -405,7 +449,8 @@ const setitemfocus = (itemid) => {
         name: 'Payroll',
         icon: 'circle-outline',
         route: 'Allpayroll',
-        permission: '',
+        permission: 'viewpayroll',
+        role: '',
         children: []
       },
       {
@@ -413,7 +458,8 @@ const setitemfocus = (itemid) => {
         name: 'Staff Leave',
         icon: 'circle-outline',
         route: 'Leave',
-        permission: '',
+        permission: 'viewstaffleave',
+        role: '',
         children: []
       },
       {
@@ -421,7 +467,8 @@ const setitemfocus = (itemid) => {
         name: 'Teachers Review',
         icon: 'circle-outline',
         route: 'All Students',
-        permission: '',
+        permission: 'viewteachersreview',
+        role: '',
         children: []
       }
     ]
@@ -431,14 +478,16 @@ const setitemfocus = (itemid) => {
     name: 'Hostel',
     icon: 'home-city-outline',
     route: 'All Students',
-    permission: '',
+    permission: 'viewhostel',
+    role: '',
     children: [
     {
       key: 81,
       name: 'Add Hostel',
       icon: 'circle-outline',
       route: 'Hostel',
-      permission: '',
+      permission: 'viewhostel',
+      role: '',
       children: []
     },
     {
@@ -446,7 +495,8 @@ const setitemfocus = (itemid) => {
       name: 'Allocate Student',
       icon: 'circle-outline',
       route: 'Allocatestudent',
-      permission: '',
+      permission: 'viewhostel',
+      role: '',
       children: []
     }
   ]
@@ -456,7 +506,8 @@ const setitemfocus = (itemid) => {
     name: 'Teaching Log',
     icon: 'post',
     route: 'Teachinglogs',
-    permission: '',
+    permission: 'viewteachinglog',
+    role: '',
     children: []
   },
   {
@@ -464,7 +515,8 @@ const setitemfocus = (itemid) => {
     name: 'Report Signature',
     icon: 'draw-pen',
     route: 'Terninalreportsignature',
-    permission: '',
+    permission: 'viewterminalreportsignatures',
+    role: '',
     children: []
   },
   {
@@ -472,7 +524,8 @@ const setitemfocus = (itemid) => {
     name: 'Weekly Report',
     icon: 'chart-line',
     route: 'All Students',
-    permission: '',
+    permission: 'viewteachersweeklyreport',
+    role: '',
     children: []
   },
   {
@@ -480,7 +533,8 @@ const setitemfocus = (itemid) => {
     name: 'Online Quiz',
     icon: 'cast-education',
     route: 'Listexams',
-    permission: '',
+    permission: 'viewonlinequiz',
+    role: '',
     children: []
   },
   {
@@ -488,21 +542,24 @@ const setitemfocus = (itemid) => {
     name: 'Library',
     icon: 'library',
     route: 'All Students',
-    permission: '',
+    permission: 'viewlibrary',
+    role: '',
     children: [
       {
         key: 131,
         name: 'Books',
         icon: 'circle-outline',
         route: 'Books',
-        permission: '',
+        permission: 'viewlibrary',
+        role: '',
         children: []
       },{
         key: 132,
         name: 'Issue Books',
         icon: 'circle-outline',
         route: 'Issuebooks',
-        permission: '',
+        permission: 'viewlibrary',
+        role: '',
         children: []
       },
     ]
@@ -512,7 +569,8 @@ const setitemfocus = (itemid) => {
     name: 'Inventory',
     icon: 'book-outline',
     route: 'All Students',
-    permission: '',
+    permission: 'viewinventory',
+    role: '',
     children: []
   },
   {
@@ -520,14 +578,16 @@ const setitemfocus = (itemid) => {
     name: 'Transportation',
     icon: 'bus-school',
     route: 'All Students',
-    permission: '',
+    permission: 'viewtransportation',
+    role: '',
     children: [
       {
         key: 121,
         name: 'Vehicle',
         icon: 'circle-outline',
         route: 'vehicle',
-        permission: '',
+        permission: 'viewtransportation',
+        role: '',
         children: []
       },
       {
@@ -535,7 +595,8 @@ const setitemfocus = (itemid) => {
         name: 'Waypoints',
         icon: 'circle-outline',
         route: 'waypoint',
-        permission: '',
+        permission: 'viewtransportation',
+        role: '',
         children: []
       },
       {
@@ -543,7 +604,8 @@ const setitemfocus = (itemid) => {
         name: 'Routes',
         icon: 'circle-outline',
         route: 'Routes',
-        permission: '',
+        permission: 'viewtransportation',
+        role: '',
         children: []
       },
       {
@@ -551,7 +613,8 @@ const setitemfocus = (itemid) => {
         name: 'Waypoint Transfer',
         icon: 'circle-outline',
         route: 'All Students',
-        permission: '',
+        permission: 'viewtransportation',
+        role: '',
         children: []
       },
     ]
@@ -561,7 +624,8 @@ const setitemfocus = (itemid) => {
     name: 'E Learning',
     icon: 'video-vintage',
     route: 'Onlinelearning',
-    permission: '',
+    permission: 'viewe-learning',
+    role: '',
     children: []
   },
   {
@@ -569,7 +633,8 @@ const setitemfocus = (itemid) => {
     name: 'Live Class',
     icon: 'google-classroom',
     route: 'Zoommeetings',
-    permission: '',
+    permission: 'viewonlineclass',
+    role: '',
     children: []
   },
   {
@@ -577,7 +642,8 @@ const setitemfocus = (itemid) => {
     name: 'Home work',
     icon: 'book-open-outline',
     route: 'Listhomework',
-    permission: '',
+    permission: 'viewonlineassignment',
+    role: '',
     children: []
   },
   {
@@ -585,14 +651,16 @@ const setitemfocus = (itemid) => {
     name: 'Student Attendance',
     icon: 'account-check-outline',
     route: 'Studentattendance',
-    permission: '',
+    permission: 'viewstudentattendance',
+    role: '',
     children: [
       {
         key: 141,
         name: 'Record Attendance',
         icon: 'circle-outline',
         route: 'Studentattendance',
-        permission: '',
+        permission: 'viewstudentattendance',
+        role: '',
         children: []
       },
       {
@@ -600,7 +668,8 @@ const setitemfocus = (itemid) => {
         name: 'Total Attendance',
         icon: 'circle-outline',
         route: 'Totalattendance',
-        permission: '',
+        permission: 'viewstudentattendance',
+        role: '',
         children: []
       },
     ]
@@ -610,7 +679,8 @@ const setitemfocus = (itemid) => {
     name: 'Student Results',
     icon: 'chart-timeline',
     route: 'All Students',
-    permission: '',
+    permission: 'viewstudentresults',
+    role: '',
     children: []
   },
   {
@@ -618,15 +688,17 @@ const setitemfocus = (itemid) => {
     name: 'Questionaires',
     icon: 'help-circle-outline',
     route: 'All Students',
-    permission: '',
+    permission: 'viewquestionnaires',
+    role: '',
     children: []
   },
   {
     key: 17,
     name: 'Terminal Report',
     icon: 'chart-line',
-    route: 'All Students',
-    permission: '',
+    route: 'Normalreport',
+    permission: 'viewterminalreport',
+    role: '',
     children: []
   },
   {
@@ -634,7 +706,8 @@ const setitemfocus = (itemid) => {
     name: 'Communicate',
     icon: 'email-box',
     route: 'All Students',
-    permission: '',
+    permission: 'viewcommunicate',
+    role: '',
     children: []
   },
   {
@@ -642,7 +715,8 @@ const setitemfocus = (itemid) => {
     name: 'Settings',
     icon: 'cog',
     route: 'All Students',
-    permission: '',
+    permission: 'viewsettings',
+    role: '',
     children: []
   },
 
@@ -688,10 +762,133 @@ const setfocustate  = (key) => {
                             </View>
                         </View>
                     </View>
-                   
+
+                    {permission !== null && (
+
+                  
                     <Drawer.Section style={styles.drawerSection}>
 
-                    {drawerlist.map(item => (
+                    {drawerlist.map(item => {
+                      
+                      if(item.permission !=""){
+
+                        if(permission.includes(item.permission)){
+
+                          return (
+                          <>
+                            <DrawerItem 
+                              focused={focus == item.key ? true: false}
+                              icon={({color, size}) => (
+                                  <Icon 
+                                    name={item.icon}
+                                      color={color}
+                                      size={size}
+                                      />
+                                  )}
+                                label={({color, focused}) => (
+                                    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                        <Text {...focused}>{item.name}</Text>
+                                        {item.children.length > 0 && (
+                                          <>
+                                          {focus == item.key ? (
+                                              <Ionicons name='arrow-down' size={25} color={color} />
+                                          ): (
+                                            <Ionicons name='arrow-up' size={25} color={color} />
+                                          )}
+                                          </>
+                                        )}
+                                    </View>
+                                )}   
+                              onPress={() => {
+                                setitemfocus(item.key);
+                                if(item.children.length > 0){
+
+                                }else{
+                                  setsubFocus(0);
+                                  props.navigation.navigate(item.route);
+                                }
+
+                              }}
+                            />
+
+                          {focus == item.key && (
+                          <>
+                          {item.children.map(children => {
+                            if(permission.includes(children.permission)){
+                              return (
+                            <DrawerItem 
+                            focused={focus == item.key &&  subfocus == children.key ? true: false}
+                            icon={({color, size}) => (
+                                <Icon 
+                                  name={children.icon}
+                                    color={color}
+                                    size={size}
+                                    />
+                                )}
+                                label={({color, focused}) => (
+                                  <Text>{children.name}</Text>
+                              )}  
+                            onPress={() => {
+                                setsubFocus(children.key);
+                                props.navigation.navigate(children.route);
+                            }}
+                            />
+                              );
+                            }
+                          })}
+
+                        </>
+                       )}
+
+                          </>
+
+                          );
+
+                        }
+                      }else{
+                        return (
+                        <DrawerItem 
+                          focused={focus == item.key ? true: false}
+                          icon={({color, size}) => (
+                              <Icon 
+                                name={item.icon}
+                                  color={color}
+                                  size={size}
+                                  />
+                              )}
+                            label={({color, focused}) => (
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                    <Text {...focused}>{item.name}</Text>
+                                    {item.children.length > 0 && (
+                                      <>
+                                      {focus == item.key ? (
+                                          <Ionicons name='arrow-down' size={25} color={color} />
+                                      ): (
+                                        <Ionicons name='arrow-up' size={25} color={color} />
+                                      )}
+                                      </>
+                                    )}
+                                </View>
+                            )}   
+                          onPress={() => {
+                            setitemfocus(item.key);
+                            if(item.children.length > 0){
+
+                            }else{
+                              setsubFocus(0);
+                              props.navigation.navigate(item.route);
+                            }
+
+                          }}
+                      />
+                        );
+                      }
+                    })}
+
+
+
+
+                    {/* {drawerlist.map(item => (
                         <>
                           <DrawerItem 
                             focused={focus == item.key ? true: false}
@@ -717,9 +914,7 @@ const setfocustate  = (key) => {
                                   </View>
                               )}   
                             onPress={() => {
-                             // setFocus(item.key);
                               setitemfocus(item.key);
-                              //setfocustate(item.key);
                               if(item.children.length > 0){
 
                               }else{
@@ -760,14 +955,12 @@ const setfocustate  = (key) => {
                         </>
 
                         
-                    ))}
+                    ))} */}
                 
-
-                
-                        
-                       
                         
                 </Drawer.Section>
+
+                )}
 
                     
                 </View>

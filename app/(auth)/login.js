@@ -66,8 +66,6 @@ function login() {
         })
           .then(async (response) => {
 
-            console.log(response.data);
-
             if(response.data.error){
                // ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
                 alert(response.data.message);
@@ -86,7 +84,7 @@ function login() {
                 dispatch(setToken(response.data.token));
                 dispatch(setRoles(response.data.roles));
                 dispatch(setUserpermission(response.data.userpermission));
-                dispatch(setPermissions(response.data.permissions));
+               // dispatch(setPermissions(response.data.permissions));
                 dispatch(setCurrency(response.data.currency));
 
                 Setsubmiitting(false);
