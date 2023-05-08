@@ -11,6 +11,7 @@ import { selectuser } from '../../features/userinfoSlice';
 import { storeData, removeusertoken, gettokendata, selectusertoken } from '../../features/usertokenSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showMessage } from "react-native-flash-message";
+import { schoolzapi } from '../../components/constants';
 
 function login() {
     
@@ -59,7 +60,7 @@ function login() {
             password: password
         }
 
-        axios.post('http://192.168.43.132/api/auth-login',
+        axios.post(schoolzapi+'/auth-login',
         formdata,
         {
             headers: {Accept: 'application/json'}
@@ -96,6 +97,7 @@ function login() {
           .catch(function (error) {
             Setsubmiitting(false);
             console.log(error);
+            //console.log(schoolzapi+'/auth-login');
           });
         
     }
