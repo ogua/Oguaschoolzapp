@@ -65,6 +65,13 @@ import Leave from '../../components/Staff/Leave';
 import Listexams from '../../components/Exams/Listexams';
 import Allpayroll from '../../components/Staff/Payroll';
 import Normalreport from '../../components/Terminalreport/Normalreport';
+import Schoolinformation from '../../components/Settings/Schoolinfo';
+import Smssettings from '../../components/Settings/Smssettings';
+import Notificationsettings from '../../components/Settings/Notificationsetting';
+import Mailsettings from '../../components/Settings/Mailsettings';
+import Noticeboard from '../../components/Communicate/Noticeboard';
+import Messagetemplate from '../../components/Communicate/Messagetemplates';
+import Sendmail from '../../components/Communicate/Sendmail';
 
 const Drawer = createDrawerNavigator();
 
@@ -144,6 +151,20 @@ function Maindashboard() {
 
 
       <Drawer.Screen name="Normalreport" component={Normalreport} />
+
+
+      <Drawer.Screen name="Noticeboard" component={Noticeboard} />
+      <Drawer.Screen name="Messagetemplate" component={Messagetemplate} />
+      <Drawer.Screen name="Sendmail" component={Sendmail} />
+      
+      
+
+
+      <Drawer.Screen name="Schoolinformation" component={Schoolinformation} />
+      <Drawer.Screen name="Smssettings" component={Smssettings} />
+      <Drawer.Screen name="Notificationsettings" component={Notificationsettings} />
+      <Drawer.Screen name="Mailsettings" component={Mailsettings} />
+      
       
       
       <Drawer.Screen name="TextBottomsheet" component={TextBottomsheet} />

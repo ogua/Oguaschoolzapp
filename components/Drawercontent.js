@@ -708,7 +708,44 @@ const setitemfocus = (itemid) => {
     route: 'All Students',
     permission: 'viewcommunicate',
     role: '',
-    children: []
+    children: [
+      {
+        key: 181,
+        name: 'Noticeboard',
+        icon: 'circle-outline',
+        route: 'Noticeboard',
+        permission: 'viewnoticeboard',
+        role: '',
+        children: []
+      },
+      {
+        key: 182,
+        name: 'Message Template',
+        icon: 'circle-outline',
+        route: 'Messagetemplate',
+        permission: 'viewnoticeboard',
+        role: '',
+        children: []
+      },
+      {
+        key: 183,
+        name: 'Send SMS',
+        icon: 'circle-outline',
+        route: 'Sendmail',
+        permission: 'viewnoticeboard',
+        role: '',
+        children: []
+      },
+      {
+        key: 184,
+        name: 'Send Mail',
+        icon: 'circle-outline',
+        route: 'Sendmail',
+        permission: 'viewnoticeboard',
+        role: '',
+        children: []
+      }
+    ]
   },
   {
     key: 19,
@@ -717,7 +754,44 @@ const setitemfocus = (itemid) => {
     route: 'All Students',
     permission: 'viewsettings',
     role: '',
-    children: []
+    children: [
+      {
+        key: 191,
+        name: 'School Information',
+        icon: 'circle-outline',
+        route: 'Schoolinformation',
+        permission: 'viewsettings',
+        role: '',
+        children: []
+      },
+      {
+        key: 192,
+        name: 'SMS Settings',
+        icon: 'circle-outline',
+        route: 'Smssettings',
+        permission: 'viewsettings',
+        role: '',
+        children: []
+      },
+      {
+        key: 193,
+        name: 'Notification Settings',
+        icon: 'circle-outline',
+        route: 'Notificationsettings',
+        permission: 'viewsettings',
+        role: '',
+        children: []
+      },
+      {
+      key: 194,
+      name: 'Mail Settings',
+      icon: 'circle-outline',
+      route: 'Mailsettings',
+      permission: 'viewsettings',
+      role: '',
+      children: []
+    }
+    ]
   },
 
 

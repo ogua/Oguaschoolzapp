@@ -118,8 +118,8 @@ function Createsubject() {
 
         <Card>
             <Card.Content>
-            <TextInput 
-              placeholder='Subject Name'
+            <TextInput
+              label="Subject Name"
               onChangeText={(e) => setName(e)}
               value={name} />
 
