@@ -72,6 +72,8 @@ import Mailsettings from '../../components/Settings/Mailsettings';
 import Noticeboard from '../../components/Communicate/Noticeboard';
 import Messagetemplate from '../../components/Communicate/Messagetemplates';
 import Sendmail from '../../components/Communicate/Sendmail';
+import Sendsms from '../../components/Communicate/Sendsms';
+import Makepayment from '../../components/Payment/Makepayment';
 
 const Drawer = createDrawerNavigator();
 
@@ -98,6 +100,8 @@ function Maindashboard() {
       <Drawer.Screen name="Calllogs" component={Calllogs} />
       <Drawer.Screen name="Postaldispatch" component={Postaldispatch} />
       <Drawer.Screen name="Postalreceived" component={Postalreceived} />
+
+      
       <Drawer.Screen name="Newstudent" component={Addstudent} />
       <Drawer.Screen name="Studentlist" component={Allstudents} />
 
@@ -152,13 +156,13 @@ function Maindashboard() {
 
       <Drawer.Screen name="Normalreport" component={Normalreport} />
 
+      <Drawer.Screen name="Makepayment" component={Makepayment} />
 
       <Drawer.Screen name="Noticeboard" component={Noticeboard} />
       <Drawer.Screen name="Messagetemplate" component={Messagetemplate} />
       <Drawer.Screen name="Sendmail" component={Sendmail} />
+      <Drawer.Screen name="Sendsms" component={Sendsms} />
       
-      
-
 
       <Drawer.Screen name="Schoolinformation" component={Schoolinformation} />
       <Drawer.Screen name="Smssettings" component={Smssettings} />

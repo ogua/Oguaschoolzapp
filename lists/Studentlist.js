@@ -74,8 +74,8 @@ function Studentlist ({item,deletedata,studentclasslist}) {
         {visible && (
                 <View style={{backgroundColor: `${visible ? '#fff' : '#fff'}`, borderBottomColor: '#000', borderBottomWidth: 1 }}>
                 <Divider bold={true} />
-                <Menu.Item style={[styles.textcolor,{marginLeft: 10}]} leadingIcon="square-edit-outline" onPress={()=> router.push(`/admin/Frontdesk/create-edit-visitor?id=${item?.id}`)} title="Edit" />
-                <Menu.Item disabled={item?.phone == "" ? true: false} style={{marginLeft: 10}} leadingIcon="eye" title="View" onPress={() => Linking.openURL(`tel:${item?.phone}`)} />
+                <Menu.Item style={[styles.textcolor,{marginLeft: 10}]} leadingIcon="square-edit-outline" onPress={()=> router.push(`/admin/admission/edit-student?id=${item?.id}`)} title="Edit" />
+                <Menu.Item disabled={item?.phone == "" ? true: false} style={{marginLeft: 10}} leadingIcon="eye" title="View" onPress={()=> router.push(`/admin/admission/view-student?id=${item?.id}`)} />
                 <Menu.Item style={{marginLeft: 10}} leadingIcon="delete-forever-outline" title="Delete" onPress={()=> deletedata(item?.id,item?.fullname)} />
                 <Menu.Item disabled={item?.phone == "" ? true: false} style={{marginLeft: 10}} leadingIcon="phone" title="Call Parent" onPress={() => Linking.openURL(`tel:${item?.phone}`)} />
                 <Menu.Item disabled={item?.phone == "" ? true: false} style={{marginLeft: 10}} leadingIcon="currency-usd" title="Update Payment" onPress={() => Linking.openURL(`tel:${item?.phone}`)} />

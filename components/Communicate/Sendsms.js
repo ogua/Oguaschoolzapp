@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Redirect, Stack, useRouter, useSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, DeviceEventEmitter, KeyboardAvoidingView, PermissionsAndroid, SafeAreaView, ScrollView, StyleSheet, Text, ToastAndroid, View } from 'react-native'
-import { Avatar, Button, Card, Checkbox, TextInput } from 'react-native-paper';
+import { Avatar, Button, Card, Checkbox, TextInput, Dialog, Portal, Provider } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -16,9 +16,10 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { showMessage } from "react-native-flash-message";
 import { selecttoken } from '../../features/userinfoSlice';
 import { schoolzapi } from '../constants';
+import { LocaleConfig, Calendar } from "react-native-calendars";
 
 
-function Sendmail() {
+function Sendsms() {
 
     const token = useSelector(selecttoken);
     const [file, setFile] = useState(null);
@@ -58,6 +59,12 @@ function Sendmail() {
     const router = useRouter();
     const {id} = useSearchParams();
     const [stclass, setstclass] = useState(false);
+
+
+    const [showdialog, setShowdialog] = useState(false);
+    const hideDialog = () => setShowdialog(false);
+    const [selecteddate, setSelecteddate] = useState(false);
+    const [scheduledate, setscheduledate] = useState("");
   
 
     useEffect(()=>{
@@ -127,12 +134,7 @@ function Sendmail() {
      settemplateItems(mdata);
 }
 
-  const sendmail = () => {
-
-    if(subject == ""){
-      alert('Subject cant be empty');
-      return;
-    }
+  const sendsms = () => {
 
     if(template == ""){
         alert('Template cant be empty');
@@ -142,24 +144,15 @@ function Sendmail() {
 
       const data = new FormData();
 
-      if(file != null){
-
-        data.append('filetoupload', {
-          uri: file.uri,
-          name: file.name,
-          type: file.mimeType
-        });
-
-      }
-
-      data.append('subject',subject);
       data.append('sendto',sendto);
       data.append('template',template);
 
       data.append('pupil',studentItems);
       data.append('eperphone',email);
+      data.append('sheduletime',"");
+      
 
-    axios.post(schoolzapi+'/send-mail',
+    axios.post(schoolzapi+'/send-sms',
     data,
     {
         headers: {Accept: 'application/json',
@@ -171,12 +164,12 @@ function Sendmail() {
         setIssubmitting(false);
 
         showMessage({
-            message: 'Mail Sent Successfully!',
+            message: 'SMS Sent Successfully!',
             type: "success",
             position: 'bottom',
           });
 
-          setFile(null);
+          //setFile(null);
        
         //router.back();
       })
@@ -279,10 +272,11 @@ const checkPermissions = async () => {
 
 
     return (
+    <Provider>
       <SafeAreaView>
         <Stack.Screen
             options={{
-                headerTitle: 'Send Mail',
+                headerTitle: 'Send SMS',
                 presentation: 'formSheet',
             }}
 
@@ -295,14 +289,6 @@ const checkPermissions = async () => {
         {isloading ? <ActivityIndicator size="large" color="#1782b6" /> : (
         <Card>
         <Card.Content>
-          
-
-        <TextInput
-              label="Subject"
-              mode="outlined"
-              onChangeText={(e) => setsubject(e)}
-              value={subject} />
-
 
                   <DropDownPicker
                     open={opentemplate}
@@ -400,28 +386,58 @@ const checkPermissions = async () => {
         {sendto === 5 && (
 
           <TextInput
-          label="Email Address"
+          label="Phone Number"
           mode="outlined"
-          keyboardType="email-address"
+          keyboardType="phone-pad"
           onChangeText={(e) => setemail(e)}
           value={email} />
 
         )}
-        
-        
 
-<Button icon="file" onPress={selectFile} uppercase={false} mode="outlined" style={{marginTop: 20}}>
-       Add Attachment
-    </Button>            
+
+         {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Text style={{fontSize: 15, fontWeight: 500}}>Schedule SMS to be sent later </Text>
+          <Button icon="calendar-range" onPress={() => setShowdialog(true)}> select Date</Button>
+      </View>
+      <Portal>
+    <Dialog visible={showdialog} onDismiss={hideDialog}>
+        <Dialog.Content>
+            <Calendar
+                visible={true}
+                onDayPress={(day) => {
+                setSelecteddate(day.dateString);
+                setscheduledate(day.dateString);
+                setShowdialog(false);
+                }}
+                markedDates={{
+                    [selecteddate]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}
+                }}
+                    enableSwipeMonths={true}
+                />
+
+        </Dialog.Content>
+        <Dialog.Actions>
+            <Button onPress={hideDialog}>Cancel</Button>
+            </Dialog.Actions>
+        </Dialog>
+        </Portal>
+
+        <TextInput
+        style={styles.Forminputhelp}
+        mode="outlined"
+        value={scheduledate}
+        onChangeText={(e) => setscheduledate(e)}
+        />
+        <Text>Make sure the scheduled date and time are more than an hour from now</Text> */}
 
 
         {issubmitting ? <ActivityIndicator size="large" color="#1782b6" style={{marginTop: 30}} /> : (
-        <Button icon="mail" mode="contained" onPress={sendmail} style={{marginTop: 30}}>
-        Send Mail
+        <Button icon="mail" mode="contained" onPress={sendsms} style={{marginTop: 30}}>
+        Send SMS
         </Button>
         )}
 
-</Card.Content>
+       </Card.Content>
         </Card>
         )}
         </KeyboardAvoidingView>
@@ -429,10 +445,11 @@ const checkPermissions = async () => {
 
 
       </SafeAreaView>
+      </Provider>
     )
 }
 
-export default Sendmail;
+export default Sendsms;
 
 const styles = StyleSheet.create({
     Forminput: {

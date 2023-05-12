@@ -6,7 +6,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser, setToken, setRoles,  setUserpermission, setPermissions, setMenu, setCurrency, selecttoken } from '../../features/userinfoSlice';
+import { setUser, setToken, setRoles,  setUserpermission, setPermissions, setMenu, setCurrency, selecttoken, setSchool } from '../../features/userinfoSlice';
 import { selectuser } from '../../features/userinfoSlice';
 import { storeData, removeusertoken, gettokendata, selectusertoken } from '../../features/usertokenSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -87,6 +87,7 @@ function login() {
                 dispatch(setUserpermission(response.data.userpermission));
                // dispatch(setPermissions(response.data.permissions));
                 dispatch(setCurrency(response.data.currency));
+                dispatch(setSchool(response.data.school));
 
                 Setsubmiitting(false);
                 router.push('/admin/');

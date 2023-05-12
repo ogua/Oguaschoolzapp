@@ -239,7 +239,7 @@ const setitemfocus = (itemid) => {
   {
     key: 6,
     name: 'Accounts',
-    icon: 'account-group',
+    icon: 'cash',
     route: 'Accounts Management',
     permission: 'viewaccountmanagement',
     role: '',
@@ -731,7 +731,7 @@ const setitemfocus = (itemid) => {
         key: 183,
         name: 'Send SMS',
         icon: 'circle-outline',
-        route: 'Sendmail',
+        route: 'Sendsms',
         permission: 'viewnoticeboard',
         role: '',
         children: []
@@ -808,6 +808,31 @@ const setfocustate  = (key) => {
   }else{
     setFocus(key);
   }
+}
+
+permission !== null && permission.includes("viewaccountmanagement")
+
+
+function checkpermission(){
+
+  if(permission !== null){
+    if(permission.includes("viewaccountmanagement")){
+      return (
+         <DrawerItem 
+                icon={({color, size}) => (
+                    <Icon 
+                    name="cash" 
+                    color={color}
+                    size={size}
+                    />
+                )}
+                label="Make Payment"
+                onPress={()=> props.navigation.navigate("Makepayment")}
+          /> 
+      );
+    }
+  }
+
 }
 
     const paperTheme = useTheme();
@@ -1038,8 +1063,13 @@ const setfocustate  = (key) => {
 
                     
                 </View>
+                
             </DrawerContentScrollView>
+          
             <Drawer.Section style={styles.bottomDrawerSection}>
+            
+                {checkpermission()}
+                
                 <DrawerItem 
                     icon={({color, size}) => (
                         <Icon 
@@ -1051,6 +1081,7 @@ const setfocustate  = (key) => {
                     label="Sign Out"
                     onPress={() => {handlelogout()}}
                 />
+
             </Drawer.Section>
         </View>
     );

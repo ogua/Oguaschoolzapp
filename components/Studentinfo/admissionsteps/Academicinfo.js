@@ -110,7 +110,6 @@ function Academicinfo (props) {
             :
             
             <>
-
             <ScrollView style={{marginBottom: 60}}>
                 
                 <View style={{marginHorizontal: 10, marginTop: 20}}>

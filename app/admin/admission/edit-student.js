@@ -11,8 +11,6 @@ import { useCallback } from 'react';
 import * as Animatable from 'react-native-animatable';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { selectschool, selecttoken, selectuser } from '../../features/userinfoSlice';
-import { schoolzapi } from '../constants';
 import AnimatedMultistep from "react-native-animated-multistep";
 import * as Imagepicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
@@ -23,28 +21,21 @@ import { showMessage } from "react-native-flash-message";
 
 
 
-/* Define the steps  */
-import Step1 from './admissionsteps/Personalinfo';
-import Academicinfo from './admissionsteps/Academicinfo';
-import Gurdianinformation from './admissionsteps/Gurdianinformation';
-import Paymentinformation from './admissionsteps/Paymentinformation';
+
 
 
 import { ScrollView } from 'react-native-gesture-handler';
+import { selectschool, selecttoken, selectuser } from '../../../features/userinfoSlice';
+import { schoolzapi } from '../../../components/constants';
 
-const allSteps = [
-  { name: "step 1", component: Step1 },
-  { name: "step 2", component: Academicinfo },
-  { name: "step 3", component: Gurdianinformation },
-  { name: "step 4", component: Paymentinformation }
-];
 
-function Addstudent(props) {
+function Editstudent() {
 
   const token = useSelector(selecttoken);
   const user = useSelector(selectuser);
   const school = useSelector(selectschool);
   const [link,setlink] = useState("");
+  
 
   const router = useRouter();
   const navigation = useNavigation();
@@ -149,7 +140,7 @@ function Addstudent(props) {
     const [sgemail, setsgemail] = useState("");
 
     const [openrelationship, setOpenrelationship] = useState(false);
-    const [relationship, setrelationship] = useState(null);
+    const [relationship, setrelationship] = useState("");
     const [relationshipitem, setrelationshipitems] = useState([
         { label: "Mother", value: "Mother"},
         { label: "Father", value: "Father"},
@@ -160,7 +151,7 @@ function Addstudent(props) {
     ]);
 
     const [openemployed, setOpenemployed] = useState(false);
-    const [employed, setemployed] = useState(null);
+    const [employed, setemployed] = useState("");
     const [employeditem, setemployeditems] = useState([
         { label: "Yes", value: "Yes"},
         { label: "No", value: "No"},
@@ -168,7 +159,7 @@ function Addstudent(props) {
 
 
     const [opensrelationship, setOpensrelationship] = useState(false);
-    const [srelationship, setsrelationship] = useState(null);
+    const [srelationship, setsrelationship] = useState("");
     const [srelationshipitem, setsrelationshipitems] = useState([
         { label: "Mother", value: "Mother"},
         { label: "Father", value: "Father"},
@@ -179,7 +170,7 @@ function Addstudent(props) {
     ]);
 
     const [opensemployed, setOpensemployed] = useState(false);
-    const [semployed, setsemployed] = useState(null);
+    const [semployed, setsemployed] = useState("");
     const [semployeditem, setsemployeditems] = useState([
         { label: "Yes", value: "Yes"},
         { label: "No", value: "No"},
@@ -187,6 +178,30 @@ function Addstudent(props) {
 
 
     const {id} = useSearchParams();
+
+
+    useEffect(()=> {
+
+        setTimeout(() => {
+          setisloading(false);
+        }, 1000);
+    
+      },[step]);
+    
+    
+      useEffect(()=> {
+    
+        if(id !== undefined){
+            loadedit();
+            setlink(schoolzapi+"/update-student-info/"+id);
+        }else{
+            setlink(schoolzapi+"/add-student");
+        }
+    
+         loaddata();
+       },[]);
+
+
 
 
     function checkpayselected(){
@@ -201,6 +216,10 @@ function Addstudent(props) {
 
 
     const createdata = () => {
+
+       // navigation.openDrawer();
+
+       // return;
 
         checkpayselected();
 
@@ -281,7 +300,7 @@ function Addstudent(props) {
       data.append('srelationship',srelationship);
       data.append('semployed',semployed);
 
-        axios.post(link,
+        axios.post(schoolzapi+"/update-student-info/"+id,
         data,
         {
             headers: {Accept: 'application/json',
@@ -297,13 +316,13 @@ function Addstudent(props) {
             if(response.data.message){
 
                 showMessage({
-                    message: 'Student Added Successfully!',
+                    message: 'Student Information Updated Successfully!',
                     type: "success",
                     position: 'bottom',
                 });
 
                 DeviceEventEmitter.emit('subject.added', {});
-                navigation.navigate("Studentlist");
+                router.back();
             }
 
             if(response.data.error){
@@ -412,27 +431,6 @@ function Addstudent(props) {
 
   
 
-  useEffect(()=> {
-
-    setTimeout(() => {
-      setisloading(false);
-    }, 1000);
-
-  },[step]);
-
-
-  useEffect(()=> {
-
-    if(id !== undefined){
-        loadedit();
-        setlink(schoolzapi+"/update-student-info/"+id);
-    }else{
-        setlink(schoolzapi+"/add-student");
-    }
-
-     loaddata();
-   },[]);
-
    //console.log(link);
 
    const loadedit = () => {
@@ -445,7 +443,54 @@ function Addstudent(props) {
     }
     }).then(function (results) {
 
+        //console.log("data",results.data.data);
+        setPic(results.data.data.pic);
+        setsurname(results.data.data.surname);
         setfirstname(results.data.data.firstname);
+        setothernames(results.data.data.onames);
+        setbranch(results.data.data.branch);
+        setgender(results.data.data.gender);
+        setDateofbirth(results.data.data.dateofbirth);
+        setnationality(results.data.data.nationality);
+        setplaceofbirth(results.data.data.placeofbirth);
+        setreligion(results.data.data.religion);
+        sethometown(results.data.data.hometown);
+        setDisability(results.data.data.disability);
+        setentrylevel(parseInt(results.data.data.entrylevel));
+        setcurrentlevel(parseInt(results.data.data.currentlevel));
+        setstudentid(results.data.data.student_id);
+
+        if(results.data.data.gaurdain.length > 0){
+
+            console.log("gurdian",results.data.data.gaurdain);
+            setgfullname(results.data.data.gaurdain[0].gurdianname);
+            setrelationship(results.data.data.gaurdain[0].relationship);
+            setgoccupation(results.data.data.gaurdain[0].occupation);
+            setgpostcode(results.data.data.gaurdain[0].postcode);
+            setgmobile(results.data.data.gaurdain[0].mobile);
+            setgemail(results.data.data.gaurdain[0].email);
+            setemployed(results.data.data.gaurdain[0].employed);
+
+            setsgfullname(results.data.data.gaurdain[1]?.gurdianname);
+            setsrelationship(results.data.data.gaurdain[1]?.relationship);
+            setsgoccupation(results.data.data.gaurdain[1]?.occupation);
+            setsgpostcode(results.data.data.gaurdain[1]?.postcode);
+            setsgmobile(results.data.data.gaurdain[1]?.mobile);
+            setsgemail(results.data.data.gaurdain[1]?.email);
+            setsemployed(results.data.data.gaurdain[1]?.employed);
+        }
+
+        //console.log(results.data.data.paystatus);
+
+        setpaytype(results.data.data.paystatus);
+        setfirdaws(parseInt(results.data.data.paydiscount));
+        setuntoma(parseInt(results.data.data.paydiscount));
+        setpaydiscount(results.data.data.paydiscount);
+
+        
+
+
+        
 
      
         
@@ -628,7 +673,7 @@ const checkPermissions = async () => {
     <Provider>
         <SafeAreaView style={{ flex: 1 }}>
         <Stack.Screen  options={{
-            headerTitle: 'New Student'
+            headerTitle: 'Edit Student Information'
         }} />
 
         <View>
@@ -1293,7 +1338,7 @@ const checkPermissions = async () => {
 
 
          {issubmitting ? <ActivityIndicator size="large" style={{marginTop: 30, marginBottom: 50}} /> : (
-            <Button mode="contained" style={{marginTop: 30, marginBottom: 50}} onPress={createdata}>Add Student</Button>
+            <Button mode="contained" style={{marginTop: 30, marginBottom: 50}} onPress={createdata}>Save</Button>
          )}
 
 
@@ -1306,7 +1351,7 @@ const checkPermissions = async () => {
     )
 }
 
-export default Addstudent;
+export default Editstudent;
 
 const styles = StyleSheet.create({
 

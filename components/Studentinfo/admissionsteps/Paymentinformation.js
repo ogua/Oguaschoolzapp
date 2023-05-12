@@ -12,7 +12,7 @@ import { selecttoken } from '../../../features/userinfoSlice';
 import { schoolzapi } from '../../constants';
 
 function Paymentinformation (props) {
-    //console.log("props", props);
+   // console.log("props", props);
 
     const token = useSelector(selecttoken);
     const [isloading, setLoading] = useState(false);
@@ -89,6 +89,11 @@ function Paymentinformation (props) {
     };
 
     const saveinfo = () => {
+
+        props.next();
+       // props.getCurrentStep()
+        return;
+
         setIssubmitting(true);
        
         props.saveState(

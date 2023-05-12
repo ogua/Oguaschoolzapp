@@ -7,7 +7,8 @@ const initialState = {
   userpermission: null,
   permissions: null,
   menu: null,
-  currency: null
+  currency: null,
+  school: null
 }
 
 export const userinfoSlice = createSlice({
@@ -35,6 +36,9 @@ export const userinfoSlice = createSlice({
     setCurrency: (state, action) => {
       state.currency = action.payload
   },
+  setSchool: (state, action) => {
+    state.school = action.payload
+},
   logout: (state) => {
     state.user = null;
     state.token = null;
@@ -45,7 +49,7 @@ export const userinfoSlice = createSlice({
   },
 })
 
-export const { setUser, setToken, setRoles,  setUserpermission, setPermissions, setMenu, setCurrency, logout} = userinfoSlice.actions
+export const { setUser, setToken, setRoles,  setUserpermission, setPermissions, setMenu, setCurrency, logout, setSchool} = userinfoSlice.actions
 
 export const selectuser = (state) => state.userinfo.user
 export const selecttoken = (state) => state.userinfo.token
@@ -54,5 +58,6 @@ export const selectuserpermission = (state) => state.userinfo.userpermission
 export const selectpermissions = (state) => state.userinfo.permissions
 export const selectmenu = (state) => state.userinfo.menu
 export const selectcurrency = (state) => state.userinfo.currency
+export const selectschool = (state) => state.userinfo.school
 
 export default userinfoSlice.reducer
