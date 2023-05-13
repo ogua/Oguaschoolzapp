@@ -18,7 +18,7 @@ import Normallist from '../../lists/Normallist';
 import { showMessage } from "react-native-flash-message";
 
 
-function Allstudents () {
+function Allcompletedstudents () {
 
     const token = useSelector(selecttoken);
     const [search, setSearch] = useState();
@@ -48,7 +48,7 @@ function Allstudents () {
 
     function getUserAccount() {
 
-        return axios.get(schoolzapi+'/student-info',
+        return axios.get(schoolzapi+'/completed-student-info',
         {
             headers: {Accept: 'application/json',
             Authorization: "Bearer "+token
@@ -79,15 +79,6 @@ function Allstudents () {
             setData(acct.data.data);
             setFilterdata(acct.data.data);
             setStudentclass(studeclass.data.data);
-            //studentclass.push({id: 1222333333, "name": 'All'});
-            ///let newall = [...studentclass];
-            //setStudentclass([...newall,{id: 1222333333, "name": 'All'}]);
-            //setStudentclass([...studentclass,{id: 1222333333, "name": 'All'}]);
-           // console.log('studeclass 1',studentclass);
-            
-
-           // console.log('userdata', acct).data;
-          // console.log('studeclass 2',studentclass);
 
         }).catch(function(error){
             setLoading(false);
@@ -297,7 +288,7 @@ function Allstudents () {
       <SafeAreaView>
         <Stack.Screen
          options={{
-          headerTitle: 'Students List'
+          headerTitle: 'Completed Students List'
          }}
         />
 
@@ -346,7 +337,7 @@ function Allstudents () {
     )
 }
 
-export default Allstudents;
+export default Allcompletedstudents;
 
 const styles = StyleSheet.create({
 

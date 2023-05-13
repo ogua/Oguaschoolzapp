@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Redirect, Stack, useRouter, useSearchParams, useNavigation } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, SafeAreaView,
-   StyleSheet, Text, TouchableOpacity, View, PermissionsAndroid, Image, DeviceEventEmitter } from 'react-native'
+   StyleSheet, Text, TouchableOpacity, View, PermissionsAndroid, Image, DeviceEventEmitter, RefreshControl } from 'react-native'
 import { Button, Card, Divider, List, Modal, Portal, Switch, TextInput, Provider, Avatar, Dialog } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { DatePickerInput, DatePickerModal } from 'react-native-paper-dates';
@@ -678,6 +678,7 @@ const checkPermissions = async () => {
 
         <View>
             <ScrollView
+             style={{padding: 15, backgroundColor: '#fff'}}
             horizontal
             >
               <Button textColor={step === 1 ? `blue` : `#000`} onPress={() => setupcurrentstep(1)}>Personal Information</Button>
@@ -690,7 +691,11 @@ const checkPermissions = async () => {
 
         {isloading ? <ActivityIndicator size="large"  style={{marginTop: 30}} /> : (
           <KeyboardAwareScrollView>
-          <ScrollView>
+          <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={isloading} onRefresh={loaddata} />
+         }
+          >
             {/* IF STATE IS ONE SHOW PERSONAL INFORMATION */}
             {step === 1 && (
               <>

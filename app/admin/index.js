@@ -74,6 +74,13 @@ import Messagetemplate from '../../components/Communicate/Messagetemplates';
 import Sendmail from '../../components/Communicate/Sendmail';
 import Sendsms from '../../components/Communicate/Sendsms';
 import Makepayment from '../../components/Payment/Makepayment';
+import Allactivestudents from '../../components/Studentinfo/Allactivestudents';
+import Allstoppedstudents from '../../components/Studentinfo/Allstoppedstudents';
+import Alldismissedstudents from '../../components/Studentinfo/Alldismissedstudents';
+import Allcompletedstudents from '../../components/Studentinfo/Allcompletedstudents';
+import Profile from '../../components/Profile/Profile';
+import AddStaff from '../../components/Staff/Addstaff';
+import Allstaff from '../../components/Staff/Allstaff';
 
 const Drawer = createDrawerNavigator();
 
@@ -88,6 +95,8 @@ function Maindashboard() {
       initialRouteName='Dashboard'
       useLegacyImplementation
       drawerContent={props => <Drawercontent user={user} {...props}/>}>
+
+      <Drawer.Screen name="Profile" component={Profile} />
       <Drawer.Screen name="Dashboard" component={Dashboard} />
       <Drawer.Screen name="Academicterm" component={Academicterm} />
       <Drawer.Screen name="Academicyear" component={Academicyear} />
@@ -100,10 +109,15 @@ function Maindashboard() {
       <Drawer.Screen name="Calllogs" component={Calllogs} />
       <Drawer.Screen name="Postaldispatch" component={Postaldispatch} />
       <Drawer.Screen name="Postalreceived" component={Postalreceived} />
-
       
       <Drawer.Screen name="Newstudent" component={Addstudent} />
       <Drawer.Screen name="Studentlist" component={Allstudents} />
+      <Drawer.Screen name="Allactivestudents" component={Allactivestudents} />
+      <Drawer.Screen name="Allstoppedstudents" component={Allstoppedstudents} />
+      <Drawer.Screen name="Alldismissedstudents" component={Alldismissedstudents} />
+      <Drawer.Screen name="Allcompletedstudents" component={Allcompletedstudents} />
+
+      
 
       <Drawer.Screen name="Fee" component={Fee} />
       <Drawer.Screen name="Feemaster" component={Feemaster} />
@@ -125,6 +139,8 @@ function Maindashboard() {
       <Drawer.Screen name="Books" component={Books} />
       <Drawer.Screen name="Issuebooks" component={Issuebooks} />
 
+      
+      <Drawer.Screen name="Allstaff" component={Allstaff} />
       <Drawer.Screen name="Staffattendance" component={Staffattendance} />
       <Drawer.Screen name="Allstaffattendance" component={Allstaffattendance} />
       <Drawer.Screen name="Leave" component={Leave} />

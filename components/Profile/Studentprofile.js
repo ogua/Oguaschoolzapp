@@ -20,22 +20,18 @@ import { showMessage } from "react-native-flash-message";
 
 import { TabbedHeaderPager, AvatarHeaderScrollView } from 'react-native-sticky-parallax-header';
 
-
-
-
-
-
 import { ScrollView } from 'react-native-gesture-handler';
-import { selectschool, selecttoken, selectuser } from '../../../features/userinfoSlice';
-import { schoolzapi } from '../../../components/constants';
 import { color } from 'react-native-reanimated';
+import { selectschool, selecttoken, selectuser } from '../../features/userinfoSlice';
+import { schoolzapi } from '../constants';
 
 
-function Viewstudent() {
+function Studentprofile({userid}) {
 
   const token = useSelector(selecttoken);
   const user = useSelector(selectuser);
   const school = useSelector(selectschool);
+
   const [link,setlink] = useState("");
   const isDarkTheme = useColorScheme() === 'dark';
   
@@ -191,37 +187,26 @@ function Viewstudent() {
 
 
     const {id} = useSearchParams();
-
-
-    useEffect(()=> {
-
-        setTimeout(() => {
-          setisloading(false);
-        }, 1000);
-    
-      },[step]);
-    
     
       useEffect(()=> {
-    
-        setlink(schoolzapi+"/update-student-info/"+id);
-        loadedit();
-    
+            loaddata();
        },[]);
 
    //console.log(link);
 
-   const loadedit = () => {
+   const loaddata = () => {
     setisloading(true);
+
+
     
-    axios.get(schoolzapi+'/student-info/show/'+id,
+    axios.get(schoolzapi+'/student-profile/'+userid,
     {
         headers: {Accept: 'application/json',
         Authorization: "Bearer "+token
     }
     }).then(function (results) {
 
-        //console.log("data",results.data.data);
+        console.log("data",results.data.data);
         setPic(results.data.data.pic);
         setsurname(results.data.data.surname);
         setfirstname(results.data.data.firstname);
@@ -686,7 +671,7 @@ function Viewstudent() {
     )
 }
 
-export default Viewstudent;
+export default Studentprofile;
 
 const screenStyles = StyleSheet.create({
     content: {

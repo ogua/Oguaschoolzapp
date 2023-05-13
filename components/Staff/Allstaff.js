@@ -10,15 +10,14 @@ import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import * as Imagepicker from 'expo-image-picker';
-import { schoolzapi } from '../constants';
-import { selecttoken } from '../../features/userinfoSlice';
-import Visitorslist from '../../lists/Visitorslist';
-import Studentlist from '../../lists/Studentlist';
 import Normallist from '../../lists/Normallist';
 import { showMessage } from "react-native-flash-message";
+import { selecttoken } from '../../features/userinfoSlice';
+import Stafflist from '../../lists/Stafflist';
+import { schoolzapi } from '../constants';
 
 
-function Allstudents () {
+function Allstaff () {
 
     const token = useSelector(selecttoken);
     const [search, setSearch] = useState();
@@ -48,7 +47,7 @@ function Allstudents () {
 
     function getUserAccount() {
 
-        return axios.get(schoolzapi+'/student-info',
+        return axios.get(schoolzapi+'/staff',
         {
             headers: {Accept: 'application/json',
             Authorization: "Bearer "+token
@@ -70,15 +69,16 @@ function Allstudents () {
     const loaddata = () => {
         setLoading(true);
         
-        Promise.all([getUserAccount(), getstudentclass()])
+        Promise.all([getUserAccount()])
         .then(function (results) {
             setLoading(false);
             const acct = results[0];
-            const studeclass = results[1];
+           // const studeclass = results[1];
 
             setData(acct.data.data);
             setFilterdata(acct.data.data);
-            setStudentclass(studeclass.data.data);
+            //setStudentclass(studeclass.data.data);
+
             //studentclass.push({id: 1222333333, "name": 'All'});
             ///let newall = [...studentclass];
             //setStudentclass([...newall,{id: 1222333333, "name": 'All'}]);
@@ -111,7 +111,7 @@ function Allstudents () {
                 text: "Yes Delete",
                 onPress: () => {
                     setLoading(true);
-                    axios.delete(schoolzapi+'/student-info/'+id,
+                    axios.delete(schoolzapi+'/staff/'+id,
                     {
                         headers: {Accept: 'application/json',
                         Authorization: "Bearer "+token
@@ -297,7 +297,15 @@ function Allstudents () {
       <SafeAreaView>
         <Stack.Screen
          options={{
-          headerTitle: 'Students List'
+          headerTitle: 'Staff List',
+          headerRight: () => (
+            <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>
+                  <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/staff/create-edit-staff')}>
+                      <Ionicons name='add-circle' size={22} color="#17a2b8"/>
+                      <Text style={{fontSize: 18}}>New</Text>
+                  </TouchableOpacity>
+            </View>
+          )
          }}
         />
 
@@ -308,7 +316,7 @@ function Allstudents () {
             value={search}
         />
 
-        <View>
+        {/* <View>
            <FlatList
                 data={studentclass}
                 renderItem={({item})=> stclasslist(item) }
@@ -319,18 +327,18 @@ function Allstudents () {
                 keyExtractor={item => item.id}
                 horizontal
             />
-        </View>
+        </View> */}
 
         <ScrollView
-        refreshControl={
-            <RefreshControl refreshing={isloading} onRefresh={loaddata} />
-        }
+            refreshControl={
+                <RefreshControl refreshing={isloading} onRefresh={loaddata} />
+            }
         >
                 <Card>
                 <Card.Content>
                 <FlatList
                     data={filterdata}
-                    renderItem={({item})=> <Studentlist item={item} deletedata={deletedata} studentclasslist={studentclass} updatestatus={updatestatus} updatesstclass={updatesstclass} /> }
+                    renderItem={({item})=> <Stafflist item={item} deletedata={deletedata} studentclasslist={studentclass} updatestatus={updatestatus} updatesstclass={updatesstclass} /> }
                     ItemSeparatorComponent={()=> <View style={styles.separator} />}
                       contentContainerStyle={{
                         marginBottom: 200
@@ -346,7 +354,7 @@ function Allstudents () {
     )
 }
 
-export default Allstudents;
+export default Allstaff;
 
 const styles = StyleSheet.create({
 

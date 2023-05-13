@@ -18,7 +18,7 @@ import Normallist from '../../lists/Normallist';
 import { showMessage } from "react-native-flash-message";
 
 
-function Allstudents () {
+function Allstoppedstudents () {
 
     const token = useSelector(selecttoken);
     const [search, setSearch] = useState();
@@ -48,7 +48,7 @@ function Allstudents () {
 
     function getUserAccount() {
 
-        return axios.get(schoolzapi+'/student-info',
+        return axios.get(schoolzapi+'/stopped-student-info',
         {
             headers: {Accept: 'application/json',
             Authorization: "Bearer "+token
@@ -297,7 +297,7 @@ function Allstudents () {
       <SafeAreaView>
         <Stack.Screen
          options={{
-          headerTitle: 'Students List'
+          headerTitle: 'Stopped Students List'
          }}
         />
 
@@ -346,7 +346,7 @@ function Allstudents () {
     )
 }
 
-export default Allstudents;
+export default Allstoppedstudents;
 
 const styles = StyleSheet.create({
 

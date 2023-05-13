@@ -9,7 +9,7 @@ import { selecttoken } from "../features/userinfoSlice";
 import { useEffect } from "react";
 import { color } from "react-native-reanimated";
 
-function Studentlist ({item,deletedata,studentclasslist}) {
+function Studentlist ({item,deletedata,studentclasslist,updatestatus,updatesstclass}) {
 
     const token = useSelector(selecttoken);
     const [visible, setVisible] = useState(false);
@@ -27,11 +27,16 @@ function Studentlist ({item,deletedata,studentclasslist}) {
     const [openstudentclass, setOpenstudentclass] = useState(false);
     const [studentclass, setStudentclass] = useState(null);
     const [classitem, setClassitems] = useState();
+    const [currentphone, setcurrentphone] = useState();
 
 
     useEffect(() => {
 
         loaddropdown(studentclasslist);
+
+        //console.log(studentclasslist);
+
+        setcurrentphone(item?.fgaurdain?.mobile);
 
     },[]);
 
@@ -77,8 +82,7 @@ function Studentlist ({item,deletedata,studentclasslist}) {
                 <Menu.Item style={[styles.textcolor,{marginLeft: 10}]} leadingIcon="square-edit-outline" onPress={()=> router.push(`/admin/admission/edit-student?id=${item?.id}`)} title="Edit" />
                 <Menu.Item disabled={item?.phone == "" ? true: false} style={{marginLeft: 10}} leadingIcon="eye" title="View" onPress={()=> router.push(`/admin/admission/view-student?id=${item?.id}`)} />
                 <Menu.Item style={{marginLeft: 10}} leadingIcon="delete-forever-outline" title="Delete" onPress={()=> deletedata(item?.id,item?.fullname)} />
-                <Menu.Item disabled={item?.phone == "" ? true: false} style={{marginLeft: 10}} leadingIcon="phone" title="Call Parent" onPress={() => Linking.openURL(`tel:${item?.phone}`)} />
-                <Menu.Item disabled={item?.phone == "" ? true: false} style={{marginLeft: 10}} leadingIcon="currency-usd" title="Update Payment" onPress={() => Linking.openURL(`tel:${item?.phone}`)} />
+                <Menu.Item disabled={currentphone == undefined ? true: false} style={{marginLeft: 10}} leadingIcon="phone" title="Call Parent" onPress={() => Linking.openURL(`tel:${item?.fgaurdain?.mobile}`)} />
 
                 <DropDownPicker
                     open={openstatus}
@@ -87,6 +91,7 @@ function Studentlist ({item,deletedata,studentclasslist}) {
                     setOpen={setOpenstatus}
                     setValue={setStatus}
                     setItems={setStatusitems}
+                    onChangeValue={() => updatestatus(item?.id,item?.fullname,status)}
                     placeholder={"Update Status"}
                     placeholderStyle={{
                         color: "#456A5A",
@@ -118,6 +123,7 @@ function Studentlist ({item,deletedata,studentclasslist}) {
                     items={classitem}
                     setOpen={setOpenstudentclass}
                     setValue={setStudentclass}
+                    onChangeValue={() => updatesstclass(item?.id,item?.fullname,studentclass)}
                     setItems={setClassitems}
                     placeholder={"Update Student Class"}
                     placeholderStyle={{
