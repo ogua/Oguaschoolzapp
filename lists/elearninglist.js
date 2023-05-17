@@ -6,7 +6,7 @@ import { useRouter } from "expo-router";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
 
-function Elearninglist ({item,deletedata,setvideoid}) {
+function Elearninglist ({item,deletedata,setvideoid,role}) {
 
     const [visible, setVisible] = useState(false);
     const router = useRouter();    
@@ -32,16 +32,16 @@ function Elearninglist ({item,deletedata,setvideoid}) {
 
         </TouchableHighlight>
 
-        <View style={[styles.rowBack,{marginBottom: 10}]}>
-            <Button onPress={()=> router.push(`/admin/elearning/create-edit-e-learning?id=${item.id}`)}>Edit</Button>
-            <Button onPress={() => deletedata(item.id,item.title)}>Delete</Button>
-                {/* <TouchableOpacity onPress={() => deletedata(item.id,item.title)}>
-                    <MaterialCommunityIcons name="delete-circle" size={30} color="red" />
-                </TouchableOpacity>
-                 <TouchableOpacity onPress={()=> router.push(`/admin/elearning/create-edit-e-learning?id=${item.id}`)} style={{marginLeft: 15}}>
-                  <MaterialCommunityIcons name="circle-edit-outline" color="#1782b6" size={30} />
-                </TouchableOpacity> */}
-        </View>
+        {role !== "Student" && (
+
+            <View style={[styles.rowBack,{marginBottom: 10}]}>
+                <Button onPress={()=> router.push(`/admin/elearning/create-edit-e-learning?id=${item.id}`)}>Edit</Button>
+                <Button onPress={() => deletedata(item.id,item.title)}>Delete</Button>
+            </View>
+            
+        )}
+
+        
             
         </Card>
 

@@ -11,7 +11,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import * as Imagepicker from 'expo-image-picker';
 import { schoolzapi } from '../constants';
-import { selecttoken } from '../../features/userinfoSlice';
+import { selectroles, selecttoken } from '../../features/userinfoSlice';
 import HomeworkList from '../../lists/HomeworkList';
 
 function Listhomework () {
@@ -27,6 +27,8 @@ function Listhomework () {
     const showDialog = () => setShowdialog(true);
     const hideDialog = () => setShowdialog(false);
     const [showsnakbar, setShowsnakbar] = useState(false);
+
+    const role = useSelector(selectroles);
 
 
     
@@ -133,16 +135,23 @@ function Listhomework () {
             <RefreshControl refreshing={isloading} onRefresh={loaddata} />
         }
         >
+
+{role[0] !== "Student" && ( 
+  <>
         {isloading ? null : (
            <View style={{marginVertical: 20}}>
                 <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>
                     
-                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/homework/create-edit-homework')}>
-                        <Ionicons name='add-circle' size={22} color="#17a2b8"/>
-                        <Text style={{fontSize: 18}}>New</Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/homework/create-edit-homework')}>
+                           <Ionicons name='add-circle' size={22} color="#17a2b8"/>
+                          <Text style={{fontSize: 18}}>New</Text>
+                        </TouchableOpacity>
+                   
+                    
                 </View>
             </View>)}
+</>
+)}
 
             <Searchbar
                 placeholder='Search....'
@@ -155,7 +164,7 @@ function Listhomework () {
                 <Card.Content>
                 <FlatList
                     data={filterdata}
-                    renderItem={({item})=> <HomeworkList item={item} deletedata={deletedata} /> }
+                    renderItem={({item})=> <HomeworkList item={item} deletedata={deletedata} role={role[0]} /> }
                     ItemSeparatorComponent={()=> <View style={styles.separator} />}
                       contentContainerStyle={{
                          marginBottom: 10

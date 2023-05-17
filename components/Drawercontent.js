@@ -20,7 +20,7 @@ import { useState } from 'react';
 import { images } from './constants';
 import { Redirect, useRouter } from 'expo-router';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout, selectpermissions, selectuser, selectuserpermission } from '../features/userinfoSlice';
+import { logout, selectpermissions, selectroles, selectuser, selectuserpermission } from '../features/userinfoSlice';
 import { showMessage } from "react-native-flash-message";
 
 
@@ -32,6 +32,7 @@ import { showMessage } from "react-native-flash-message";
  const router = useRouter();
  const dispatch = useDispatch();
  const permission = useSelector(selectuserpermission);
+ const role = useSelector(selectroles);
 
  const handlelogout = () => {
   
@@ -59,24 +60,7 @@ const setitemfocus = (itemid) => {
 }
 
  const drawerlist = [
-  {
-    key: 1,
-    name: 'Dashboard',
-    icon: 'monitor-dashboard',
-    route: 'Dashboard',
-    permission: 'viewdashboard',
-    role: 'Administrator',
-    children: []
-  },
-  {
-    key: 22,
-    name: 'Profile',
-    icon: 'account-outline',
-    route: 'Profile',
-    permission: '',
-    role: '',
-    children: []
-  },
+  
   {
     key: 2,
     name: 'Academics',
@@ -101,14 +85,14 @@ const setitemfocus = (itemid) => {
       permission: 'viewacademics',
       role: '',
     },
-    {
-      key: 23,
-      name: 'Academic Calendar',
-      icon: 'circle-outline',
-      route: 'Calendar',
-      permission: 'viewacademics',
-      role: '',
-    },
+    // {
+    //   key: 23,
+    //   name: 'Academic Calendar',
+    //   icon: 'circle-outline',
+    //   route: 'Calendar',
+    //   permission: 'viewacademics',
+    //   role: '',
+    // },
     {
       key: 24,
       name: 'Subject',
@@ -543,7 +527,26 @@ const setitemfocus = (itemid) => {
     route: 'Listexams',
     permission: 'viewonlinequiz',
     role: '',
-    children: []
+    children: [
+      {
+        key: 11121,
+        name: 'Questions Bank',
+        icon: 'circle-outline',
+        route: 'Questionbank',
+        permission: 'viewonlinequiz',
+        role: '',
+        children: []
+      },
+      {
+        key: 11122,
+        name: 'Examinations',
+        icon: 'circle-outline',
+        route: 'Examination',
+        permission: 'viewonlinequiz',
+        role: '',
+        children: []
+      },
+    ]
   },
   {
     key: 13,
@@ -731,7 +734,7 @@ const setitemfocus = (itemid) => {
         name: 'Message Template',
         icon: 'circle-outline',
         route: 'Messagetemplate',
-        permission: 'viewnoticeboard',
+        permission: 'viewmessagetemplate',
         role: '',
         children: []
       },
@@ -740,7 +743,7 @@ const setitemfocus = (itemid) => {
         name: 'Send SMS',
         icon: 'circle-outline',
         route: 'Sendsms',
-        permission: 'viewnoticeboard',
+        permission: 'viewsendsms',
         role: '',
         children: []
       },
@@ -749,7 +752,7 @@ const setitemfocus = (itemid) => {
         name: 'Send Mail',
         icon: 'circle-outline',
         route: 'Sendmail',
-        permission: 'viewnoticeboard',
+        permission: 'viewsendmail',
         role: '',
         children: []
       }
@@ -873,7 +876,101 @@ function checkpermission(){
                     {permission !== null && (
 
                   
-                    <Drawer.Section style={styles.drawerSection}>
+                  <Drawer.Section style={styles.drawerSection}>
+
+                  <DrawerItem 
+                      focused={focus == `1` ? true: false}
+                      icon={({color, size}) => (
+                          <Icon 
+                            name="monitor-dashboard"
+                              color={color}
+                              size={size}
+                              />
+                          )}
+                        label={({color, focused}) => (
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                <Text {...focused}>Dashboard</Text>
+                            </View>
+                        )}   
+                      onPress={() => {
+                        setitemfocus(`1`);
+                        setsubFocus(0);
+                        props.navigation.navigate("Dashboard");
+
+                      }}
+                     />
+
+
+                   <DrawerItem 
+                      focused={focus == `2` ? true: false}
+                      icon={({color, size}) => (
+                          <Icon 
+                            name="account-outline"
+                              color={color}
+                              size={size}
+                              />
+                          )}
+                        label={({color, focused}) => (
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                <Text {...focused}>Profile</Text>
+                            </View>
+                        )}   
+                      onPress={() => {
+                        setitemfocus(`2`);
+                        setsubFocus(0);
+                        props.navigation.navigate("Profile");
+
+                      }}
+                     />
+
+
+                    {role[0] == "Student" && (
+                      <DrawerItem 
+                      focused={focus == `00220` ? true: false}
+                      icon={({color, size}) => (
+                          <Icon 
+                            name="cash"
+                              color={color}
+                              size={size}
+                              />
+                          )}
+                        label={({color, focused}) => (
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                <Text {...focused}>My Transaction</Text>
+                            </View>
+                        )}   
+                      onPress={() => {
+                        setitemfocus(`00220`);
+                        setsubFocus(0);
+                        props.navigation.navigate("Studenttransaction");
+
+                      }}
+                     />
+                    )}
+
+                   {role[0] == "Staff" && (
+                      <DrawerItem 
+                      focused={focus == `00220` ? true: false}
+                      icon={({color, size}) => (
+                          <Icon 
+                            name="cash"
+                              color={color}
+                              size={size}
+                              />
+                          )}
+                        label={({color, focused}) => (
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                <Text {...focused}>My Payroll</Text>
+                            </View>
+                        )}   
+                      onPress={() => {
+                        setitemfocus(`00220`);
+                        setsubFocus(0);
+                        props.navigation.navigate("Studenttransaction");
+
+                      }}
+                     />
+                    )}
 
                     {drawerlist.map(item => {
                       
@@ -883,7 +980,36 @@ function checkpermission(){
 
                           return (
                           <>
-                            <DrawerItem 
+                          {item.key == 14 ? (
+                            <>
+
+                            {role[0] == 'Student' ? (
+                              <>
+                          <DrawerItem 
+                            focused={focus == `1092` ? true: false}
+                            icon={({color, size}) => (
+                                <Icon 
+                                  name="account-check-outline"
+                                    color={color}
+                                    size={size}
+                                    />
+                                )}
+                              label={({color, focused}) => (
+                                  <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                      <Text {...focused}>Attendance</Text>
+                                  </View>
+                              )}   
+                            onPress={() => {
+                              setitemfocus(`1092`);
+                              setsubFocus(0);
+                              props.navigation.navigate("Myattendance");
+
+                            }}
+                          />
+                              
+                              </>
+                            ) : (
+                              <DrawerItem 
                               focused={focus == item.key ? true: false}
                               icon={({color, size}) => (
                                   <Icon 
@@ -917,6 +1043,122 @@ function checkpermission(){
 
                               }}
                             />
+                            )}
+                            
+                            
+                            </>
+                          ) : (
+                            <>
+
+                            {item.key == `1112` ? 
+                            (
+                              <>
+                              {role[0] == "Student" ? (
+                                <DrawerItem 
+                                focused={focus == `111112` ? true: false}
+                                icon={({color, size}) => (
+                                    <Icon 
+                                      name="cash"
+                                        color={color}
+                                        size={size}
+                                        />
+                                    )}
+                                  label={({color, focused}) => (
+                                      <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                          <Text {...focused}>Online Quiz</Text>
+                                      </View>
+                                  )}   
+                                onPress={() => {
+                                  setitemfocus(`111112`);
+                                  setsubFocus(0);
+                                  props.navigation.navigate("Examination");
+
+                                }}
+                              />
+                              ) : (
+                                <>
+                              <DrawerItem 
+                                focused={focus == item.key ? true: false}
+                                icon={({color, size}) => (
+                                    <Icon 
+                                      name={item.icon}
+                                        color={color}
+                                        size={size}
+                                        />
+                                    )}
+                                  label={({color, focused}) => (
+                                      <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                          <Text {...focused}>{item.name}</Text>
+                                          {item.children.length > 0 && (
+                                            <>
+                                            {focus == item.key ? (
+                                                <Ionicons name='arrow-down' size={25} color={color} />
+                                            ): (
+                                              <Ionicons name='arrow-up' size={25} color={color} />
+                                            )}
+                                            </>
+                                          )}
+                                      </View>
+                                  )}   
+                                onPress={() => {
+                                  setitemfocus(item.key);
+                                  if(item.children.length > 0){
+
+                                  }else{
+                                    setsubFocus(0);
+                                    props.navigation.navigate(item.route);
+                                  }
+
+                                }}
+                              />
+                                
+                                </>
+                              )}
+                              
+                              </>
+                            ) : 
+                            (<>
+
+                             <DrawerItem 
+                              focused={focus == item.key ? true: false}
+                              icon={({color, size}) => (
+                                  <Icon 
+                                    name={item.icon}
+                                      color={color}
+                                      size={size}
+                                      />
+                                  )}
+                                label={({color, focused}) => (
+                                    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                        <Text {...focused}>{item.name}</Text>
+                                        {item.children.length > 0 && (
+                                          <>
+                                          {focus == item.key ? (
+                                              <Ionicons name='arrow-down' size={25} color={color} />
+                                          ): (
+                                            <Ionicons name='arrow-up' size={25} color={color} />
+                                          )}
+                                          </>
+                                        )}
+                                    </View>
+                                )}   
+                              onPress={() => {
+                                setitemfocus(item.key);
+                                if(item.children.length > 0){
+
+                                }else{
+                                  setsubFocus(0);
+                                  props.navigation.navigate(item.route);
+                                }
+
+                              }}
+                            />
+
+                            
+                            </>)}
+                            
+                            </>
+                          )}
 
                           {focus == item.key && (
                           <>
@@ -991,6 +1233,53 @@ function checkpermission(){
                         );
                       }
                     })}
+
+                    <DrawerItem 
+                      focused={focus == `003330` ? true: false}
+                      icon={({color, size}) => (
+                          <Icon 
+                            name="cash"
+                              color={color}
+                              size={size}
+                              />
+                          )}
+                        label={({color, focused}) => (
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                <Text {...focused}>Track School Bus</Text>
+                            </View>
+                        )}   
+                      onPress={() => {
+                        setitemfocus(`003330`);
+                        setsubFocus(0);
+                        props.navigation.navigate("Myresults");
+
+                      }}
+                     />
+
+
+                   {role[0] == "Student" && (
+                      <DrawerItem 
+                      focused={focus == `002220` ? true: false}
+                      icon={({color, size}) => (
+                          <Icon 
+                            name="cash"
+                              color={color}
+                              size={size}
+                              />
+                          )}
+                        label={({color, focused}) => (
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                <Text {...focused}>My Results</Text>
+                            </View>
+                        )}   
+                      onPress={() => {
+                        setitemfocus(`002220`);
+                        setsubFocus(0);
+                        props.navigation.navigate("Myresults");
+
+                      }}
+                     />
+                    )}
 
 
 

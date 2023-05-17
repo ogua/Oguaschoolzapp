@@ -85,11 +85,14 @@ function AssignmentsubList ({item,saveattendance,attdate,studentclass}) {
     },[]);
 
     const buttonshow = () =>{
+
+        //console.log("item",item);
+
         if(item?.assignment !== null){
-            if(item?.assignment?.score == ""){
-                return <Button>Download Assignment</Button>;
+            if(item?.assignment?.score == null){
+                return <Button onPress={()=> Linking.openURL(item?.assignment?.file)}>Download Assignment</Button>;
             }else{
-                return <Text style={{color: 'red'}}>Score {item?.assignment?.score}</Text>
+                return <Text style={{color: '#fff', fontSize: 20}}>Score {item?.assignment?.score ? item?.assignment?.score : 0 }</Text>
             }
         }else{
             return <Text style={{color: 'red'}}>NOT SUMITTED</Text>;
@@ -104,6 +107,7 @@ function AssignmentsubList ({item,saveattendance,attdate,studentclass}) {
 
         <Card style={{backgroundColor: item.assignment !== null ? `#17a2b8` : '#fff'}}>
             <Card.Title title={`${item?.fullname.toUpperCase()}`}
+            subtitle={item?.student_id+" ("+item?.stclass+")"}
            titleStyle={{color: item.assignment !== null && `#fff`}}
            left={() => (   
 

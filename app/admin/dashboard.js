@@ -5,7 +5,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { selecttoken,selectcurrency } from '../../features/userinfoSlice';
+import { selecttoken,selectcurrency, selectuserpermission } from '../../features/userinfoSlice';
 import { schoolzapi } from '../../components/constants';
 
 function Dashboard() {
@@ -14,6 +14,7 @@ function Dashboard() {
     const token = useSelector(selecttoken);
     const currency = useSelector(selectcurrency);
     const [expectedfees, Setexpectedfees] = useState("");
+    const permission = useSelector(selectuserpermission);
 
     useEffect(()=>{
         loaddata();
@@ -81,6 +82,9 @@ function Dashboard() {
                     </View>
                 </TouchableOpacity>
 
+            
+            {permission.includes("viewviewtotalsmsbalance") && (
+
             <TouchableOpacity style={[{marginTop: 20}]}>
                 <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row',
                  alignItems: 'center'}}>
@@ -93,7 +97,10 @@ function Dashboard() {
                     </View>
                 </View>
             </TouchableOpacity>
+        )}
 
+
+         {permission.includes("viewviewtotalvoicebalance") && (    
             <TouchableOpacity style={[{marginTop: 20}]}>
                 <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#17a2b8', padding: 10}}>
@@ -110,6 +117,11 @@ function Dashboard() {
                 </View>
             </TouchableOpacity>
 
+        )}     
+
+
+
+          {permission.includes("viewtotalstaff") && (                    
             <TouchableOpacity style={[{marginTop: 20}]}>
                 <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#28a745', padding: 10}}>
@@ -122,6 +134,10 @@ function Dashboard() {
                 </View>
             </TouchableOpacity>
 
+        )}
+
+
+            {permission.includes("viewtotalstudents") && (
             <TouchableOpacity style={[{marginTop: 20}]}>
                 <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#17a2b8', padding: 10}}>
@@ -133,7 +149,10 @@ function Dashboard() {
                     </View>
                 </View>
             </TouchableOpacity>
+        )}
 
+            
+            {permission.includes("viewlasttermarrears") && (
             <TouchableOpacity style={[{marginTop: 20}]}>
                 <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#28a745', padding: 10}}>
@@ -145,7 +164,10 @@ function Dashboard() {
                     </View>
                 </View>
             </TouchableOpacity>
+            )}
 
+            
+            {permission.includes("viewexpectedfees") && (
             <TouchableOpacity style={[{marginTop: 20}]}>
                 <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#17a2b8', padding: 10}}>
@@ -157,7 +179,10 @@ function Dashboard() {
                     </View>
                 </View>
             </TouchableOpacity>
+            )}
 
+            
+            {permission.includes("viewexpectedowings") && (
             <TouchableOpacity style={[{marginTop: 20}]}>
                 <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#28a745', padding: 10}}>
@@ -169,7 +194,10 @@ function Dashboard() {
                     </View>
                 </View>
             </TouchableOpacity>
+            )}
 
+            
+            {permission.includes("viewtotalfeesreceivedthisterm") && (
             <TouchableOpacity style={[{marginTop: 20}]}>
                 <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#17a2b8', padding: 10}}>
@@ -181,7 +209,10 @@ function Dashboard() {
                     </View>
                 </View>
             </TouchableOpacity>
+            )}
 
+            
+            {permission.includes("viewtotalfeespayablethismonth") && (
             <TouchableOpacity style={[{marginTop: 20}]}>
                 <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#28a745', padding: 10}}>
@@ -193,7 +224,10 @@ function Dashboard() {
                     </View>
                 </View>
             </TouchableOpacity>
+            )}
 
+            
+            {permission.includes("viewtotalfeesreceivedtoday") && (
             <TouchableOpacity style={[{marginTop: 20}]}>
                 <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#17a2b8', padding: 10}}>
@@ -205,7 +239,10 @@ function Dashboard() {
                     </View>
                 </View>
             </TouchableOpacity>
+            )}
 
+            
+            {permission.includes("viewtotalattendance") && (
             <TouchableOpacity style={[{marginTop: 20}]}>
                 <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#28a745', padding: 10}}>
@@ -217,7 +254,10 @@ function Dashboard() {
                     </View>
                 </View>
             </TouchableOpacity>
+            )}
 
+            
+            {permission.includes("viewtotalabsenttoday") && (
             <TouchableOpacity style={[{marginTop: 20}]}>
                 <View style={{backgroundColor: '#17a2b8',padding: 10, flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{backgroundColor: '#fff', padding: 10}}>
@@ -230,10 +270,7 @@ function Dashboard() {
                     </View>
                 </View>
             </TouchableOpacity>
-
-
-
-
+            )}
 
 
         </ScrollView>

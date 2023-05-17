@@ -46,6 +46,7 @@ function Assigmentlist () {
     },[]);
 
     const loaddata = () => {
+      console.log("assigmtid",assigmtid);
         setLoading(true);
         axios.get(schoolzapi+'/students-assignment-submitted/'+stclass+'/'+assigmtid,
         {
@@ -54,7 +55,7 @@ function Assigmentlist () {
         }
         })
           .then(function (response) {
-            //console.log(response.data);
+          //console.log(response.data.data);
            setFilterdata(response.data.data);
            setLoading(false);
            

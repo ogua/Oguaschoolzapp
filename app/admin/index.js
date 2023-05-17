@@ -81,6 +81,11 @@ import Allcompletedstudents from '../../components/Studentinfo/Allcompletedstude
 import Profile from '../../components/Profile/Profile';
 import AddStaff from '../../components/Staff/Addstaff';
 import Allstaff from '../../components/Staff/Allstaff';
+import Studenttransaction from '../../components/Accounts/Studenttransaction';
+import Myattendance from '../../components/Attendance/Myattendance';
+import Questionbank from '../../components/Exams/Questionbank';
+import Examination from '../../components/Exams/Examination';
+import Myresults from '../../components/Terminalreport/Myresults';
 
 const Drawer = createDrawerNavigator();
 
@@ -127,6 +132,7 @@ function Maindashboard() {
       <Drawer.Screen name="Transactionsperterm" component={Transactionsperterm} />
       <Drawer.Screen name="Transactionsperday" component={Transactionsperday} />
       <Drawer.Screen name="Transactionspermonth" component={Transactionspermonth} />
+      <Drawer.Screen name="Studenttransaction" component={Studenttransaction} />
       <Drawer.Screen name="Feepayment" component={Feepayment} />
       <Drawer.Screen name="Debtors" component={Debtors} />
       <Drawer.Screen name="Receipttrack" component={Receipttrack} />
@@ -143,12 +149,17 @@ function Maindashboard() {
       <Drawer.Screen name="Allstaff" component={Allstaff} />
       <Drawer.Screen name="Staffattendance" component={Staffattendance} />
       <Drawer.Screen name="Allstaffattendance" component={Allstaffattendance} />
+      <Drawer.Screen name="Myattendance" component={Myattendance} />
+      
       <Drawer.Screen name="Leave" component={Leave} />
       <Drawer.Screen name="Allpayroll" component={Allpayroll} />
 
-      <Drawer.Screen name="Listexams" component={Listexams} />
-
       
+      
+      <Drawer.Screen name="Questionbank" component={Questionbank} />
+      <Drawer.Screen name="Examination" component={Examination} />
+      
+      <Drawer.Screen name="Listexams" component={Listexams} />
       
 
 
@@ -171,6 +182,8 @@ function Maindashboard() {
 
 
       <Drawer.Screen name="Normalreport" component={Normalreport} />
+      <Drawer.Screen name="Myresults" component={Myresults} />
+
 
       <Drawer.Screen name="Makepayment" component={Makepayment} />
 

@@ -208,7 +208,7 @@ function Studentprofile({userid}) {
 
         console.log("data",results.data.data);
         setPic(results.data.data.pic);
-        setsurname(results.data.data.surname);
+        setsurname(results.data.data.fullname);
         setfirstname(results.data.data.firstname);
         setothernames(results.data.data.onames);
         setbranch(results.data.data.branch);
@@ -300,7 +300,7 @@ function Studentprofile({userid}) {
     return (
         <>
           <Stack.Screen  options={{
-            headerTitle: 'Student Information'
+            headerTitle: 'Profile'
            }} />
     {isloading ? <ActivityIndicator size="large" style={{marginTop: 30}} /> : (
 
@@ -313,7 +313,7 @@ function Studentprofile({userid}) {
           foregroundImage={{ uri: pic }}
           rememberTabScrollPosition
           //logo={{ uri: pic }}
-          title={surname+" "+firstname+" "+othernames}
+          title={surname}
           titleStyle={screenStyles.text}
           tabs={tabs.map((section) => ({
             title: section.title,
@@ -327,7 +327,7 @@ function Studentprofile({userid}) {
                   <View style={{flexDirection: 'row', justifyContent: "space-between", alignItems: 'center', marginBottom: 10}}>
                       <Text style={{textAlign: 'left',fontSize: 16}}>Full name</Text>
                         <View>
-                          <Text style={{textAlign: 'left',fontSize: 16}}>{surname} {firstname} {othernames}</Text>
+                          <Text style={{textAlign: 'left',fontSize: 16}}>{surname}</Text>
                           </View>
                         </View>
               </TouchableOpacity>
@@ -707,7 +707,6 @@ const screenStyles = StyleSheet.create({
       flex: 1,
     },
     text: {
-      fontFamily: 'AvertaStd-Regular',
     },
   });
 

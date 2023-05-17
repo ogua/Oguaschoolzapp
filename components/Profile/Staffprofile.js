@@ -21,17 +21,13 @@ import { showMessage } from "react-native-flash-message";
 import { TabbedHeaderPager, AvatarHeaderScrollView } from 'react-native-sticky-parallax-header';
 
 
-
-
-
-
 import { ScrollView } from 'react-native-gesture-handler';
-import { selectschool, selecttoken, selectuser } from '../../../features/userinfoSlice';
-import { schoolzapi } from '../../../components/constants';
 import { color } from 'react-native-reanimated';
+import { selectschool, selecttoken, selectuser } from '../../features/userinfoSlice';
+import { schoolzapi } from '../constants';
 
 
-function Viewstaff() {
+function Staffprofile({userid}) {
 
   const token = useSelector(selecttoken);
   const user = useSelector(selectuser);
@@ -230,32 +226,18 @@ function Viewstaff() {
       {title: 'Assigned Subjects Information'},
       {title: 'Document'},
   ];
-
-    const {id,userid} = useSearchParams();
-
-
-    useEffect(()=> {
-
-        setTimeout(() => {
-          setisloading(false);
-        }, 1000);
-    
-      },[step]);
-    
     
       useEffect(()=> {
     
-        setlink(schoolzapi+"/update-student-info/"+id);
-        loadedit();
+        loaddata();
     
        },[]);
 
-   //console.log(link);
 
-   const loadedit = () => {
+   const loaddata = () => {
     setisloading(true);
     
-    axios.get(schoolzapi+'/staff/show/'+id,
+    axios.get(schoolzapi+'/staff-profile/'+userid,
     {
         headers: {Accept: 'application/json',
         Authorization: "Bearer "+token
@@ -340,7 +322,7 @@ function Viewstaff() {
     return (
         <>
           <Stack.Screen  options={{
-            headerTitle: 'Staff Information'
+            headerTitle: 'Profile'
            }} />
     {isloading ? <ActivityIndicator size="large" style={{marginTop: 30}} /> : (
 
@@ -730,7 +712,7 @@ function Viewstaff() {
     )
 }
 
-export default Viewstaff;
+export default Staffprofile;
 
 const screenStyles = StyleSheet.create({
     content: {
@@ -766,7 +748,6 @@ const screenStyles = StyleSheet.create({
       flex: 1,
     },
     text: {
-      fontFamily: 'AvertaStd-Regular',
     },
   });
 

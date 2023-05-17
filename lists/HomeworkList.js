@@ -1,21 +1,59 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Linking, TouchableOpacity, View } from "react-native";
-import { Button, Dialog, Divider, List, Menu, Portal, Snackbar, Text } from "react-native-paper";
+import { ActivityIndicator, Button, Dialog, Divider, List, Menu, Portal, Snackbar, Text } from "react-native-paper";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from "expo-router";
 import { useSelector } from "react-redux";
-import { selectcurrency } from "../features/userinfoSlice";
+import { selectcurrency, selecttoken } from "../features/userinfoSlice";
 import { StyleSheet } from "react-native";
+import axios from "axios";
+import { schoolzapi } from "../components/constants";
 
-function HomeworkList ({item,deletedata}) {
+function HomeworkList ({item,deletedata,role}) {
 
     const [visible, setVisible] = useState(false);
     const currency = useSelector(selectcurrency);
-    const router = useRouter();    
+    const router = useRouter();
+    const [Loading, setLoading] = useState(false);
+    const [submitted, setsubmitted] = useState(null);
+    const token = useSelector(selecttoken);
+
+
+    useEffect(()=>{
+
+        if(role == "Student"){
+            loaddata();
+        }
+
+    },[]);
+
+    const loaddata = () => {
+        setLoading(true);
+        axios.get(schoolzapi+'/check-submitted-assignment/'+item?.id,
+        {
+            headers: {Accept: 'application/json',
+            Authorization: "Bearer "+token
+        }
+        })
+        .then(function (results) {
+  
+            setsubmitted(results.data.data);
+            console.log("results",results.data.data);
+            setLoading(false);
+            
+        }).catch(function(error){
+            setLoading(false);
+            console.log(error);
+        });
+    }
+
+
 
     return (
         <>
-        <TouchableOpacity style={{backgroundColor: '#fff', padding: 10}}
+        {Loading ? <ActivityIndicator size="small" /> : (
+
+        <TouchableOpacity style={{backgroundColor: item?.status == `Elapse` ? `#17a2b8` : `#fff`, padding: 10}}
         onPress={() => setVisible(! visible)}
         >
 
@@ -46,8 +84,12 @@ function HomeworkList ({item,deletedata}) {
         />
             
         </TouchableOpacity>
+        )}
 
-        <View style={{flexDirection: 'row', backgroundColor: '#fff', justifyContent: 'flex-end'}}>
+        {role !== "Student" ? (
+            <>
+
+        <View style={{flexDirection: 'row', backgroundColor: item?.status == `Elapse` ? `#17a2b8` : `#fff`, justifyContent: 'flex-end', marginBottom: 10}}>
             <Button onPress={()=> router.push(`/admin/homework/view-assignment-submitted?stclass=${item?.stclass}&assigmtid=${item?.id}`)}>Assignments Received</Button>
             <Button onPress={()=> router.push(`/admin/homework/enter-assignment-score?stclass=${item?.stclass}&assigmtid=${item?.id}`)}>Enter Score</Button>
         </View>
@@ -59,6 +101,41 @@ function HomeworkList ({item,deletedata}) {
                 <Menu.Item style={{marginLeft: 10}} leadingIcon="delete-forever-outline" title="Delete" onPress={()=> deletedata(item?.id,item?.title)} />
             </View>
         )}
+            
+            </>
+        ) : (
+            <>
+            {item?.status !== 'Elapse' ? (
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#fff' }}>
+              
+                <>
+                <Button disabled={item?.file == "" ? true: false} icon="download" onPress={() => Linking.openURL(item?.file)}>Download</Button>
+                {submitted == undefined ? (
+                    <Button onPress={()=> router.push(`/admin/homework/submit-assignment?id=${item?.id}`)}>Submit Assignments</Button>
+                ) : (
+                    <Button icon="check">Submitted</Button>
+                )}
+                </>               
+            </View>
+            ): (
+                <View style={{marginBottom: 10}}></View>
+            )}
+
+            {submitted !== undefined && (
+                <>
+                {submitted?.score && (
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#fff', borderBottomColor: '#000', borderBottomWidth: 1 }}>
+                      <Button>Score: {submitted?.score}</Button>
+                   </View>
+                )}
+                </>
+            
+            )}
+            </>
+            
+        )}
+
+        
         </>
     )
 }

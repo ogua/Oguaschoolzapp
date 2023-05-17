@@ -1,8 +1,8 @@
-import React, { Component, useCallback } from 'react'
+import React, { Component } from 'react'
 import { Stack, useRouter } from 'expo-router';
 import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
    ScrollView, StyleSheet, Text, TouchableOpacity, 
-   View, DeviceEventEmitter, Alert, Dimensions } from 'react-native'
+   View, DeviceEventEmitter, Alert } from 'react-native'
 import { useEffect } from 'react';
 import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar } from 'react-native-paper';
 import { useState } from 'react';
@@ -11,15 +11,11 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import * as Imagepicker from 'expo-image-picker';
 import { schoolzapi } from '../constants';
-import { selectroles, selecttoken } from '../../features/userinfoSlice';
-import Routelist from '../../lists/Routelist';
-import YoutubeIframe from 'react-native-youtube-iframe';
-import Elearninglist from '../../lists/elearninglist';
-import { SwipeListView } from 'react-native-swipe-list-view';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { selecttoken } from '../../features/userinfoSlice';
+import Examslist from '../../lists/Examslist';
+import Questionbanklist from '../../lists/Questionbanklist';
 
-
-function Onlinelearning () {
+function Questionbank () {
 
     const token = useSelector(selecttoken);
     const [search, setSearch] = useState();
@@ -33,10 +29,7 @@ function Onlinelearning () {
     const hideDialog = () => setShowdialog(false);
     const [showsnakbar, setShowsnakbar] = useState(false);
 
-    const SCREEN_HEIGHT = Dimensions.get("window").height;
-    const SCREEN_WIDTH = Dimensions.get("window").width;
-    const [videoid, setvideoid] = useState("");
-    const role = useSelector(selectroles);
+
     
 
     useEffect(()=> {
@@ -49,14 +42,12 @@ function Onlinelearning () {
 
        loaddata();
 
-       //console.log("role",role[0]);
-
     },[]);
 
 
     const loaddata = () => {
         setLoading(true);
-        axios.get(schoolzapi+'/online-learning',
+        axios.get(schoolzapi+'/questions-bank',
         {
             headers: {Accept: 'application/json',
             Authorization: "Bearer "+token
@@ -66,7 +57,6 @@ function Onlinelearning () {
             console.log(response.data.data);
             setData(response.data.data);
             setFilterdata(response.data.data);
-            setvideoid(data[0].linkid);
             setLoading(false);
           })
           .catch(function (error) {
@@ -89,7 +79,7 @@ function Onlinelearning () {
                 text: "Yes Delete",
                 onPress: () => {
                     setLoading(true);
-                    axios.delete(schoolzapi+'/online-learning/'+id,
+                    axios.delete(schoolzapi+'/questions-bank/'+id,
                     {
                         headers: {Accept: 'application/json',
                         Authorization: "Bearer "+token
@@ -99,8 +89,8 @@ function Onlinelearning () {
                             const newData = data.filter((item) => item.id != id);
                             setFilterdata(newData);
                             setData(newData);
-                           // loaddata();
-                            //setLoading(false);
+                            //loaddata();
+                            setLoading(false);
                         })
                         .catch(function (error) {
                         setLoading(false);
@@ -118,8 +108,8 @@ function Onlinelearning () {
           if (text) {
               
             const newData = data.filter(function (item) {
-              const itemData = item.name
-                ? item.name.toUpperCase()
+              const itemData = item.title
+                ? item.title.toUpperCase()
                 : ''.toUpperCase();
               const textData = text.toUpperCase();
               return itemData.indexOf(textData) > -1;
@@ -132,85 +122,44 @@ function Onlinelearning () {
           }
       };
 
-
-
-        const [playing, setPlaying] = useState(false);
-
-        const onStateChange = useCallback((state) => {
-            if (state === "ended") {
-            setPlaying(false);
-             alert("video has finished playing!");
-            }
-        }, []);
-
-        const togglePlaying = useCallback(() => {
-            setPlaying((prev) => !prev);
-        }, []);
-
-
-        const setplayervideoid = (vid) => {
-            setvideoid(vid);
-            console.log(vid);
-        }
-
     return (
       <Provider>
       <SafeAreaView>
         <Stack.Screen options={{
-            headerTitle: 'Online Learning',
-            headerRight: () => (
-                <View>
-                   {role[0] !== "Student" && (
-
-                      <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>
-                      <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/elearning/create-edit-e-learning')}>
-                          <Ionicons name='add-circle' size={22} color="#17a2b8"/>
-                          <Text style={{fontSize: 18}}>New</Text> 
-                      </TouchableOpacity>
-                      </View>
-
-                   )}
-                 </View>
-            )
+            headerTitle: 'Question Bank'
         }}
         />
-
-        
-
-
         <ScrollView
         refreshControl={
             <RefreshControl refreshing={isloading} onRefresh={loaddata} />
         }
         >
-            <View style={{flex: 1, justifyContent: 'center'}}>
+        {isloading ? null : (
+           <View style={{marginVertical: 20}}>
+                <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>
+                    
+                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/quiz/create-edit-question-bank')}>
+                        <Ionicons name='add-circle' size={22} color="#17a2b8"/>
+                        <Text style={{fontSize: 18}}>New</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>)}
 
-
-            {videoid && (
-
-            <YoutubeIframe
-            height={200}
-            width={SCREEN_WIDTH}
-            play={playing}
-            videoId={videoid}
-            onChangeState={onStateChange}
-            style={{backgroundColor: '#000'}}
+            <Searchbar
+                placeholder='Search....'
+                mode="outlined"
+                onChangeText={(text) => searchFilterFunction(text)}
+                value={search}
             />
-
-            )}
-
-        
-            </View>
             
             <Card>
                 <Card.Content>
-            
                 <FlatList
                     data={filterdata}
-                    renderItem={({item})=> <Elearninglist item={item} deletedata={deletedata} setvideoid={setplayervideoid} role={role[0]}/> }
-                    //ItemSeparatorComponent={()=> <View style={styles.separator} />}
+                    renderItem={({item})=> <Questionbanklist item={item} deletedata={deletedata} /> }
+                    ItemSeparatorComponent={()=> <View style={styles.separator} />}
                       contentContainerStyle={{
-                         marginBottom: 20
+                         marginBottom: 10
                     }}
                     keyExtractor={item => item.id}
                 />
@@ -223,7 +172,7 @@ function Onlinelearning () {
     )
 }
 
-export default Onlinelearning;
+export default Questionbank;
 
 const styles = StyleSheet.create({
 
@@ -236,13 +185,5 @@ const styles = StyleSheet.create({
       margin: 0,
       height: '100%',
       width: '100%'
-  },
-  rowBack: {
-    alignItems: 'center',
-    backgroundColor: '#ccc',
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 30
-  },
+  }
 });

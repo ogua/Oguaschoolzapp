@@ -4,7 +4,7 @@ import { Button, Dialog, Divider, List, Menu, Portal, Snackbar, Text } from "rea
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from "expo-router";
 
-function Noticeboardlist ({item,deletedata}) {
+function Noticeboardlist ({item,deletedata,role}) {
 
     const [visible, setVisible] = useState(false);
     const router = useRouter();
@@ -38,11 +38,16 @@ function Noticeboardlist ({item,deletedata}) {
             
         </TouchableOpacity>
 
-        {visible && (
-            <View style={{backgroundColor: '#fff', borderBottomColor: '#000', borderBottomWidth: 1 }}>
-                <Menu.Item style={{marginLeft: 10}} leadingIcon="square-edit-outline" onPress={()=> router.push(`/admin/Communicate/create-edit-noticeboard?id=${item?.id}`)} title="Edit" />
-                <Menu.Item style={{marginLeft: 10}} leadingIcon="delete-forever-outline" title="Delete" onPress={()=> deletedata(item?.id,item?.title)} />
-            </View>
+        {role !== 'Student' && (
+            <>
+            {visible && (
+                <View style={{backgroundColor: '#fff', borderBottomColor: '#000', borderBottomWidth: 1 }}>
+                    <Menu.Item style={{marginLeft: 10}} leadingIcon="square-edit-outline" onPress={()=> router.push(`/admin/Communicate/create-edit-noticeboard?id=${item?.id}`)} title="Edit" />
+                    <Menu.Item style={{marginLeft: 10}} leadingIcon="delete-forever-outline" title="Delete" onPress={()=> deletedata(item?.id,item?.title)} />
+                </View>
+          )}
+            
+            </>
         )}
         </>
     )
