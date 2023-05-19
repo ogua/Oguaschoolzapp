@@ -20,7 +20,7 @@ import { useState } from 'react';
 import { images } from './constants';
 import { Redirect, useRouter } from 'expo-router';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout, selectpermissions, selectroles, selectuser, selectuserpermission } from '../features/userinfoSlice';
+import { logout, selectpermissions, selectroles, selectstaffrole, selectuser, selectuserpermission } from '../features/userinfoSlice';
 import { showMessage } from "react-native-flash-message";
 
 
@@ -33,6 +33,7 @@ import { showMessage } from "react-native-flash-message";
  const dispatch = useDispatch();
  const permission = useSelector(selectuserpermission);
  const role = useSelector(selectroles);
+ const driver = useSelector(selectstaffrole);
 
  const handlelogout = () => {
   
@@ -692,7 +693,35 @@ const setitemfocus = (itemid) => {
     route: 'All Students',
     permission: 'viewstudentresults',
     role: '',
-    children: []
+    children: [
+      {
+        key: 151,
+        name: 'Enter Results',
+        icon: 'circle-outline',
+        route: 'All Students',
+        permission: 'viewstudentresults',
+        role: '',
+        children: []
+      },
+      {
+        key: 152,
+        name: 'View Results',
+        icon: 'circle-outline',
+        route: 'All Students',
+        permission: 'viewstudentresults',
+        role: '',
+        children: []
+      },
+      {
+        key: 151,
+        name: 'Results per student',
+        icon: 'circle-outline',
+        route: 'All Students',
+        permission: 'viewstudentresults',
+        role: '',
+        children: []
+      },
+    ]
   },
   {
     key: 16,
@@ -701,7 +730,26 @@ const setitemfocus = (itemid) => {
     route: 'All Students',
     permission: 'viewquestionnaires',
     role: '',
-    children: []
+    children: [
+      {
+        key: 161,
+        name: 'Questionaire 1',
+        icon: 'circle-outline',
+        route: 'All Students',
+        permission: 'viewquestionnaires',
+        role: '',
+        children: []
+      },
+      {
+        key: 162,
+        name: 'Questionaire 2',
+        icon: 'circle-outline',
+        route: 'All Students',
+        permission: 'viewquestionnaires',
+        role: '',
+        children: []
+      },
+    ]
   },
   {
     key: 17,
@@ -947,6 +995,31 @@ function checkpermission(){
                       }}
                      />
                     )}
+
+                {driver == "Driver" && (
+                  <DrawerItem 
+                      focused={focus == `003330` ? true: false}
+                      icon={({color, size}) => (
+                          <Icon 
+                            name="map-marker-circle"
+                              color={color}
+                              size={size}
+                              />
+                          )}
+                        label={({color, focused}) => (
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                <Text {...focused}>Driver</Text>
+                            </View>
+                        )}   
+                      onPress={() => {
+                        setitemfocus(`003330`);
+                        setsubFocus(0);
+                        props.navigation.navigate("Trackroute");
+
+                      }}
+                     />
+                    )}
+
 
                    {role[0] == "Staff" && (
                       <DrawerItem 
@@ -1238,7 +1311,7 @@ function checkpermission(){
                       focused={focus == `003330` ? true: false}
                       icon={({color, size}) => (
                           <Icon 
-                            name="cash"
+                            name="map-marker-circle"
                               color={color}
                               size={size}
                               />
@@ -1251,7 +1324,7 @@ function checkpermission(){
                       onPress={() => {
                         setitemfocus(`003330`);
                         setsubFocus(0);
-                        props.navigation.navigate("Myresults");
+                        props.navigation.navigate("Trackroute");
 
                       }}
                      />

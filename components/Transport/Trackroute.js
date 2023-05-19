@@ -4,18 +4,20 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
    ScrollView, StyleSheet, Text, TouchableOpacity, 
    View, DeviceEventEmitter, Alert } from 'react-native'
 import { useEffect } from 'react';
-import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar } from 'react-native-paper';
+import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar, ActivityIndicator } from 'react-native-paper';
 import { useState } from 'react';
 import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import * as Imagepicker from 'expo-image-picker';
 import { schoolzapi } from '../constants';
-import { selecttoken } from '../../features/userinfoSlice';
-import Vehiclelist from '../../lists/Vehiclelist';
-import Booklist from '../../lists/Booklist';
+import { selectstaffrole, selecttoken } from '../../features/userinfoSlice';
+import Routelist from '../../lists/Routelist';
+import Routetracklist from '../../lists/Routetracklist';
+import * as Location from 'expo-location';
 
-function Books () {
+
+function Trackroute () {
 
     const token = useSelector(selecttoken);
     const [search, setSearch] = useState();
@@ -28,10 +30,41 @@ function Books () {
     const showDialog = () => setShowdialog(true);
     const hideDialog = () => setShowdialog(false);
     const [showsnakbar, setShowsnakbar] = useState(false);
+    const [location,setLocation] = useState("");
+    const [errorMsg,setErrorMsg] = useState("");
+    const driver = useSelector(selectstaffrole);
     
+    useEffect(() => {
+
+      loadlocation();
+
+    }, []);
+
+
+    function loadlocation(){
+
+      (async () => {
+        
+        let { status } = await Location.requestForegroundPermissionsAsync();
+
+        if (status !== 'granted') {
+          setErrorMsg('Permission to access location was denied');
+          return;
+        }
+  
+        let location = await Location.getCurrentPositionAsync({});
+        setLocation(location);
+      })();
+
+
+
+    }
+
+
 
     useEffect(()=> {
       
+    
       DeviceEventEmitter.addListener("subject.added", (event)=>{
         console.log('how many time');
         loaddata();
@@ -42,10 +75,20 @@ function Books () {
 
     },[]);
 
+    let text = '';
+    if (errorMsg) {
+      text = errorMsg;
+    }
+
 
     const loaddata = () => {
+
+
+      loadlocation();
+
+
         setLoading(true);
-        axios.get(schoolzapi+'/books',
+        axios.get(schoolzapi+'/routes',
         {
             headers: {Accept: 'application/json',
             Authorization: "Bearer "+token
@@ -59,7 +102,7 @@ function Books () {
           })
           .catch(function (error) {
             setLoading(false);
-            console.log(error);
+            console.log(error.response);
           });
     }
 
@@ -77,7 +120,7 @@ function Books () {
                 text: "Yes Delete",
                 onPress: () => {
                     setLoading(true);
-                    axios.delete(schoolzapi+'/books/'+id,
+                    axios.delete(schoolzapi+'/routes/'+id,
                     {
                         headers: {Accept: 'application/json',
                         Authorization: "Bearer "+token
@@ -106,8 +149,8 @@ function Books () {
           if (text) {
               
             const newData = data.filter(function (item) {
-              const itemData = item.title
-                ? item.title.toUpperCase()
+              const itemData = item.name
+                ? item.name.toUpperCase()
                 : ''.toUpperCase();
               const textData = text.toUpperCase();
               return itemData.indexOf(textData) > -1;
@@ -124,7 +167,14 @@ function Books () {
       <Provider>
       <SafeAreaView>
         <Stack.Screen options={{
-            headerTitle: 'Books'
+            headerTitle: 'Track School Bus',
+            headerRight: () => (
+              <>
+                <TouchableOpacity onPress={loaddata} style={{marginRight: 20}}>
+                  <Ionicons name="refresh" size={30} />
+                </TouchableOpacity>
+              </>
+            )
         }}
         />
         <ScrollView
@@ -132,16 +182,6 @@ function Books () {
             <RefreshControl refreshing={isloading} onRefresh={loaddata} />
         }
         >
-        {isloading ? null : (
-           <View style={{marginVertical: 20}}>
-                <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>
-                    
-                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/library/create-edit-book')}>
-                        <Ionicons name="add-circle" size={22} color="#17a2b8"/>
-                        <Text style={{fontSize: 18}}>New</Text> 
-                    </TouchableOpacity>
-                </View>
-            </View>)}
 
             <Searchbar
                 placeholder='Search....'
@@ -149,18 +189,33 @@ function Books () {
                 onChangeText={(text) => searchFilterFunction(text)}
                 value={search}
             />
+
+            <Text>{text}</Text>
             
             <Card>
                 <Card.Content>
-                <FlatList
+                  {location == "" ? (
+                    <>
+                    <ActivityIndicator size="large" />
+                    <Text style={{textAlign: 'center'}}>Getting user Location...</Text>
+                    </>
+                  )
+                   : (
+
+                    <FlatList
                     data={filterdata}
-                    renderItem={({item})=> <Booklist item={item} deletedata={deletedata} /> }
+                    renderItem={({item})=> <Routetracklist item={item} deletedata={deletedata} location={location} driver={driver} /> }
                     ItemSeparatorComponent={()=> <View style={styles.separator} />}
                       contentContainerStyle={{
-                         marginBottom: 10
+                         marginBottom: 20
                     }}
                     keyExtractor={item => item.id}
-                />
+                  />
+                   
+                  )}
+
+                  
+                
                 </Card.Content>
             </Card> 
 
@@ -170,7 +225,7 @@ function Books () {
     )
 }
 
-export default Books;
+export default Trackroute;
 
 const styles = StyleSheet.create({
 

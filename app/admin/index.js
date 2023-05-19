@@ -86,6 +86,7 @@ import Myattendance from '../../components/Attendance/Myattendance';
 import Questionbank from '../../components/Exams/Questionbank';
 import Examination from '../../components/Exams/Examination';
 import Myresults from '../../components/Terminalreport/Myresults';
+import Trackroute from '../../components/Transport/Trackroute';
 
 const Drawer = createDrawerNavigator();
 
@@ -179,6 +180,7 @@ function Maindashboard() {
       <Drawer.Screen name="vehicle" component={Vehicle} />
       <Drawer.Screen name="waypoint" component={Waypoint} />
       <Drawer.Screen name="Routes" component={Routes} />
+      <Drawer.Screen name="Trackroute" component={Trackroute} />
 
 
       <Drawer.Screen name="Normalreport" component={Normalreport} />

@@ -8,7 +8,12 @@ const initialState = {
   permissions: null,
   menu: null,
   currency: null,
-  school: null
+  school: null,
+  staffrole: null,
+  origin: null,
+  orgaddress: null,
+  destination: null,
+  desaddress: null,
 }
 
 export const userinfoSlice = createSlice({
@@ -38,18 +43,34 @@ export const userinfoSlice = createSlice({
   },
   setSchool: (state, action) => {
     state.school = action.payload
-},
+  },
+  setOrigin: (state, action) => {
+    state.origin = action.payload
+  },
+  setOrgaddress: (state, action) => {
+    state.orgaddress = action.payload
+  },
+  setDestination: (state, action) => {
+    state.destination = action.payload
+  },
+  setdesAdrress: (state, action) => {
+    state.desaddress = action.payload
+  },
+  setStaffrole: (state, action) => {
+    state.staffrole = action.payload
+  },
   logout: (state) => {
     state.user = null;
     state.token = null;
     state.roles = null;
     state.userpermission = null;
     state.permissions = null;
+    state.staffrole = null;
   },
   },
 })
 
-export const { setUser, setToken, setRoles,  setUserpermission, setPermissions, setMenu, setCurrency, logout, setSchool} = userinfoSlice.actions
+export const {setOrigin, setOrgaddress, setDestination, setdesAdrress, setUser, setToken, setRoles,setStaffrole, setUserpermission, setPermissions, setMenu, setCurrency, logout, setSchool} = userinfoSlice.actions
 
 export const selectuser = (state) => state.userinfo.user
 export const selecttoken = (state) => state.userinfo.token
@@ -59,5 +80,10 @@ export const selectpermissions = (state) => state.userinfo.permissions
 export const selectmenu = (state) => state.userinfo.menu
 export const selectcurrency = (state) => state.userinfo.currency
 export const selectschool = (state) => state.userinfo.school
+export const selectstaffrole = (state) => state.userinfo.staffrole
+export const seleteorigin = (state) => state.userinfo.origin
+export const selectorgaddress = (state) => state.userinfo.orgaddress
+export const selectdestination = (state) => state.userinfo.destination
+export const selectdesaddress = (state) => state.userinfo.desaddress
 
 export default userinfoSlice.reducer

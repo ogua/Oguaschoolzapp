@@ -4,9 +4,11 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { selecttoken,selectcurrency, selectuserpermission } from '../../features/userinfoSlice';
-import { schoolzapi } from '../../components/constants';
+import { useDispatch, useSelector } from 'react-redux';
+import { selecttoken,selectcurrency, selectuserpermission, selectstaffrole, setOrigin, setDestination } from '../../features/userinfoSlice';
+import { LOCATION_TASK_NAME, schoolzapi } from '../../components/constants';
+import * as Location from 'expo-location';
+import * as TaskManager from 'expo-task-manager';
 
 function Dashboard() {
     const [dashbaord, Setdashboard] = useState();
@@ -15,7 +17,53 @@ function Dashboard() {
     const currency = useSelector(selectcurrency);
     const [expectedfees, Setexpectedfees] = useState("");
     const permission = useSelector(selectuserpermission);
+    const dispatch = useDispatch();
+    const role = useSelector(selectstaffrole);
 
+    useEffect(() => {
+
+        (async () => {
+          
+          let { status } = await Location.requestBackgroundPermissionsAsync();
+  
+          if (status !== 'granted') {
+            alert('Permission to access location was denied');
+            return;
+          }
+
+          await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+            accuracy: Location.Accuracy.Balanced,
+          });
+
+          initail();
+
+        })();
+  
+      }, []);
+
+      function initail(){
+
+        TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
+            if (error) {
+              // Error occurred - check `error.message` for more details.
+              alert('Something went wrong with background locations');
+              return;
+            }
+            if (data) {
+              const { locations } = data;
+              console.log("locations",locations[0].coords);
+             if(role == "Driver"){
+                dispatch(setOrigin({latitude: locations[0].coords.latitude,longitude: locations[0].coords.longitude}));
+             }else{
+                dispatch(setDestination({latitude: locations[0].coords.latitude,longitude: locations[0].coords.longitude}));
+             }
+            }
+          });
+
+      }
+      
+    
+    
     useEffect(()=>{
         loaddata();
     },[]);
