@@ -698,29 +698,29 @@ const setitemfocus = (itemid) => {
         key: 151,
         name: 'Enter Results',
         icon: 'circle-outline',
-        route: 'All Students',
+        route: 'Enterresults',
         permission: 'viewstudentresults',
         role: '',
         children: []
       },
       {
         key: 152,
-        name: 'View Results',
+        name: 'Results per subject',
         icon: 'circle-outline',
-        route: 'All Students',
+        route: 'Resultspersubject',
         permission: 'viewstudentresults',
         role: '',
         children: []
       },
-      {
-        key: 151,
-        name: 'Results per student',
-        icon: 'circle-outline',
-        route: 'All Students',
-        permission: 'viewstudentresults',
-        role: '',
-        children: []
-      },
+      // {
+      //   key: 153,
+      //   name: 'Results per student',
+      //   icon: 'circle-outline',
+      //   route: 'All Students',
+      //   permission: 'viewstudentresults',
+      //   role: '',
+      //   children: []
+      // },
     ]
   },
   {
@@ -950,7 +950,7 @@ function checkpermission(){
 
 
                    <DrawerItem 
-                      focused={focus == `2` ? true: false}
+                      focused={focus == `2112` ? true: false}
                       icon={({color, size}) => (
                           <Icon 
                             name="account-outline"
@@ -964,7 +964,7 @@ function checkpermission(){
                             </View>
                         )}   
                       onPress={() => {
-                        setitemfocus(`2`);
+                        setitemfocus(`2112`);
                         setsubFocus(0);
                         props.navigation.navigate("Profile");
 

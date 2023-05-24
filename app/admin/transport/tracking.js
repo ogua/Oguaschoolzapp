@@ -269,6 +269,11 @@ function Trackroute() {
                     mode="DRIVING"
                     strokeWidth={3}
                     strokeColor='black'
+                    optimizeWaypoints={true}
+                    onReady={result => {
+                      mapref.current.fitToCoordinates(result.coordinates,
+                        {edgePadding: {top: 50, right: 50, bottom: 50, left: 50}});
+                    }}
                     />
 
                 )}

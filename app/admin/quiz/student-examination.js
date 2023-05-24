@@ -8,7 +8,7 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
   import { useState } from 'react';
   import axios from 'axios';
   import Ionicons from '@expo/vector-icons/Ionicons';
-  import { useSelector } from 'react-redux';
+  import { useDispatch, useSelector } from 'react-redux';
   import * as Imagepicker from 'expo-image-picker';
   import { showMessage } from "react-native-flash-message";
   import { selecttoken } from '../../../features/userinfoSlice';
@@ -17,6 +17,8 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
   import DropDownPicker from 'react-native-dropdown-picker';
   import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
   import {produce} from "immer";
+  import { selectexam, setExam } from '../../../features/examSlice'; 
+import Examquestions from '../../../components/Exams/Examquestions';
 
   
   function Studentexamination () {
@@ -48,6 +50,9 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
     const [value, setValue] = useState("");
 
     const [examtitleid, setexamtitleid] = useState("");
+
+    const dispatch = useDispatch();
+    const exams = useSelector(selectexam);
 
     // useEffect(()=> {
 
@@ -132,13 +137,14 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
     .then(function (results) {
       
      // console.log(results.data.data);
-      loadqestions(results.data.data);
+      
       setexamtittle(results.data.examtitle);
 
       setduration(results.data.examtitle.minutes);
       setexamtitleid(results.data.examtitle.id);
 
       //console.log(results.data.examtitle.minutes);
+      loadqestions(results.data.data);
 
       setLoading(false);
       
@@ -158,8 +164,10 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
      mddatas.map(item =>  mdata.push(
         {id: "que_" + Math.random(),exam_id: item?.exam_id, question: item?.question, optiona: item?.optiona, optionb: item?.optionb, optionc: item?.optionc, optiond: item?.optiond, answer: item?.answer, useranser: '', response: 'Wrong'}
     ))
+
+    dispatch(setExam(mdata));
     
-     setData(mdata);
+   // setData(mdata);
 }
   
     
@@ -176,10 +184,9 @@ const savequestions = () => {
   
     const formdata = {
       examid: id,
-      data,
+      exams,
       examtitleid
     }
-
 
     setLoading(true);
     
@@ -265,7 +272,7 @@ return (
        <Ionicons name="close-circle" size={30} />
     </TouchableOpacity>
     <>
-    <Text style={{fontWeight: 600}}>Total Questions: {data !== null ? data.length : 0}</Text>
+    <Text style={{fontWeight: 600}}>Total Questions: {exams !== null ? exams.length : 0}</Text>
     <Text style={{fontWeight: 600}}>Timer: {duration}</Text>
     </>
     
@@ -297,58 +304,15 @@ return (
   ref={scrollViewRef}
   onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
   style={{marginBottom: 250}}
-  refreshControl={
-    <RefreshControl refreshing={isloading} onRefresh={loaddata} />
-  }
   > 
   <Card>
   <Card.Content>
   
-    {data !== null && (
+    {exams !== null && (
         <>
-        {data.map((item,index) => (
+        {exams.map((item,index) => (
         <>    
-        <View style={{marginBottom: 30, backgroundColor: retry ? (item.response == 'Correct' ? '#17a2b8' : 'red') : '#ccc', padding: 10}} key={item?.id}>
-            
-            <Text style={{fontSize: 18, marginBottom: 15, color: retry ? '#fff' : '#000'}}>{index+1}:: {item.question}</Text>
-              <RadioButton.Group onValueChange={newValue => answerinoput(index,newValue)} value={item?.useranser}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Text style={{marginRight: 20, color: retry ? '#fff' : '#000'}}>A</Text>
-                  <RadioButton value="a" />
-                  <Text style={{color: retry ? '#fff' : '#000'}}>{item.optiona}</Text>
-                  
-              </View>
-
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Text style={{marginRight: 20,color: retry ? '#fff' : '#000'}}>B</Text>
-                  <RadioButton value="b" />
-                  <Text style={{color: retry ? '#fff' : '#000'}}>{item.optionb}</Text>
-                  
-              </View>
-
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Text style={{marginRight: 20,color: retry ? '#fff' : '#000'}}>C</Text>
-                  <RadioButton value="c" />
-                  <Text style={{color: retry ? '#fff' : '#000'}}>{item.optionc}</Text>
-                  
-              </View>
-
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Text style={{marginRight: 20,color: retry ? '#fff' : '#000'}}>D</Text>
-                  <RadioButton value="d" />
-                  <Text style={{color: retry ? '#fff' : '#000'}}>{item.optiond}</Text>
-                  
-              </View>
-
-              </RadioButton.Group>
-
-             {retry && (
-              <>
-              <Text style={{marginTop: 20, color: '#fff'}}>Answer:: {item.answer.toUpperCase()}</Text>
-              </>
-              
-             )}   
-        </View>
+        <Examquestions key={index} item={item} index={index} retry={retry}/>
         
         </>
     ))}

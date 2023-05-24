@@ -87,6 +87,8 @@ import Questionbank from '../../components/Exams/Questionbank';
 import Examination from '../../components/Exams/Examination';
 import Myresults from '../../components/Terminalreport/Myresults';
 import Trackroute from '../../components/Transport/Trackroute';
+import Enterresults from '../../components/Results/Enterresults';
+import Resultspersubject from '../../components/Results/Resultspersubject';
 
 const Drawer = createDrawerNavigator();
 
@@ -183,6 +185,10 @@ function Maindashboard() {
       <Drawer.Screen name="Trackroute" component={Trackroute} />
 
 
+      <Drawer.Screen name="Enterresults" component={Enterresults} />
+      <Drawer.Screen name="Resultspersubject" component={Resultspersubject} />
+      
+      
       <Drawer.Screen name="Normalreport" component={Normalreport} />
       <Drawer.Screen name="Myresults" component={Myresults} />
 

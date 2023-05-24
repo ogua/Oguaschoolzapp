@@ -156,7 +156,7 @@ function Trackroute() {
 
         
         <MapView style={styles.map}
-            mapType="mutedStandard[9999"
+            mapType="mutedStandard"
                 initialRegion={{
                     latitude: parseFloat(latitude),
                     longitude: parseFloat(logitude),
