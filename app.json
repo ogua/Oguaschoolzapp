@@ -1,15 +1,45 @@
 {
   "expo": {
     "scheme": "acme",
-    "web": {
-      "bundler": "metro"
-    },
-    "name": "OguaSchoolz",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "name": "oguaschoolz-app",
     "slug": "OguaSchoolz",
+    "version": "1,0",
+    "orientation": "portrait",
+    "icon": "./assets/soft.png",
+    "primaryColor": "#fff",
     "splash": {
       "image": "./assets/soft.png",
       "backgroundColor": "#ccc",
-      "resizeMode": "contain"
+      "resizeMode": "200x200"
+    },
+    "android": {
+      "package": "com.oguaschoolz.app",
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
+      "versionCode": 1,
+      "adaptiveIcon":{
+        "foregroundImage": "./assets/soft.png",
+        "backgroundColor": "#fff"
+      }
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.oguaschoolz.app",
+      "buildNumber": "1.0.0",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to let user put a photo in his profile page."
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
     }
   }
 }

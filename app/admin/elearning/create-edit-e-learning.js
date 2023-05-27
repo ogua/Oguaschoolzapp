@@ -11,6 +11,7 @@ import { useCallback } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
 import { selecttoken } from '../../../features/userinfoSlice';
 import { schoolzapi } from '../../../components/constants';
+import { showMessage } from "react-native-flash-message";
 
 function Createeditelearning() {
 
@@ -189,10 +190,18 @@ function Createeditelearning() {
         }
         })
           .then(function (response) {
-            ToastAndroid.show('info saved successfully!', ToastAndroid.SHORT);
             setIssubmitting(false);
-            DeviceEventEmitter.emit('subject.added', {});
-            router.back();
+
+            showMessage({
+              message: 'Info recorded Successfully!',
+              type: "success",
+              position: 'bottom',
+            });
+          
+          DeviceEventEmitter.emit('subject.added', {});
+          router.back();
+
+           
           })
           .catch(function (error) {
             setIssubmitting(false);

@@ -735,7 +735,7 @@ const setitemfocus = (itemid) => {
         key: 161,
         name: 'Questionaire 1',
         icon: 'circle-outline',
-        route: 'All Students',
+        route: 'Questionnaire 1',
         permission: 'viewquestionnaires',
         role: '',
         children: []
@@ -744,7 +744,7 @@ const setitemfocus = (itemid) => {
         key: 162,
         name: 'Questionaire 2',
         icon: 'circle-outline',
-        route: 'All Students',
+        route: 'Questionnaire 2',
         permission: 'viewquestionnaires',
         role: '',
         children: []

@@ -5,7 +5,9 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selecttoken,selectcurrency, selectuserpermission, selectstaffrole, setOrigin, setDestination } from '../../features/userinfoSlice';
+import { selecttoken,selectcurrency, selectuserpermission, selectstaffrole } from '../../features/userinfoSlice';
+import {setOrigin, setDestination } from '../../features/examSlice';
+
 import { LOCATION_TASK_NAME, schoolzapi } from '../../components/constants';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
@@ -53,7 +55,10 @@ function Dashboard() {
               const { locations } = data;
               console.log("locations",locations[0].coords);
              if(role == "Driver"){
-                dispatch(setOrigin({latitude: locations[0].coords.latitude,longitude: locations[0].coords.longitude}));
+                dispatch(setOrigin({
+                    cordinates: {latitude: locations[0].coords.latitude,longitude: locations[0].coords.longitude},
+                    token: token
+                }));
              }else{
                 dispatch(setDestination({latitude: locations[0].coords.latitude,longitude: locations[0].coords.longitude}));
              }

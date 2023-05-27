@@ -11,6 +11,8 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { TimePickerModal } from 'react-native-paper-dates';
 import { useCallback } from 'react';
 import { LocaleConfig, Calendar } from "react-native-calendars";
+import { showMessage } from "react-native-flash-message";
+
 
 
 function Createeditcalllogs() {
@@ -142,10 +144,17 @@ const hideDialog = () => setShowdialog(false);
         }
         })
           .then(function (response) {
-            ToastAndroid.show('info saved successfully!', ToastAndroid.SHORT);
             setIssubmitting(false);
+
+            showMessage({
+              message: 'Info recorded Successfully!',
+              type: "success",
+              position: 'bottom',
+            });
+          
             DeviceEventEmitter.emit('subject.added', {});
             router.back();
+            
           })
           .catch(function (error) {
             setIssubmitting(false);
@@ -189,9 +198,18 @@ const hideDialog = () => setShowdialog(false);
       }
       })
         .then(function (response) {
-            setIssubmitting(false);
+          setIssubmitting(false);
+
+          showMessage({
+            message: 'Info recorded Successfully!',
+            type: "success",
+            position: 'bottom',
+          });
+        
           DeviceEventEmitter.emit('subject.added', {});
           router.back();
+
+          
         })
         .catch(function (error) {
             setIssubmitting(false);

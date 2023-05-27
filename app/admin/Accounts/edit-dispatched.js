@@ -15,6 +15,7 @@ import MultiSelect from 'react-native-multiple-select';
 import { cos } from 'react-native-reanimated';
 import { TouchableOpacity } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { showMessage } from "react-native-flash-message";
 
 function Editdispatched() {
 
@@ -255,9 +256,14 @@ function Editdispatched() {
             if( response.data.error !== undefined){
                 alert('Fee Already Added!');
             }else{
-                ToastAndroid.show('info saved successfully!', ToastAndroid.SHORT);
-                DeviceEventEmitter.emit('subject.added', {});
-                router.back();
+              showMessage({
+                message: 'Info recorded Successfully!',
+                type: "success",
+                position: 'bottom',
+              });
+            
+              DeviceEventEmitter.emit('subject.added', {});
+              router.back();
             }
             
            
@@ -330,6 +336,13 @@ function Editdispatched() {
       })
         .then(function (response) {
           setIssubmitting(false);
+          
+          showMessage({
+            message: 'Info recorded Successfully!',
+            type: "success",
+            position: 'bottom',
+          });
+        
           DeviceEventEmitter.emit('subject.added', {});
           router.back();
         })

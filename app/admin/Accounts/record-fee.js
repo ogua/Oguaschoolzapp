@@ -14,6 +14,7 @@ import { selectcurrency, selecttoken } from '../../../features/userinfoSlice';
 import { schoolzapi } from '../../../components/constants';
 import Feemasterlist from '../../../lists/Feemasterlist';
 import Payfeelist from '../../../lists/Payfeelist';
+import { showMessage } from "react-native-flash-message";
 
 function Recordfee () {
 
@@ -158,8 +159,14 @@ function Recordfee () {
                             if( response.data.error !== undefined){
                                 alert(response.data.error);
                             }else{
-                                ToastAndroid.show(response.data.data, ToastAndroid.SHORT);
-                                loaddata();
+
+                              showMessage({
+                                message: response.data.data,
+                                type: "success",
+                                position: 'bottom',
+                              });
+
+                               loaddata();
                             }
                             setLoading(false);
                         })

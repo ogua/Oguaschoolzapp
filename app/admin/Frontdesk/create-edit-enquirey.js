@@ -8,6 +8,7 @@ import { schoolzapi } from '../../../components/constants';
 import { selecttoken } from '../../../features/userinfoSlice';
 import { useEffect } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { showMessage } from "react-native-flash-message";
 
 function Createeditenquiry() {
 
@@ -109,10 +110,18 @@ function Createeditenquiry() {
         }
         })
           .then(function (response) {
-            ToastAndroid.show('info saved successfully!', ToastAndroid.SHORT);
             setIssubmitting(false);
-            DeviceEventEmitter.emit('subject.added', {});
-            router.back();
+
+            showMessage({
+              message: 'Info recorded Successfully!',
+              type: "success",
+              position: 'bottom',
+            });
+          
+          DeviceEventEmitter.emit('subject.added', {});
+          router.back();
+
+           
           })
           .catch(function (error) {
             setIssubmitting(false);

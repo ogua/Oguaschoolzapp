@@ -89,6 +89,8 @@ import Myresults from '../../components/Terminalreport/Myresults';
 import Trackroute from '../../components/Transport/Trackroute';
 import Enterresults from '../../components/Results/Enterresults';
 import Resultspersubject from '../../components/Results/Resultspersubject';
+import Questionaireone from '../../components/Questinnaire/Questionaireone';
+import Questionnairetwo from '../../components/Questinnaire/Questionnairetwo';
 
 const Drawer = createDrawerNavigator();
 
@@ -187,6 +189,11 @@ function Maindashboard() {
 
       <Drawer.Screen name="Enterresults" component={Enterresults} />
       <Drawer.Screen name="Resultspersubject" component={Resultspersubject} />
+
+      <Drawer.Screen name="Questionnaire 1" component={Questionaireone} />
+      <Drawer.Screen name="Questionnaire 2" component={Questionnairetwo} />
+      
+      
       
       
       <Drawer.Screen name="Normalreport" component={Normalreport} />

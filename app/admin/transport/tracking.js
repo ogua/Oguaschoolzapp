@@ -6,13 +6,15 @@ import { Avatar, Button, Card, Divider, TextInput } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import MapView, { Marker } from "react-native-maps";
-import { selectdestination, selecttoken, seleteorigin } from '../../../features/userinfoSlice';
+import {  selecttoken } from '../../../features/userinfoSlice';
 import { schoolzapi, images } from '../../../components/constants';
 import { FlatList,Image } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapViewDirections from "react-native-maps-directions";
+import { selectdestination, seleteorigin } from '../../../features/examSlice';
+import * as Location from 'expo-location';
 
 function Trackroute() {
 
@@ -36,6 +38,10 @@ function Trackroute() {
     const [dlogitude, setdlogitude] = useState(mylongitude);
     const [daddress, setdaddress] = useState(myaddress);
     const [distance, setdistance] = useState("");
+    const [heading, setheading] = useState(100);
+
+
+    
 
 
     const origin = useSelector(seleteorigin);
@@ -44,6 +50,7 @@ function Trackroute() {
     const setautoref = useRef();
 
     const mapref = useRef(null);
+    const markerRef = useRef();
 
     useEffect(()=> {
       if(dlatitude == null || dlogitude == null) return;
@@ -53,6 +60,7 @@ function Trackroute() {
         //   edgePadding: {top: 50, right: 50, bottom: 50, left: 50}
         // });
 
+        animate(parseFloat(dlatitude), parseFloat(dlogitude));
 
         mapref.current.fitToCoordinates([
           {latitude: parseFloat(latitude),longitude: parseFloat(logitude)},
@@ -60,6 +68,60 @@ function Trackroute() {
           {edgePadding: {top: 50, right: 50, bottom: 50, left: 50}});
         
     },[dlatitude,dlogitude]);
+
+
+   
+
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+        getLiveLocation()
+    }, 6000);
+    return () => clearInterval(interval)
+  }, []);
+
+
+function getLiveLocation(){
+
+  (async () => {
+    
+    let { status } = await Location.requestForegroundPermissionsAsync();
+
+    if (status !== 'granted') {
+      setErrorMsg('Permission to access location was denied');
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+
+    // setlatitude(location.coords.latitude);
+    // setlongitude(location.coords.longitude);
+    // setaddress(location.coords.longitude);
+
+   // console.log("location",location);
+
+    setheading(coords.heading);
+
+    animate(location.coords.latitude,location.coords.longitude);
+
+   // setLocation(location);
+  })();
+}
+
+
+const animate = (latitude, longitude) => {
+  const newCoordinate = { latitude, longitude };
+  console.log("newCoordinate",newCoordinate);
+  if (Platform.OS == 'android') {
+      if (markerRef.current) {
+          markerRef.current.animateMarkerToCoordinate(newCoordinate, 7000);
+      }
+  } else {
+     // coordinate.timing(newCoordinate).start();
+  }
+}
+
+
 
 
     useEffect(()=> {
@@ -272,13 +334,14 @@ function Trackroute() {
                     optimizeWaypoints={true}
                     onReady={result => {
                       mapref.current.fitToCoordinates(result.coordinates,
-                        {edgePadding: {top: 50, right: 50, bottom: 50, left: 50}});
+                        {edgePadding: {top: 50, right: 50, bottom: 50, left: 50},animate: true});
                     }}
                     />
 
                 )}
 
-                    <Marker
+                    <Marker.Animated
+                     ref={markerRef}
                       coordinate={{latitude: parseFloat(latitude),
                           longitude: parseFloat(logitude)}}
                       title="Drivers Location"
@@ -287,11 +350,17 @@ function Trackroute() {
                       >
                       <Image source={require('../../../assets/bus.png')}
                       resizeMode="contain"
-                      style={{height: 35, width:35 }} />
-                    </Marker>
+                      style={{
+                        width: 40,
+                        height: 40,
+                        transform: [{rotate: `${heading}deg`}]
+                    }}
+                     />
+                    </Marker.Animated>
 
 
-                    <Marker
+                    <Marker.Animated
+                       ref={markerRef}
                         coordinate={{latitude: parseFloat(dlatitude),
                             longitude: parseFloat(dlogitude)}}
                         title="Your Location"

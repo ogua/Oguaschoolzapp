@@ -12,6 +12,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import { LocaleConfig, Calendar } from "react-native-calendars";
 import { selecttoken } from '../../../features/userinfoSlice';
 import { schoolzapi } from '../../../components/constants';
+import { showMessage } from "react-native-flash-message";
 
 
 function Createeditissuedbook() {
@@ -212,7 +213,11 @@ function Createeditissuedbook() {
         }
         })
           .then(function (response) {
-            ToastAndroid.show('info saved successfully!', ToastAndroid.SHORT);
+            showMessage({
+                message: 'Info recorded Successfully!',
+                type: "success",
+                position: 'bottom',
+              });
             setIssubmitting(false);
             DeviceEventEmitter.emit('subject.added', {});
             router.back();

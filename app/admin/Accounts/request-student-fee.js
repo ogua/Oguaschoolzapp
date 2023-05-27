@@ -15,6 +15,7 @@ import MultiSelect from 'react-native-multiple-select';
 import { cos } from 'react-native-reanimated';
 import { TouchableOpacity } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { showMessage } from "react-native-flash-message";
 
 function Requestfees() {
 
@@ -162,7 +163,13 @@ function Requestfees() {
             if( response.data.error !== undefined){
                 alert(response.data.error);
             }else{
-                ToastAndroid.show(response.data.data, ToastAndroid.SHORT);
+
+                showMessage({
+                    message: response.data.data,
+                    type: "success",
+                    position: 'bottom',
+                  });
+                
                 DeviceEventEmitter.emit('subject.added', {});
                 router.back();
             }

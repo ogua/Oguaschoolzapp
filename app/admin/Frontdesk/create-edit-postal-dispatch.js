@@ -12,6 +12,7 @@ import { TimePickerModal } from 'react-native-paper-dates';
 import { useCallback } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
 import { LocaleConfig, Calendar } from "react-native-calendars";
+import { showMessage } from "react-native-flash-message";
 
 function Createeditpostaldispatch() {
 
@@ -148,10 +149,17 @@ const hideDialog = () => setShowdialog(false);
         }
         })
           .then(function (response) {
-            ToastAndroid.show('info saved successfully!', ToastAndroid.SHORT);
             setIssubmitting(false);
+            
+            showMessage({
+              message: 'Info recorded Successfully!',
+              type: "success",
+              position: 'bottom',
+            });
+          
             DeviceEventEmitter.emit('subject.added', {});
             router.back();
+           
           })
           .catch(function (error) {
             setIssubmitting(false);

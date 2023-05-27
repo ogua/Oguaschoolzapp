@@ -6,6 +6,7 @@ import { Button, Card, TextInput } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { schoolzapi } from '../../../components/constants';
 import { selecttoken } from '../../../features/userinfoSlice';
+import { showMessage } from "react-native-flash-message";
 
 function Editcalendar() {
 
@@ -56,6 +57,13 @@ function Editcalendar() {
       })
         .then(function (response) {
           setLoading(false);
+          showMessage({
+            message: 'Info recorded Successfully!',
+            type: "success",
+            position: 'bottom',
+          });
+        
+          DeviceEventEmitter.emit('subject.added', {});
           router.back();
         })
         .catch(function (error) {
@@ -76,7 +84,8 @@ function Editcalendar() {
         <Card>
             <Card.Content>
             <TextInput 
-              placeholder='Academic Term'
+              label='Academic Term'
+              mode="outlined"
               onChangeText={(e) => setName(e)}
               value={name} />
 

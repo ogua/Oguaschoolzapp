@@ -15,6 +15,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { DeviceEventEmitter } from 'react-native';
 import { ToastAndroid } from 'react-native';
+import { showMessage } from "react-native-flash-message";
 
 function Createeditfee() {
 
@@ -83,8 +84,13 @@ function Createeditfee() {
       }
       })
         .then(function (response) {
-          ToastAndroid.show('info saved successfully!', ToastAndroid.SHORT);
           setIssubmitting(false);
+          showMessage({
+            message: 'Info recorded Successfully!',
+            type: "success",
+            position: 'bottom',
+          });
+        
           DeviceEventEmitter.emit('subject.added', {});
           router.back();
         })
@@ -117,8 +123,16 @@ function Createeditfee() {
     })
       .then(function (response) {
         setIssubmitting(false);
+
+        showMessage({
+          message: 'Info recorded Successfully!',
+          type: "success",
+          position: 'bottom',
+        });
+      
         DeviceEventEmitter.emit('subject.added', {});
         router.back();
+
       })
       .catch(function (error) {
           setIssubmitting(false);

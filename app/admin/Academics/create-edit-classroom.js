@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { schoolzapi } from '../../../components/constants';
 import { selecttoken } from '../../../features/userinfoSlice';
 import { useEffect } from 'react';
+import { showMessage } from "react-native-flash-message";
 
 function Createeditsubject() {
 
@@ -71,10 +72,17 @@ function Createeditsubject() {
         }
         })
           .then(function (response) {
-            ToastAndroid.show('info saved successfully!', ToastAndroid.SHORT);
+
             setLoading(false);
-            DeviceEventEmitter.emit('subject.added', {});
-            router.back();
+            
+            showMessage({
+              message: 'Info recorded Successfully!',
+              type: "success",
+              position: 'bottom',
+            });
+          
+          DeviceEventEmitter.emit('subject.added', {});
+          router.back();
           })
           .catch(function (error) {
             setLoading(false);
@@ -120,7 +128,8 @@ function Createeditsubject() {
         <Card>
             <Card.Content>
             <TextInput 
-              placeholder='Class Name'
+              label='Class Name'
+              mode="outlined"
               onChangeText={(e) => setName(e)}
               value={name} />
 

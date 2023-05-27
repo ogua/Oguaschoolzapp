@@ -14,6 +14,8 @@ import { schoolzapi } from '../../../components/constants';
 import { selecttoken } from '../../../features/userinfoSlice';
 import Incomeexpenslist from '../../../lists/Incomeexpenselist';
 import Incomeexpensetypelist from '../../../lists/incomeexpensetype';
+import { showMessage } from "react-native-flash-message";
+
 
 function Incomeexpensecategory () {
 

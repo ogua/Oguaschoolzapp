@@ -17,6 +17,8 @@ import { TouchableOpacity, Image } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { LocaleConfig, Calendar } from "react-native-calendars";
+import { showMessage } from "react-native-flash-message";
+
 
 
 function Createeditvendors() {
@@ -234,9 +236,16 @@ function Createeditvendors() {
             if( response.data.error !== undefined){
                 alert(response.data.error);
             }else{
-                ToastAndroid.show('info saved successfully!', ToastAndroid.SHORT);
-                DeviceEventEmitter.emit('subject.added', {});
-                router.back();
+                
+              showMessage({
+                message: 'Info recorded Successfully!',
+                type: "success",
+                position: 'bottom',
+              });
+            
+              DeviceEventEmitter.emit('subject.added', {});
+              router.back();
+
             }
            
             

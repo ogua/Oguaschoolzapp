@@ -14,6 +14,7 @@ import * as Animatable from 'react-native-animatable';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { LocaleConfig, Calendar } from "react-native-calendars";
+import { showMessage } from "react-native-flash-message";
 
 
 function Createacademicterm() {
@@ -156,7 +157,14 @@ function Createacademicterm() {
         })
           .then(function (response) {
             setLoading(false);
-            router.back();
+            showMessage({
+              message: 'Info recorded Successfully!',
+              type: "success",
+              position: 'bottom',
+            });
+          
+          DeviceEventEmitter.emit('subject.added', {});
+          router.back();
           })
           .catch(function (error) {
             setLoading(false);

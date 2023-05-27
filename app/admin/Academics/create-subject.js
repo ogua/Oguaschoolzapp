@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { schoolzapi } from '../../../components/constants';
 import { selecttoken } from '../../../features/userinfoSlice';
 import { useEffect } from 'react';
+import { showMessage } from "react-native-flash-message";
 
 function Createsubject() {
     const token = useSelector(selecttoken);
@@ -70,8 +71,14 @@ function Createsubject() {
         }
         })
           .then(function (response) {
-            ToastAndroid.show('info saved successfully!', ToastAndroid.SHORT);
             setLoading(false);
+            
+            showMessage({
+              message: 'Info recorded Successfully!',
+              type: "success",
+              position: 'bottom',
+            });
+          
             DeviceEventEmitter.emit('subject.added', {});
             router.back();
           })
@@ -120,6 +127,7 @@ function Createsubject() {
             <Card.Content>
             <TextInput
               label="Subject Name"
+              mode="outlined"
               onChangeText={(e) => setName(e)}
               value={name} />
 

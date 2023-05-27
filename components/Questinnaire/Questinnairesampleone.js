@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { Stack, useRouter, useSearchParams } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
    ScrollView, StyleSheet, Text, TouchableOpacity, 
-   View, DeviceEventEmitter, Alert, TextInput} from 'react-native'
+   View, DeviceEventEmitter, Alert } from 'react-native'
 import { useEffect } from 'react';
 import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar } from 'react-native-paper';
 import { useState } from 'react';
@@ -10,59 +10,58 @@ import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import * as Imagepicker from 'expo-image-picker';
-import { useRef } from 'react';
-import { selecttoken } from '../../../features/userinfoSlice';
-import { schoolzapi } from '../../../components/constants';
-import Transactionlist from '../../../lists/Transactionlist';
-import { showMessage } from "react-native-flash-message";
+import { schoolzapi } from '../constants';
+import { selecttoken } from '../../features/userinfoSlice';
+import Questionairelistonelist from '../../lists/Questionairelistonelist';
 
-function Transactionstudent () {
+function Questinnairesampleone () {
 
     const token = useSelector(selecttoken);
     const [search, setSearch] = useState();
     const [isloading, setLoading] = useState(true);
     const [data, setData] = useState([]);
     const [filterdata, setFilterdata] = useState([]);
-    const [studentclass, setStudentclass] = useState([]);
     const router = useRouter();
     const [visible, setVisible] = useState(0);
     const [showdialog, setShowdialog] = useState(false);
     const showDialog = () => setShowdialog(true);
     const hideDialog = () => setShowdialog(false);
     const [showsnakbar, setShowsnakbar] = useState(false);
-    const [active, setActive] = useState("");
-    const fromdate = useRef();
-    const {studentid,studentname} = useSearchParams();
 
-    const [txtfromdate, settxtfromdate] = useState("");
-    const [txttodate, settxttodate] = useState("");
+
+    
 
     useEffect(()=> {
+      
+      DeviceEventEmitter.addListener("subject.added", (event)=>{
+        console.log('how many time');
+        loaddata();
+        DeviceEventEmitter.removeAllListeners("event.test");
+      });
+
        loaddata();
+
     },[]);
 
 
     const loaddata = () => {
         setLoading(true);
-        
-        axios.get(schoolzapi+'/student-transaction/'+studentid,
+        axios.get(schoolzapi+'/questionnaire-one',
         {
             headers: {Accept: 'application/json',
             Authorization: "Bearer "+token
         }
         })
-        .then(function (results) {
+          .then(function (response) {
+            console.log(response.data.data);
+            setData(response.data.data);
+            setFilterdata(response.data.data);
             setLoading(false);
-
-            setData(results.data.data);
-            setFilterdata(results.data.data);
-
-        }).catch(function(error){
+          })
+          .catch(function (error) {
             setLoading(false);
-            const acct = error[0];
-            const studeclass = error[1];
-            
-        });
+            console.log(error);
+          });
     }
 
 
@@ -79,7 +78,7 @@ function Transactionstudent () {
                 text: "Yes Delete",
                 onPress: () => {
                     setLoading(true);
-                    axios.delete(schoolzapi+'/fees-dispacted/'+id,
+                    axios.delete(schoolzapi+'/questionnaire-one/'+id,
                     {
                         headers: {Accept: 'application/json',
                         Authorization: "Bearer "+token
@@ -89,7 +88,7 @@ function Transactionstudent () {
                             const newData = data.filter((item) => item.id != id);
                             setFilterdata(newData);
                             setData(newData);
-                            //loaddata();
+                           // loaddata();
                             setLoading(false);
                         })
                         .catch(function (error) {
@@ -108,8 +107,8 @@ function Transactionstudent () {
           if (text) {
               
             const newData = data.filter(function (item) {
-              const itemData = item.fullname
-                ? item.fullname.toUpperCase()
+              const itemData = item.stclassname
+                ? item.stclassname.toUpperCase()
                 : ''.toUpperCase();
               const textData = text.toUpperCase();
               return itemData.indexOf(textData) > -1;
@@ -120,105 +119,41 @@ function Transactionstudent () {
             setFilterdata(data);
             setSearch(text);
           }
-    };
-
-
-    const checkclassselected = (id) => {
-
-      if(active == id){
-        setActive("All");
-        searchFilterclassFunction("All");
-      }else{
-        setActive(id);
-        searchFilterclassFunction(id);
-      }
-    }
-
-
-    const stclasslist = (item) => (
-        <>
-        <TouchableOpacity style={{backgroundColor: `${active == item.id ? `#1782b6` : `#fff` }`, borderRadius: 30, marginTop: 10, marginRight: 20}}
-        onPress={()=> {
-            checkclassselected(item.id);
-        }}
-        >
-        <List.Item
-            title={item?.name}
-            titleStyle={{color: `${active == item.id ? `#fff` : `#000` }`}}
-            titleEllipsizeMode="middle"/>
-        </TouchableOpacity>
-        </>
-    );
-
-    const searchFilterclassFunction = (text) => {
-        
-        if (text) {
-            setLoading(true);
-            if(text == "All"){
-
-              setFilterdata(data);
-
-            }else{
-              const newData = data.filter(item => item.stclassid == text);
-              setFilterdata(newData);
-            }
-          //setSearch(text);
-          setLoading(false);
-        } else {
-            setLoading(true);
-          setFilterdata(data);
-          //setSearch(text);
-          setLoading(false);
-        }
-  };
-
-  const refreshdata = () => {
-    loaddata();
-  }
-
-
-  const generatetransaction = () => {
-    Alert('working');
-  }
-
+      };
 
     return (
       <Provider>
-      <SafeAreaView>
-        <Stack.Screen
-        options={{
-            headerTitle: '',
-            headerLeft: () => (
-              <TouchableOpacity onPress={() => router.back()}>
-                    <Ionicons name="close-circle" size={30} style={{marginRight: 10}} />
-              </TouchableOpacity>
-            ),
-            headerRight: () => (
-              <TouchableOpacity onPress={refreshdata}>
-                    <Ionicons name="refresh" size={30} style={{marginRight: 10}} />
-              </TouchableOpacity>
-            ),
-           }}
-        />
-
-       {/* <View style={{backgroundColor: '#fff', padding: 20}}>
-          <Text style={{fontSize: 18, textAlign: 'center', fontWeight: 500}}>Transactions for {studentname}</Text>
-       </View> */}
-
         <ScrollView
-        style={{marginBottom: 40}}
         refreshControl={
             <RefreshControl refreshing={isloading} onRefresh={loaddata} />
         }
-        > 
+        >
+        {isloading ? null : (
+           <View style={{marginVertical: 20}}>
+                <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>
+                    
+                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/questionnaire/Sampleone')}>
+                        <Ionicons name='add-circle' size={22} color="#17a2b8"/>
+                        <Text style={{fontSize: 18}}>New</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>)}
+
+            <Searchbar
+                placeholder='Search....'
+                mode="outlined"
+                onChangeText={(text) => searchFilterFunction(text)}
+                value={search}
+            />
+            
             <Card>
                 <Card.Content>
                 <FlatList
                     data={filterdata}
-                    renderItem={({item})=> <Transactionlist item={item} deletedata={deletedata} studentclasslist={studentclass} /> }
+                    renderItem={({item})=> <Questionairelistonelist item={item} deletedata={deletedata} /> }
                     ItemSeparatorComponent={()=> <View style={styles.separator} />}
                       contentContainerStyle={{
-                        marginBottom: 200
+                         marginBottom: 10
                     }}
                     keyExtractor={item => item.id}
                 />
@@ -226,12 +161,11 @@ function Transactionstudent () {
             </Card> 
 
         </ScrollView>
-      </SafeAreaView>
       </Provider>
     )
 }
 
-export default Transactionstudent;
+export default Questinnairesampleone;
 
 const styles = StyleSheet.create({
 
