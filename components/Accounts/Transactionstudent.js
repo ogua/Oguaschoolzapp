@@ -195,7 +195,7 @@ function Transactionstudent () {
            }}
         />
 
-       <View style={{backgroundColor: '#fff', padding: 20}}>
+       {/* <View style={{backgroundColor: '#fff', padding: 20}}>
           <Text>Generate Transaction Format (YYYY-MM-DD)</Text>
           <View>
             <TextInput
@@ -218,7 +218,7 @@ function Transactionstudent () {
             
           </View>
           <Button mode="elevated" style={{marginTop: 10}} onPress={generatetransaction}>Generate</Button>
-       </View>
+       </View> */}
 
         <ScrollView
         style={{marginBottom: 40}}

@@ -4,11 +4,11 @@ import { Avatar, Button, Card, Dialog, Divider, List, Menu, Portal, Snackbar, Te
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from "expo-router";
 import { useSelector } from "react-redux";
-import { selectcurrency, selecttoken } from "../features/userinfoSlice";
+import { selectcurrency, selecttoken, selectuser } from "../features/userinfoSlice";
 import RadioGroup from 'react-native-radio-buttons-group';
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import axios from "axios";
-import { schoolzapi } from "../components/constants";
+import { oguaschoolz, schoolzapi } from "../components/constants";
 import { showMessage } from "react-native-flash-message";
 
 
@@ -16,6 +16,7 @@ function Reportstudentslist ({item,term,opendate,closedate,stclass,reporttype,wo
 
     const [visible, setVisible] = useState(false);
     const token = useSelector(selecttoken);
+    const user = useSelector(selectuser);
     const currency = useSelector(selectcurrency);
     const [issubmitting, setissubmitting] = useState(false);
     const router = useRouter();
@@ -24,7 +25,9 @@ function Reportstudentslist ({item,term,opendate,closedate,stclass,reporttype,wo
     const [mailsent, setmailsent] = useState(false);
 
     const [position, setposition] = useState("");
-    const [fees, setfees] = useState("");
+    const [fees, setfees] = useState(0);
+
+    const [link, setlink] = useState("");
     
 
     function savestudentattendance(radioButtonsArray,studentid,radioprops){
@@ -101,6 +104,30 @@ function Reportstudentslist ({item,term,opendate,closedate,stclass,reporttype,wo
             setissubmitting(false);
             console.log(error);
           });
+    }
+
+    const openurl = (id) => {
+        
+        if(reporttype == "Normal Report"){
+            let printurl =  oguaschoolz+`/app-view-terminal-report/${fees}/${totstudent}/${term}/${stclass}/${id}/${opendate}/${position ? position : 'null'}/${closedate}/${user.uniqueid}`;
+            //console.log("link",printurl);
+            Linking.openURL(printurl);
+        }
+
+        if(reporttype == "Sample 1"){
+            let printurl =  oguaschoolz+`/app-view-questionaire-report/${fees}/${totstudent}/${term}/${stclass}/${id}/${opendate}/null/${closedate}/${user.uniqueid}`;
+            //console.log("link",printurl);
+            Linking.openURL(printurl);
+        }
+
+        if(reporttype == "Sample 2"){
+            let printurl =  oguaschoolz+`/app-view-questionaire-report-sample-2/${fees}/${totstudent}/${term}/${stclass}/${id}/${opendate}/null/${closedate}/${user.uniqueid}`;
+            //console.log("link",printurl);
+            Linking.openURL(printurl);
+        }
+        
+       
+
     }
 
 
@@ -196,8 +223,9 @@ function Reportstudentslist ({item,term,opendate,closedate,stclass,reporttype,wo
                 </View>
 
               <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 20}}>
-                <Button icon={smssent ? `check` : `mail`} onPress={()=> sendsmsreport(item?.id)} textColor={smssent ? `red` : `blue`}>Send Sms</Button>
-                <Button icon={mailsent ? `check` : `mail`} onPress={()=> sendmailreport(item?.id)} textColor={mailsent ? `red` : `blue`}>Send Mail</Button>
+                 <Button icon="download" onPress={()=> openurl(item?.id)} textColor={smssent ? `red` : ``}></Button>
+                <Button icon={smssent ? `check` : `mail`} onPress={()=> sendsmsreport(item?.id)} textColor={smssent ? `red` : ``}>Send Sms</Button>
+                <Button icon={mailsent ? `check` : `mail`} onPress={()=> sendmailreport(item?.id)} textColor={mailsent ? `red` : ``}>Send Mail</Button>
               </View>
               </>
             )}

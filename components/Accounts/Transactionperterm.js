@@ -36,7 +36,6 @@ function Transactionsperterm () {
     const [txttodate, settxttodate] = useState("");
 
     useEffect(()=> {
-     fromdate.current.focus();
        loaddata();
     },[]);
 
@@ -101,6 +100,61 @@ function Transactionsperterm () {
           );
 
     }
+
+    const revertfee = (id,stdntid,amount) => {
+
+      return Alert.alert(
+          "Are your sure?",
+          `You want to revert an amount of ${amount}`,
+          [
+            {
+              text: "No",
+            },
+            {
+              text: "Yes Revert",
+              onPress: () => {
+                  setLoading(true);
+
+                  const formdata = {
+                    id,
+                    stdntid
+                  }
+
+                  axios.post(schoolzapi+'/revert-fees-paid',
+                  formdata,
+                  {
+                      headers: {Accept: 'application/json',
+                      Authorization: "Bearer "+token
+                  }
+                  })
+                      .then(function (response) {
+
+                          if(response.data.error){
+
+                            alert(response.data.error);
+
+                          }else{
+
+                            const newData = data.filter((item) => item.id != id);
+                            setFilterdata(newData);
+                            setData(newData);
+                            //loaddata();
+                            setLoading(false);
+
+                          }
+
+                          
+                      })
+                      .catch(function (error) {
+                      setLoading(false);
+                      console.log(error);
+                      });
+              },
+            },
+          ]
+        );
+
+  }
   
       const searchFilterFunction = (text) => {
   
@@ -194,7 +248,7 @@ function Transactionsperterm () {
            }}
         />
 
-       <View style={{backgroundColor: '#fff', padding: 20}}>
+       {/* <View style={{backgroundColor: '#fff', padding: 20}}>
           <Text>Generate Transaction Format (YYYY-MM-DD)</Text>
           <View>
             <TextInput
@@ -217,7 +271,7 @@ function Transactionsperterm () {
             
           </View>
           <Button mode="elevated" style={{marginTop: 10}} onPress={generatetransaction}>Generate</Button>
-       </View>
+       </View> */}
 
         <ScrollView
         style={{marginBottom: 40}}
@@ -237,7 +291,7 @@ function Transactionsperterm () {
                 <Card.Content>
                 <FlatList
                     data={filterdata}
-                    renderItem={({item})=> <Transactionlist item={item} deletedata={deletedata} studentclasslist={studentclass} /> }
+                    renderItem={({item})=> <Transactionlist revertfee={revertfee} item={item} deletedata={deletedata} studentclasslist={studentclass} /> }
                     ItemSeparatorComponent={()=> <View style={styles.separator} />}
                       contentContainerStyle={{
                         marginBottom: 200

@@ -319,6 +319,15 @@ const setitemfocus = (itemid) => {
         children: []
       },
       {
+        key: 619,
+        name: 'Transaction By Mail',
+        icon: 'circle-outline',
+        route: 'Sendtransactionbymail',
+        permission: 'viewtransactions',
+        role: '',
+        children: []
+      },
+      {
         key: 610,
         name: 'Fee Payment',
         icon: 'circle-outline',

@@ -50,28 +50,28 @@ function HomeworkList ({item,deletedata,role}) {
 
 
     return (
-        <>
+        <View style={{marginBottom: 20}}>
         {Loading ? <ActivityIndicator size="small" /> : (
 
-        <TouchableOpacity style={{backgroundColor: item?.status == `Elapse` ? `#17a2b8` : `#fff`, padding: 10}}
+        <TouchableOpacity style={{backgroundColor: item?.status == `Elapse` ? `red` : `#fff`, padding: 10}}
         onPress={() => setVisible(! visible)}
         >
 
         <List.Item
             title={()=> (
                 <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <Ionicons name="book-outline" size={20} style={{marginRight: 10}} />
-                    <Text style={{flex: 1, fontSize: 18}}>{item?.title}</Text>
-                     <Text style={{fontSize: 10}}>{item?.studentclass}</Text>
+                    <Ionicons color={item?.status == `Elapse` ? `#fff` : ``} name="book-outline" size={20} style={{marginRight: 10}} />
+                    <Text style={{flex: 1, fontSize: 18,color: item?.status == `Elapse` ? `#fff` : `#000`,}}>{item?.title}</Text>
+                     <Text style={{fontSize: 10,color: item?.status == `Elapse` ? `#fff` : `#000`,}}>{item?.studentclass}</Text>
                      {/* <Ionicons name="ellipsis-vertical-sharp" size={20} /> */}
                 </View>
             )}
             titleEllipsizeMode="middle"
             description={()=>(
                 <>
-                <Text style={{fontSize: 10, marginLeft: 30}}>{item?.term}</Text>
-                <Text style={{fontSize: 10, marginLeft: 30}}>Submission Date: {item?.subdate} - {item?.time}</Text>
-                <Text style={{fontSize: 13, marginLeft: 30}}>{item?.description}</Text>
+                <Text style={{fontSize: 10, marginLeft: 30,color: item?.status == `Elapse` ? `#fff` : `#000`,}}>{item?.term}</Text>
+                <Text style={{fontSize: 10, marginLeft: 30,color: item?.status == `Elapse` ? `#fff` : `#000`,}}>Submission Date: {item?.subdate} - {item?.time}</Text>
+                <Text style={{fontSize: 13, marginLeft: 30,color: item?.status == `Elapse` ? `#fff` : `#000`,}}>{item?.description}</Text>
                 <View style={styles.ribbon}>
                 <Text style={styles.ribbontext}>{item?.status}</Text>
                 </View>
@@ -88,18 +88,20 @@ function HomeworkList ({item,deletedata,role}) {
 
         {role !== "Student" ? (
             <>
-
-        <View style={{flexDirection: 'row', backgroundColor: item?.status == `Elapse` ? `#17a2b8` : `#fff`, justifyContent: 'flex-end', marginBottom: 10}}>
-            <Button onPress={()=> router.push(`/admin/homework/view-assignment-submitted?stclass=${item?.stclass}&assigmtid=${item?.id}`)}>Assignments Received</Button>
-            <Button onPress={()=> router.push(`/admin/homework/enter-assignment-score?stclass=${item?.stclass}&assigmtid=${item?.id}`)}>Enter Score</Button>
+        <View style={{flexDirection: 'row', backgroundColor: item?.status == `Elapse` ? `red` : `#fff`, justifyContent: 'flex-end'}}>
+            <Button  textColor={item?.status == `Elapse` ? `` : ``} onPress={()=> router.push(`/admin/homework/view-assignment-submitted?stclass=${item?.stclass}&assigmtid=${item?.id}`)} style={{marginRight: 10}}>Assignments Received</Button>
+            <Button  onPress={()=> router.push(`/admin/homework/enter-assignment-score?stclass=${item?.stclass}&assigmtid=${item?.id}`)}>Enter Score</Button>
         </View>
 
         {visible && (
+            <>
+            <Divider bold={true} />
             <View style={{backgroundColor: '#fff', borderBottomColor: '#000', borderBottomWidth: 1 }}>
-                <Menu.Item disabled={item?.file == "" ? true: false} style={{marginLeft: 10}} leadingIcon="download-circle" title="Downlaod Attachment" onPress={() => Linking.openURL(`mailto:${item?.email}`)} />
+                <Menu.Item disabled={item?.file == "" ? true: false} style={{marginLeft: 10}} leadingIcon="download-circle" title="Downlaod Attachment" onPress={() => Linking.openURL(`${item?.file}`)} />
                 <Menu.Item style={{marginLeft: 10}} leadingIcon="square-edit-outline" onPress={()=> router.push(`/admin/homework/create-edit-homework?id=${item?.id}`)} title="Edit" />
                 <Menu.Item style={{marginLeft: 10}} leadingIcon="delete-forever-outline" title="Delete" onPress={()=> deletedata(item?.id,item?.title)} />
             </View>
+            </>
         )}
             
             </>
@@ -136,7 +138,7 @@ function HomeworkList ({item,deletedata,role}) {
         )}
 
         
-        </>
+        </View>
     )
 }
 

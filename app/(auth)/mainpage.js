@@ -28,7 +28,6 @@ import Addstudent from '../../components/Studentinfo/Addstudent';
 import Vehicle from '../../components/Transport/Vehicle';
 import Waypoint from '../../components/Transport/Waypoints';
 import Routes from '../../components/Transport/Route';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState } from 'react';
 import { useCallback } from 'react';
 import Fee from '../../components/Accounts/Fee';

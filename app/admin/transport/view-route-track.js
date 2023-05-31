@@ -6,7 +6,7 @@ import { Avatar, Button, Card, Divider, TextInput } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import MapView, { Marker } from "react-native-maps";
-import { selecttoken } from '../../../features/userinfoSlice';
+import { selectstaffrole, selecttoken } from '../../../features/userinfoSlice';
 import { schoolzapi, images } from '../../../components/constants';
 import { FlatList,Image } from 'react-native';
 import { TouchableOpacity } from 'react-native';
@@ -15,6 +15,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 function Trackroute() {
 
     const token = useSelector(selecttoken);
+    const driver = useSelector(selectstaffrole);
     const [waypoints, setWaypoints] = useState([]);
     const [students, setstudents] = useState([]);
     const [staff, setstaff] = useState([]);
@@ -27,8 +28,9 @@ function Trackroute() {
     
     const SCREEN_HEIGHT = Dimensions.get("window").height;
     const [isloading, setLoading] = useState(false);
+    const [issubmitting, setissubmitting] = useState(false);
     const router = useRouter();
-    const {id,mylatitiude,mylongitude} = useSearchParams();
+    const {id} = useSearchParams();
 
     useEffect(()=>{
       loadedit();
@@ -102,7 +104,7 @@ function Trackroute() {
           setstaff(staff.data.data);  
           setroutes(route.data.data); 
 
-          loadtatitudeandlogitude();
+          loadtatitudeandlogitude(waypoint.data.data);
 
           console.log('students',student.data.data);
 
@@ -114,9 +116,9 @@ function Trackroute() {
       });
   }
 
-    const loadtatitudeandlogitude = () => {
+    const loadtatitudeandlogitude = (data) => {
             
-        const waypoint = waypoints[0];
+        const waypoint = data[0];
         setlatitude(waypoint.latitude);
         setlogitude(waypoint.longitude);
         setaddress(waypoint.addrress);
@@ -124,7 +126,48 @@ function Trackroute() {
 
         setLoading(false);
   
-       // console.log(items);
+       // console.log(routes);
+    }
+
+    const endtrip = () => {
+        
+        return Alert.alert(
+            "Are your sure?",
+            "You want to end this trip",
+            [
+              {
+                text: "No",
+              },
+              {
+                text: "Yes End",
+                onPress: () => {
+                    setissubmitting(true);
+
+                        const formdata = {
+                            id: route?.id    
+                        }
+
+                        axios.post(schoolzapi+'/end-route',
+                        formdata,
+                        {
+                            headers: {Accept: 'application/json',
+                            Authorization: "Bearer "+token
+                        }
+                        })
+                        .then(function (response) {
+                            setissubmitting(false);
+                            loadedit();
+                        })
+                        .catch(function (error) {
+                            setissubmitting(false);
+                            console.log(error.response);
+                        });
+
+                },
+              },
+            ]
+          );
+
     }
 
 
@@ -297,14 +340,32 @@ function Trackroute() {
                     keyExtractor={item => item.id}
                 />
 
-                {route?.status == '0' ? (
-                    <Button>Processing...</Button>
-                ) : (route?.status == '1' ? (
-                    <Button onPress={() => router.push(`/admin/transport/tracking?id=${route?.id}&mylatitiude=${mylatitiude}&mylongitude=${mylongitude}`)}>Track Vehicle</Button>
+                <Text style={{textAlign: 'center', backgroundColor: 'red', padding: 15, color: '#fff'}}>Trip Status:  {route?.status == '0' ? 'Not Started' : (route?.status == '1' ? "Route Started" : 'Route Ended')}</Text>
+
+                {driver == "Driver" ? (
+                    <>
+                     {issubmitting ? <ActivityIndicator size="large" style={{marginVertical: 15}} /> : (
+                        <>
+                        {route?.status == '1' && (
+                            <Button textColor='red' onPress={endtrip}>End Trip</Button>
+                        )}
+                        </>
+                     )}
+                      <Button onPress={() => router.push(`/admin/transport/tracking-driver?id=${route?.id}`)}>Enter Trip</Button>
+                    </>
                 ) : (
-                    <Button>Route Endded</Button>
-                ))}
-                
+                    <>
+                    {route?.status == '0' ? (
+                         <Button>Not Started</Button>
+                        ) : (route?.status == '1' ? (
+                            <Button onPress={() => router.push(`/admin/transport/tracking?id=${route?.id}`)}>Track Vehicle</Button>
+                        ) : (
+                            <Button>Route Endded</Button>
+                    ))}
+                    
+                    </>
+                )}
+        
 
        </Card.Content>
         </Card>

@@ -81,7 +81,8 @@ function Banktransactionlist ({item,deletedata}) {
 
         {visible && (
             <View style={{backgroundColor: '#fff', borderBottomColor: '#000', borderBottomWidth: 1 }}>
-                <Menu.Item disabled={item?.file == null ? true: false} style={{marginLeft: 10}} leadingIcon="download-circle" title="Downlaod Attachment" onPress={() => downloadFromUrl(item?.file,'bank-document')} />
+                {/* <Menu.Item disabled={item?.file == null ? true: false} style={{marginLeft: 10}} leadingIcon="download-circle" title="Downlaod Attachment" onPress={() => downloadFromUrl(item?.file,'bank-document')} /> */}
+                 <Menu.Item disabled={item?.file == "" ? true: false} style={{marginLeft: 10}} leadingIcon="download-circle" title="Downlaod Attachment" onPress={() => Linking.openURL(item?.file)} />
                 <Menu.Item style={{marginLeft: 10}} leadingIcon="square-edit-outline" onPress={()=> router.push(`/admin/Accounts/create-edit-bank-transaction?id=${item?.id}`)} title="Edit" />
                 <Menu.Item style={{marginLeft: 10}} leadingIcon="delete-forever-outline" title="Delete" onPress={()=> deletedata(item?.id,item?.type)} />
             </View>

@@ -165,10 +165,10 @@ function Listhomework () {
                 <FlatList
                     data={filterdata}
                     renderItem={({item})=> <HomeworkList item={item} deletedata={deletedata} role={role[0]} /> }
-                    ItemSeparatorComponent={()=> <View style={styles.separator} />}
-                      contentContainerStyle={{
-                         marginBottom: 10
-                    }}
+                    // ItemSeparatorComponent={()=> <View style={styles.separator} />}
+                    //   contentContainerStyle={{
+                    //      marginBottom: 15
+                    // }}
                     keyExtractor={item => item.id}
                 />
                 </Card.Content>

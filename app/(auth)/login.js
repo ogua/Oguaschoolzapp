@@ -1,6 +1,7 @@
 import { Redirect, Stack, useFocusEffect, useRouter } from 'expo-router';
 import { ActivityIndicator, Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, 
-    TextInput, ToastAndroid, View } from 'react-native'
+    TextInput, ToastAndroid, View } from 'react-native';
+import {Button} from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useEffect, useRef, useState } from 'react';
@@ -9,9 +10,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setUser, setToken, setRoles,  setUserpermission, setPermissions, setMenu, setCurrency, selecttoken, setSchool, setStaffrole } from '../../features/userinfoSlice';
 import { selectuser } from '../../features/userinfoSlice';
 import { storeData, removeusertoken, gettokendata, selectusertoken } from '../../features/usertokenSlice';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showMessage } from "react-native-flash-message";
 import { schoolzapi } from '../../components/constants';
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+import { makeRedirectUri } from 'expo-auth-session';
+
+WebBrowser.maybeCompleteAuthSession();
 
 function login() {
     
@@ -25,7 +30,52 @@ function login() {
     const user = useSelector(selectuser);
     const token = useSelector(selecttoken);
 
+    const [request, response, promptAsync] = Google.useAuthRequest({
+        androidClientId: "358977683240-u6klp13p2b43uvrc248h3sn8p5jknmmt.apps.googleusercontent.com",
+        iosClientId: "358977683240-u6klp13p2b43uvrc248h3sn8p5jknmmt.apps.googleusercontent.com",
+        webClientId: "358977683240-mhquda12rihlb2i5u7f6rm19d426f597.apps.googleusercontent.com",
+        expoClientId: "358977683240-gjfsfa4k8htcubkmorcnatbr51pidu3e.apps.googleusercontent.com",
+    }
+    );
+
     //console.log("user",user);
+
+    useEffect(() => {
+        handlesigninwithGoogle();
+    }, [response]);
+
+
+    async function handlesigninwithGoogle(){
+
+        console.log("response",response);
+        
+        if (response?.type === "success") {
+            // setToken(response.authentication.accessToken);
+            console.log("token",response.authentication.accessToken);
+            await getUserInfo(response.authentication.accessToken);
+        }
+
+    }
+
+    const getUserInfo = async (token) => {
+        if (!token) return;
+        try {
+          const response = await fetch(
+            "https://www.googleapis.com/userinfo/v2/me",
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+    
+          const user = await response.json();
+         // await AsyncStorage.setItem("@user", JSON.stringify(user));
+         // setUserInfo(user);
+         console.log("user",JSON.stringify(user));
+        } catch (error) {
+          // Add your own error handler here
+          console.log("error",error);
+        }
+      };
 
     
 
@@ -115,9 +165,9 @@ function login() {
 
             <View style={styles.formtitle}>
                 <Text style={styles.logintext}>Login User</Text>
-                <Text>
+                <Button onPress={()=> router.push("/parentlogin")}>
                     <Ionicons name="person" size={13} style={{marginRight: 5}} />Parent Login
-                    </Text>
+                </Button>
             </View>
             <View style={styles.formcontainer}>
                 <View style={styles.formgroup}>
@@ -142,7 +192,7 @@ function login() {
 
                 <Text style={styles.forgotpassword} onPress={cleartoken}>Forgot Password ?</Text>
                 
-                <TouchableOpacity style={styles.loginwithgoogle}>
+                <TouchableOpacity style={styles.loginwithgoogle} onPress={promptAsync}>
                     <Text style={styles.logingoogletext}>
                         <Ionicons name="logo-google" size={20} color="red" /> Login with google
                     </Text>

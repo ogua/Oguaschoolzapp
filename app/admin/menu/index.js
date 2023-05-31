@@ -27,7 +27,6 @@ import Addstudent from '../../../components/Studentinfo/Addstudent';
 import Vehicle from '../../../components/Transport/Vehicle';
 import Waypoint from '../../../components/Transport/Waypoints';
 import Routes from '../../../components/Transport/Route';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState } from 'react';
 import { useCallback } from 'react';
 import Fee from '../../../components/Accounts/Fee';
@@ -64,6 +63,7 @@ import Listexams from '../../../components/Exams/Listexams';
 import Allpayroll from '../../../components/Staff/Payroll';
 import Dashboard from '../dashboard';
 import Academicterm from '../../../components/Academics/AcademicTerm';
+import Sendtransactionbymail from '../../../components/Accounts/Sendtransactionbymail';
 
 const Drawer = createDrawerNavigator();
 
@@ -135,6 +135,7 @@ function Mainmenu() {
       <Drawer.Screen name="Transactionsperterm" component={Transactionsperterm} />
       <Drawer.Screen name="Transactionsperday" component={Transactionsperday} />
       <Drawer.Screen name="Transactionspermonth" component={Transactionspermonth} />
+      <Drawer.Screen name="Sendtransactionbymail" component={Sendtransactionbymail} />
       <Drawer.Screen name="Feepayment" component={Feepayment} />
       <Drawer.Screen name="Debtors" component={Debtors} />
       <Drawer.Screen name="Receipttrack" component={Receipttrack} />

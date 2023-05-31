@@ -16,7 +16,7 @@ import MapViewDirections from "react-native-maps-directions";
 import { selectdesaddress, selectdestination, selectorgaddress, seleteorigin, setDestination, setOrgaddress, setOrigin } from '../../../features/examSlice';
 import * as Location from 'expo-location';
 
-function Trackroute() {
+function Trackingdriver() {
 
     const token = useSelector(selecttoken);
     const dispatch = useDispatch();
@@ -35,18 +35,18 @@ function Trackroute() {
     const router = useRouter();
     const {id,mylatitiude,mylongitude,myaddress} = useSearchParams();
 
-    const [dlatitude, setdlatitude] = useState(mylatitiude); 
-    const [dlogitude, setdlogitude] = useState(mylongitude);
-    const [daddress, setdaddress] = useState(myaddress);
+   
     const [distance, setdistance] = useState("");
     const [time, settime] = useState("");
-    const [heading, setheading] = useState(100);
+    
 
 
+    const [heading, setheading] = useState(100); 
     const origin = useSelector(seleteorigin);
     const originaddress = useSelector(selectorgaddress);
     const destination = useSelector(selectdestination);
     const destaddress = useSelector(selectdesaddress);
+
 
     const setautoref = useRef();
 
@@ -72,13 +72,6 @@ function Trackroute() {
       if(destination == null || origin == null) return;
 
        animate(origin?.latitude, origin?.longitude);
-
-        // mapref.current.fitToCoordinates([
-        //   {latitude: parseFloat(origin.latitude),longitude: parseFloat(origin.longitude)},
-        //   {latitude: parseFloat(destination.latitude),longitude: parseFloat(destination.longitude)}
-        // ],
-        //   {edgePadding: {top: 50, right: 50, bottom: 50, left: 50}});
-
         
     },[origin,destination]);
    
@@ -107,21 +100,31 @@ function getLiveLocation(){
 
     if(location){
 
-    dispatch(setDestination({latitude: location.coords.latitude,longitude: location.coords.longitude}));
+    dispatch(setOrigin({latitude: location.coords.latitude,longitude: location.coords.longitude}));
 
-    getdriverlocation();
+    setheading(location.coords.heading);
 
+    getdriverlocation(location.coords.latitude,location.coords.longitude,location.coords.heading);
+    
 
-    }
+  }
     
     
   })();
 }
 
 
-const getdriverlocation = () => {
-  
-  axios.get(schoolzapi+'/routes/show/'+id,
+const getdriverlocation = (lat,lng,heading) => {
+
+  const formdata = {
+    id,
+    lat,
+    lng,
+    heading
+  }
+
+  axios.post(schoolzapi+'/driver-add-cordinates',
+  formdata,
 {
     headers: {Accept: 'application/json',
     Authorization: "Bearer "+token
@@ -129,21 +132,7 @@ const getdriverlocation = () => {
 })
   .then(function (results) {
       
-      setroutes(results.data.data);
-
-     // console.log("live location",results.data.data.address);
-
-      const lat = parseFloat(results.data.data.latitude);
-      const lng = parseFloat(results.data.data.longitude);
-      const address = results.data.data.address;
-
-      setheading(parseFloat(results.data.data.heading));
-
-      dispatch(setOrigin({latitude: lat,longitude: lng}));
-      dispatch(setOrgaddress(address));
-
       animate(lat, lng);
-
             setState({
                 coordinate: new AnimatedRegion({
                     latitude: lat,
@@ -152,9 +141,6 @@ const getdriverlocation = () => {
                     longitudeDelta: 0.005
                 })
             })
-
-
-
 
   }).catch(function(error){
       
@@ -174,8 +160,6 @@ const animate = (latitude, longitude) => {
       coordinate.timing(newCoordinate).start();
   }
 }
-
-
 
 
     // useEffect(()=> {
@@ -232,7 +216,8 @@ const animate = (latitude, longitude) => {
       <SafeAreaView>
         <Stack.Screen
             options={{
-                headerTitle: 'Tracking',
+                headerTitle: '',
+                headerShown: false,
                 presentation: 'formSheet',
                 headerLeft: () => (
                   <>
@@ -243,16 +228,18 @@ const animate = (latitude, longitude) => {
                 ),
                 headerRight: () => (
                   <>
-                    <TouchableOpacity onPress={refresh}>
+                    {/* <TouchableOpacity onPress={refresh}>
                       <Ionicons name="refresh" size={30} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                   </>
                 )
             }}
 
         />
 
-    
+            <TouchableOpacity onPress={() => router.back()} style={{marginBottom: 20, marginLeft: 20, marginTop: 30}}>
+                <Ionicons name="close-circle-outline" size={30} />
+             </TouchableOpacity>    
 
         <ScrollView style={{marginBottom: 30}} keyboardShouldPersistTaps='always'
         >
@@ -261,7 +248,7 @@ const animate = (latitude, longitude) => {
         <Card.Content>
 
         <GooglePlacesAutocomplete
-            placeholder="Your Destination"
+            placeholder="Where Are You Going Today ?"
             nearbyPlacesAPI="GooglePlacesSearch"
             debounce={400}
             fetchDetails={true}
@@ -271,7 +258,7 @@ const animate = (latitude, longitude) => {
               const location = JSON.stringify(details?.geometry?.location);
 
               dispatch(setDestination({latitude: parseFloat(JSON.stringify(details?.geometry?.location.lat)),longitude: parseFloat(JSON.stringify(details?.geometry?.location.lng))}));
-              dispatch(setdaddress(data.description))
+              dispatch(setaddress(data.description));
 
             }}
             styles={{
@@ -286,9 +273,9 @@ const animate = (latitude, longitude) => {
           />
 
 
-        {destination && (
+        {origin && (
         
-        <View style={{height: SCREEN_HEIGHT/2}}>
+        <View style={{height: SCREEN_HEIGHT}}>
 
         
         <MapView style={styles.map}
@@ -334,7 +321,7 @@ const animate = (latitude, longitude) => {
                   <Marker.Animated
                   ref={markerRef}
                   coordinate={{latitude: parseFloat(origin.latitude),longitude: parseFloat(origin.longitude)}}
-                  title="Drivers Location"
+                  title={`Your Location Ariving in ${time}`}
                   //description={address}
                   identifier='origin'
                   >
@@ -349,14 +336,21 @@ const animate = (latitude, longitude) => {
                   </Marker.Animated>
 
                 )}
+
+
+                {destination && (
+
+                  <Marker.Animated
+                  coordinate={{latitude: parseFloat(destination.latitude),longitude: parseFloat(destination.longitude)}}
+                  title={`Destination`}
+                  // description={address}
+                  identifier='destination'
+                  />
+
+                )}
                    
 
-                    <Marker.Animated
-                        coordinate={{latitude: parseFloat(destination.latitude),longitude: parseFloat(destination.longitude)}}
-                        title={`Your Location Ariving in ${time}`}
-                       // description={address}
-                        identifier='destination'
-                       />
+                    
     
             </MapView>
           
@@ -365,28 +359,7 @@ const animate = (latitude, longitude) => {
         )}
                        
                         
-      <Divider style={{marginVertical: 20}} />
-
-      <TouchableOpacity>
-        <Text style={{fontSize: 18}}>Drivers name</Text>
-        <Text>{route.assignedto}</Text>
-      </TouchableOpacity>
-
-      <Divider style={{marginVertical: 20}} />
-
-      <TouchableOpacity>
-        <Text style={{fontSize: 18}}>Drivers contact</Text>
-        <Text onPress={() => Linking.openURL(`tel:${route?.contact}`)}>{route.contact}</Text>
-      </TouchableOpacity>
-
-      <Divider style={{marginVertical: 20}} />
-
-      <TouchableOpacity>
-        <Text style={{fontSize: 18}}>Vehicle Current Location</Text>
-        <Text>{originaddress}</Text>
-      </TouchableOpacity>
-
-      <Divider style={{marginVertical: 20}} />
+      {/* <Divider style={{marginVertical: 20}} />
 
        <TouchableOpacity>
         <Text style={{fontSize: 18}}>Distance / Time Remaining</Text>
@@ -394,11 +367,9 @@ const animate = (latitude, longitude) => {
            <Text>{distance}</Text>
         )}
        
-      </TouchableOpacity> 
+      </TouchableOpacity>  */}
 
             
-                
-
        </Card.Content>
         </Card>
         )}
@@ -408,7 +379,7 @@ const animate = (latitude, longitude) => {
     )
 }
 
-export default Trackroute;
+export default Trackingdriver;
 
 const styles = StyleSheet.create({
     map: {

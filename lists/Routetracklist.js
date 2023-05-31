@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
-import { Linking, TouchableWithoutFeedback, View } from "react-native";
+import { ActivityIndicator, Alert, Linking, TouchableWithoutFeedback, View } from "react-native";
 import { Avatar, Button, Card, Dialog, Divider, List, Menu, Portal, Snackbar, Text } from "react-native-paper";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from "expo-router";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { schoolzapi } from "../components/constants";
+import { useSelector } from "react-redux";
+import { selecttoken } from "../features/userinfoSlice";
+import axios from "axios";
 //import Geolocation from '@react-native-community/geolocation';
 
 
@@ -11,46 +15,62 @@ const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
 
 function Routetracklist ({item,deletedata,location,driver}) {
 
+    const token = useSelector(selecttoken);
     const [visible, setVisible] = useState(false);
     const router = useRouter();
     const [latitude, setlatitude] = useState("");
     const [longitude, setlongitude] = useState("");
     const [address, setaddress] = useState("");
+    const [isloading, setLoading] = useState(false);
     
     
-    useEffect(()=>{
-
-       // Geolocation.getCurrentPosition(info => console.log("info",info));
-     
-        if (location) {
-        console.log("loc",location.coords);
-        setlatitude(location.coords.latitude);
-        setlongitude(location.coords.longitude);
-        setaddress(location.coords.longitude);
-     }
-
-    },[]);
+    
 
 
     const trackbus = () => {
 
-        if (location) {
-            setlatitude(location.coords.latitude);
-            setlongitude(location.coords.longitude);
-        }
-
-        router.push(`/admin/transport/view-route-track?id=${item?.id}&mylatitiude=${latitude}&mylongitude=${longitude}&myaddress=${address}`)
+        router.push(`/admin/transport/view-route-track?id=${item?.id}`);
 
     }
 
     const starttrip = () => {
+        
+        return Alert.alert(
+            "Are your sure?",
+            "You want to start this trip",
+            [
+              {
+                text: "No",
+              },
+              {
+                text: "Yes Start",
+                onPress: () => {
+                    setLoading(true);
 
-        if (location) {
-            setlatitude(location.coords.latitude);
-            setlongitude(location.coords.longitude);
-        }
+                        const formdata = {
+                            id: item?.id    
+                        }
 
-        router.push(`/admin/transport/view-route-track?id=${item?.id}&mylatitiude=${latitude}&mylongitude=${longitude}&myaddress=${address}`)
+                        axios.post(schoolzapi+'/start-route',
+                        formdata,
+                        {
+                            headers: {Accept: 'application/json',
+                            Authorization: "Bearer "+token
+                        }
+                        })
+                        .then(function (response) {
+                            setLoading(false);
+                            router.push(`/admin/transport/view-route-track?id=${item?.id}`);
+                        })
+                        .catch(function (error) {
+                            setLoading(false);
+                            console.log(error.response);
+                        });
+
+                },
+              },
+            ]
+          );
 
     }
 
@@ -64,28 +84,36 @@ function Routetracklist ({item,deletedata,location,driver}) {
 
         <Card>
             <Card.Title title={`${item?.name} (${item?.tripway})`} 
-            subtitle={`Driver ${item?.assignedto}`}
-            left={() => (
+           // subtitle={`Driver ${item?.assignedto}`}
             
+            left={() => (
             <Avatar.Image 
                  source={{uri: item.assignedto_pic}}
                 size={30}
+              />
+            )}
+            
             />
-            
-            )} />
-            <Card.Content>
-            </Card.Content>
-            
-            <View style={{marginLeft: 35,flexDirection: 'row', justifyContent: "space-around", padding: 10}}>
-            <Text>#Passengers{item?.capacity}</Text>
+            <Text style={{textAlign: 'center'}}>{`Driver ${item?.assignedto}`}</Text>
+            <View style={{flexDirection: 'row', justifyContent: "space-around", padding: 10}}>
+            <Text>#Passengers {item?.capacity}</Text>
             <Text>Time: {item?.pickupstart}</Text>
             </View>
-            <Text style={{marginLeft:70, color: 'red'}}> {item?.status == '0' ? 'Processing' : (item?.status == '1' ? "Route Started" : 'Route Ended')}</Text>
+            <Text style={{color: 'red', textAlign: 'center'}}> {item?.status == '0' ? 'Not Started' : (item?.status == '1' ? "Route Started" : 'Route Ended')}</Text>
             {driver == 'Driver' ? (
-                <Button onPress={starttrip}>Start Trip</Button>
+                <>
+                {isloading ? <ActivityIndicator size="large" /> : (
+                    <Button onPress={starttrip}>
+                        Start Trip
+                    </Button>
+                ) }
+                </>
             ) : (
                 <Button onPress={trackbus}>Track Route</Button>
             )}
+
+              <Card.Content>
+            </Card.Content>
             
         </Card>
 

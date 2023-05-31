@@ -5,13 +5,14 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from "expo-router";
 import { useSelector } from "react-redux";
 import DropDownPicker from "react-native-dropdown-picker";
-import { selectcurrency, selecttoken } from "../features/userinfoSlice";
+import { selectcurrency, selectroles, selecttoken } from "../features/userinfoSlice";
 import { useEffect } from "react";
 import { color } from "react-native-reanimated";
 
-function Transactionlist ({item,deletedata,studentclasslist}) {
+function Transactionlist ({item,deletedata,studentclasslist,revertfee}) {
 
     const token = useSelector(selecttoken);
+    const role = useSelector(selectroles);
     const currency = useSelector(selectcurrency);
     const [visible, setVisible] = useState(false);
     const router = useRouter();
@@ -23,6 +24,9 @@ function Transactionlist ({item,deletedata,studentclasslist}) {
         <TouchableOpacity style={{backgroundColor: '#fff', marginTop: 40}}
         onPress={() => setVisible(! visible)}
         >
+
+        
+
          <View style={{justifyContent: 'center', alignItems: 'center', marginTop: -30}}>
             <Avatar.Image 
                 source={{uri: item?.pic}}
@@ -53,7 +57,10 @@ function Transactionlist ({item,deletedata,studentclasslist}) {
                     <Text style={{fontSize: 15}}>{currency}{item?.owenow}</Text>
                 </View>
 
-                
+            {role[0] !== "Student" && (
+                <Button onPress={()=> revertfee(item?.id,item?.stdntid,(currency+item?.amountpaid))} icon="refresh" textColor="red">Revert</Button>
+            )}
+            
                 
         </View>
         </TouchableOpacity>

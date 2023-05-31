@@ -142,6 +142,101 @@ function Allstaff () {
 
     }
 
+    const forcelogout = (id,delname) => {
+
+      return Alert.alert(
+          "Are your sure?",
+          "You want to disable "+delname+" Logins",
+          [
+            {
+              text: "No",
+            },
+            {
+              text: "Yes Disable",
+              onPress: () => {
+
+                  setLoading(true);
+
+                  const formdata = {
+                    id
+                  }
+
+                  axios.post(schoolzapi+'/staff-force-logout',
+                  formdata,
+                  {
+                      headers: {Accept: 'application/json',
+                      Authorization: "Bearer "+token
+                  }
+                  })
+                      .then(function (response) {
+                          setLoading(false);
+
+                          showMessage({
+                            message: 'Logged Out Activated!',
+                            type: "success",
+                            position: 'bottom',
+                        });
+
+                      })
+                      .catch(function (error) {
+                      setLoading(false);
+                      console.log(error);
+                      });
+              },
+            },
+          ]
+        );
+
+  }
+
+
+  const enablelogout = (id,delname) => {
+
+    return Alert.alert(
+        "Are your sure?",
+        "You want to enable "+delname+" Logins",
+        [
+          {
+            text: "No",
+          },
+          {
+            text: "Yes Enable",
+            onPress: () => {
+
+                setLoading(true);
+
+                const formdata = {
+                  id
+                }
+
+                axios.post(schoolzapi+'/staff-enable-logout',
+                formdata,
+                {
+                    headers: {Accept: 'application/json',
+                    Authorization: "Bearer "+token
+                }
+                })
+                    .then(function (response) {
+                        setLoading(false);
+
+                        showMessage({
+                          message: 'Logged Out Activated!',
+                          type: "success",
+                          position: 'bottom',
+                      });
+
+                    })
+                    .catch(function (error) {
+                    setLoading(false);
+                    console.log(error);
+                    });
+            },
+          },
+        ]
+      );
+
+}
+
     const updatestatus = (id,delname,value) => {
 
       return Alert.alert(
@@ -338,7 +433,7 @@ function Allstaff () {
                 <Card.Content>
                 <FlatList
                     data={filterdata}
-                    renderItem={({item})=> <Stafflist item={item} deletedata={deletedata} studentclasslist={studentclass} updatestatus={updatestatus} updatesstclass={updatesstclass} /> }
+                    renderItem={({item})=> <Stafflist enablelogout={enablelogout} forcelogout={forcelogout} item={item} deletedata={deletedata} studentclasslist={studentclass} updatestatus={updatestatus} updatesstclass={updatesstclass} /> }
                     ItemSeparatorComponent={()=> <View style={styles.separator} />}
                       contentContainerStyle={{
                         marginBottom: 200

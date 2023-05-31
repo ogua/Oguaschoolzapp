@@ -331,7 +331,6 @@ function Allstudents () {
                 <FlatList
                     data={filterdata}
                     renderItem={({item})=> <Studentlist item={item} deletedata={deletedata} studentclasslist={studentclass} updatestatus={updatestatus} updatesstclass={updatesstclass} /> }
-                    ItemSeparatorComponent={()=> <View style={styles.separator} />}
                       contentContainerStyle={{
                         marginBottom: 200
                     }}

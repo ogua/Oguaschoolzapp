@@ -66,7 +66,7 @@ function Onlinelearning () {
             console.log(response.data.data);
             setData(response.data.data);
             setFilterdata(response.data.data);
-            setvideoid(data[0].linkid);
+            setvideoid(response.data.data[0].linkid);
             setLoading(false);
           })
           .catch(function (error) {

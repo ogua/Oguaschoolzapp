@@ -36,7 +36,6 @@ function Alltransactions () {
     const [txttodate, settxttodate] = useState("");
 
     useEffect(()=> {
-     fromdate.current.focus();
        loaddata();
     },[]);
 
@@ -52,14 +51,13 @@ function Alltransactions () {
         })
         .then(function (results) {
             setLoading(false);
-
+           // console.log("data",results.data.data);
             setData(results.data.data);
             setFilterdata(results.data.data);
 
         }).catch(function(error){
             setLoading(false);
-            const acct = error[0];
-            const studeclass = error[1];
+            console.log("error",error);
             
         });
     }
@@ -101,6 +99,69 @@ function Alltransactions () {
           );
 
     }
+
+
+    const revertfee = (id,stdntid,amount) => {
+
+      return Alert.alert(
+          "Are your sure?",
+          `You want to revert an amount of ${amount}`,
+          [
+            {
+              text: "No",
+            },
+            {
+              text: "Yes Revert",
+              onPress: () => {
+                  setLoading(true);
+
+                  const formdata = {
+                    id,
+                    stdntid
+                  }
+
+                  axios.post(schoolzapi+'/revert-fees-paid',
+                  formdata,
+                  {
+                      headers: {Accept: 'application/json',
+                      Authorization: "Bearer "+token
+                  }
+                  })
+                      .then(function (response) {
+
+                          if(response.data.error){
+
+                            alert(response.data.error);
+
+                          }else{
+
+                            const newData = data.filter((item) => item.id != id);
+                            setFilterdata(newData);
+                            setData(newData);
+                            //loaddata();
+                            setLoading(false);
+
+                          }
+
+                          
+                      })
+                      .catch(function (error) {
+                      setLoading(false);
+                      console.log(error);
+                      });
+              },
+            },
+          ]
+        );
+
+  }
+
+
+
+
+
+
+
   
       const searchFilterFunction = (text) => {
   
@@ -195,7 +256,7 @@ function Alltransactions () {
            }}
         />
 
-       <View style={{backgroundColor: '#fff', padding: 20}}>
+       {/* <View style={{backgroundColor: '#fff', padding: 20}}>
           <Text>Generate Transaction Format (YYYY-MM-DD)</Text>
           <View>
             <TextInput
@@ -218,7 +279,7 @@ function Alltransactions () {
             
           </View>
           <Button mode="elevated" style={{marginTop: 10}} onPress={generatetransaction}>Generate</Button>
-       </View>
+       </View> */}
 
         <ScrollView
         style={{marginBottom: 40}}
@@ -238,7 +299,7 @@ function Alltransactions () {
                 <Card.Content>
                 <FlatList
                     data={filterdata}
-                    renderItem={({item})=> <Transactionlist item={item} deletedata={deletedata} studentclasslist={studentclass} /> }
+                    renderItem={({item})=> <Transactionlist item={item} revertfee={revertfee} deletedata={deletedata} studentclasslist={studentclass} /> }
                     ItemSeparatorComponent={()=> <View style={styles.separator} />}
                       contentContainerStyle={{
                         marginBottom: 200

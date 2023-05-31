@@ -8,18 +8,22 @@ import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar, ActivityI
 import { useState } from 'react';
 import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as Imagepicker from 'expo-image-picker';
 import { schoolzapi } from '../constants';
 import { selectstaffrole, selecttoken } from '../../features/userinfoSlice';
 import Routelist from '../../lists/Routelist';
 import Routetracklist from '../../lists/Routetracklist';
 import * as Location from 'expo-location';
+import * as TaskManager from 'expo-task-manager';
+import { setDestination, setHeading, setOrigin } from '../../features/examSlice';
 
 
 function Trackroute () {
 
     const token = useSelector(selecttoken);
+    const role = useSelector(selectstaffrole);
+    const dispatch = useDispatch();
     const [search, setSearch] = useState();
     const [isloading, setLoading] = useState(true);
     const [data, setData] = useState([]);
@@ -36,27 +40,48 @@ function Trackroute () {
     
     useEffect(() => {
 
-      loadlocation();
+      (async () => {
+        
+        let { status } = await Location.requestBackgroundPermissionsAsync();
+
+        if (status !== 'granted') {
+          alert('Permission to access location was denied');
+          return;
+        }
+
+        await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+          accuracy: Location.Accuracy.Balanced,
+        });
+
+        initail();
+
+      })();
 
     }, []);
 
+    function initail(){
 
-    function loadlocation(){
+      TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
+          if (error) {
+            // Error occurred - check `error.message` for more details.
+            alert('Something went wrong with background locations');
+            return;
+          }
+          if (data) {
+            const { locations } = data;
+           // console.log("locations",locations[0].coords);
+           if(role == "Driver"){
 
-      (async () => {
-        
-        let { status } = await Location.requestForegroundPermissionsAsync();
+              dispatch(setOrigin({latitude: locations[0].coords.latitude,longitude: locations[0].coords.longitude}));
 
-        if (status !== 'granted') {
-          setErrorMsg('Permission to access location was denied');
-          return;
-        }
-  
-        let location = await Location.getCurrentPositionAsync({});
-        setLocation(location);
-      })();
+              dispatch(setHeading( locations[0].coords.heading));
 
 
+           }else{
+              dispatch(setDestination({latitude: locations[0].coords.latitude,longitude: locations[0].coords.longitude}));
+           }
+          }
+        });
 
     }
 
@@ -64,7 +89,6 @@ function Trackroute () {
 
     useEffect(()=> {
       
-    
       DeviceEventEmitter.addListener("subject.added", (event)=>{
         console.log('how many time');
         loaddata();
@@ -82,10 +106,6 @@ function Trackroute () {
 
 
     const loaddata = () => {
-
-
-      loadlocation();
-
 
         setLoading(true);
         axios.get(schoolzapi+'/routes',
@@ -189,20 +209,11 @@ function Trackroute () {
                 onChangeText={(text) => searchFilterFunction(text)}
                 value={search}
             />
-
-            <Text>{text}</Text>
             
             <Card>
                 <Card.Content>
-                  {location == "" ? (
-                    <>
-                    <ActivityIndicator size="large" />
-                    <Text style={{textAlign: 'center'}}>Getting user Location...</Text>
-                    </>
-                  )
-                   : (
-
-                    <FlatList
+                  
+                  <FlatList
                     data={filterdata}
                     renderItem={({item})=> <Routetracklist item={item} deletedata={deletedata} location={location} driver={driver} /> }
                     ItemSeparatorComponent={()=> <View style={styles.separator} />}
@@ -211,10 +222,7 @@ function Trackroute () {
                     }}
                     keyExtractor={item => item.id}
                   />
-                   
-                  )}
-
-                  
+                
                 
                 </Card.Content>
             </Card> 

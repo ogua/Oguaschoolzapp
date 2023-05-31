@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ActivityIndicator, Linking, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, ActivityIndicator, Linking, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Avatar, Button, Dialog, Divider, List, Menu,MD3Colors, Portal,ProgressBar, Snackbar, Text } from "react-native-paper";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from "expo-router";
@@ -8,6 +8,8 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { selecttoken } from "../features/userinfoSlice";
 import { useEffect } from "react";
 import { color } from "react-native-reanimated";
+import axios from "axios";
+import { schoolzapi } from "../components/constants";
 
 function Stafflist ({item,deletedata,studentclasslist,updatestatus,updatesstclass}) {
 
@@ -29,37 +31,118 @@ function Stafflist ({item,deletedata,studentclasslist,updatestatus,updatesstclas
     const [classitem, setClassitems] = useState();
     const [currentphone, setcurrentphone] = useState();
 
+    const [logout, setlogout] = useState("");
+    const [issubmitting, setissubmitting] = useState(false);
 
-    useEffect(() => {
 
-        //loaddropdown(studentclasslist);
-
-        //console.log(studentclasslist);
-
-       // setcurrentphone(item?.fgaurdain?.mobile);
-
+    useEffect(()=>{
+        setlogout(item?.is_logout);
     },[]);
 
+    const forcelogout = (id,delname) => {
 
-    const loaddropdown = (studentclasslist) => {
-
-        console.log("studentclasslist",studentclasslist);
-            
-        const mddatas = studentclasslist;
-        
-        let mdata = [];
+        return Alert.alert(
+            "Are your sure?",
+            "You want to disable "+delname+" Logins",
+            [
+              {
+                text: "No",
+              },
+              {
+                text: "Yes Disable",
+                onPress: () => {
   
-         mddatas.map(item =>  mdata.push({ label: item?.name, value: item?.id}))
-        
-         setClassitems(mdata);
-          
-      }
+                    setissubmitting(true);
+  
+                    const formdata = {
+                      id
+                    }
+  
+                    axios.post(schoolzapi+'/staff-force-logout',
+                    formdata,
+                    {
+                        headers: {Accept: 'application/json',
+                        Authorization: "Bearer "+token
+                    }
+                    })
+                        .then(function (response) {
+                            setissubmitting(false);
+
+                            setlogout("1");
+  
+                            showMessage({
+                              message: 'Logged Out Activated!',
+                              type: "success",
+                              position: 'bottom',
+                          });
+  
+                        })
+                        .catch(function (error) {
+                        setissubmitting(false);
+                        console.log(error);
+                        });
+                },
+              },
+            ]
+          );
+  
+    }
+  
+  
+    const enablelogout = (id,delname) => {
+  
+      return Alert.alert(
+          "Are your sure?",
+          "You want to enable "+delname+" Logins",
+          [
+            {
+              text: "No",
+            },
+            {
+              text: "Yes Enable",
+              onPress: () => {
+  
+                  setissubmitting(true);
+  
+                  const formdata = {
+                    id
+                  }
+  
+                  axios.post(schoolzapi+'/staff-enable-logout',
+                  formdata,
+                  {
+                      headers: {Accept: 'application/json',
+                      Authorization: "Bearer "+token
+                  }
+                  })
+                      .then(function (response) {
+                          setissubmitting(false);
+
+                          setlogout("0");
+  
+                          showMessage({
+                            message: 'Logged Out Activated!',
+                            type: "success",
+                            position: 'bottom',
+                        });
+  
+                      })
+                      .catch(function (error) {
+                      setissubmitting(false);
+                      console.log(error);
+                      });
+              },
+            },
+          ]
+        );
+  
+  }
 
 
     return (
-        <>
+        <View style={{ marginBottom: 10}}>
         
-        <TouchableOpacity style={{backgroundColor: '#fff', padding: 20}}
+        <TouchableOpacity style={{backgroundColor: logout == '1' ? 'red' : '#fff', padding: 20}}
         onPress={() => setVisible(! visible)}
         >
          <View style={{justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center'}}>
@@ -67,7 +150,11 @@ function Stafflist ({item,deletedata,studentclasslist,updatestatus,updatesstclas
                 source={{uri: item?.pic}}
                     size={30}
             />
-             <Text style={{fontSize: 15}}>{item?.fullname}</Text>
+             <Text style={{fontSize: 15,color: logout == '1' ? '#fff': '#000'}}>{item?.fullname} </Text>
+             {logout == '1' && (
+                <Text style={{color: logout == '1' ? '#fff' : ''}}>Disabled</Text>
+             )}
+             
         </View>
          
          {/* <View style={{alignItems: 'center',padding: 10}}>
@@ -82,10 +169,28 @@ function Stafflist ({item,deletedata,studentclasslist,updatestatus,updatesstclas
                 <Menu.Item style={[styles.textcolor,{marginLeft: 10}]} leadingIcon="square-edit-outline" onPress={()=> router.push(`/admin/staff/create-edit-staff?id=${item?.id}&userid=${item?.user_id}`)} title="Edit" />
                 <Menu.Item style={{marginLeft: 10}} leadingIcon="eye" title="View" onPress={()=> router.push(`/admin/staff/view-staff?id=${item?.id}&userid=${item?.user_id}`)} />
                 <Menu.Item style={{marginLeft: 10}} leadingIcon="delete-forever-outline" title="Delete" onPress={()=> deletedata(item?.id,item?.fullname)} />
-                <Menu.Item disabled={item?.phone == "" ? true: false} style={{marginLeft: 10}} leadingIcon="phone" title="Call" onPress={() => Linking.openURL(`tel:${item?.phone}`)} />                   
+                <Menu.Item disabled={item?.phone == "" ? true: false} style={{marginLeft: 10}} leadingIcon="phone" title="Call" onPress={() => Linking.openURL(`tel:${item?.phone}`)} />
+                
+                {issubmitting ? <ActivityIndicator size="small" /> : (
+                    <>
+                        {logout == '1' ? (
+                        <Menu.Item style={{marginLeft: 10}} leadingIcon="login" title="Enable Login" onPress={()=> {
+                            enablelogout(item?.id,item?.fullname);
+                        }} />
+
+                        ) : (
+                            <Menu.Item style={{marginLeft: 10}} leadingIcon="logout" title="Disable Login" onPress={()=> {
+                                forcelogout(item?.id,item?.fullname);
+                            }} />
+                        )}
+                    </>
+                )}
+                
+
+                <Menu.Item style={{marginLeft: 10}} leadingIcon="key" title="Permissions" onPress={()=> router.push("/admin/staff/permissions?userid="+item?.user_id)} />                   
             </View>
         )}
-        </>
+        </View>
     )
 }
 

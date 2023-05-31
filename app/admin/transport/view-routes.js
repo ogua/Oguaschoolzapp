@@ -102,7 +102,7 @@ function Viewroutes() {
           setstaff(staff.data.data);  
           setroutes(route.data.data); 
 
-          loadtatitudeandlogitude();
+          loadtatitudeandlogitude(waypoint.data.data);
 
           console.log('students',student.data.data);
 
@@ -114,9 +114,9 @@ function Viewroutes() {
       });
   }
 
-    const loadtatitudeandlogitude = () => {
+    const loadtatitudeandlogitude = (data) => {
             
-        const waypoint = waypoints[0];
+        const waypoint = data[0];
         setlatitude(waypoint.latitude);
         setlogitude(waypoint.longitude);
         setaddress(waypoint.addrress);

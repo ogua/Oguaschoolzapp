@@ -32,7 +32,7 @@ function Studentlist ({item,deletedata,studentclasslist,updatestatus,updatesstcl
 
     useEffect(() => {
 
-        loaddropdown(studentclasslist);
+        loaddropdown();
 
         //console.log(studentclasslist);
 
@@ -41,9 +41,8 @@ function Studentlist ({item,deletedata,studentclasslist,updatestatus,updatesstcl
     },[]);
 
 
-    const loaddropdown = (studentclasslist) => {
+    const loaddropdown = () => {
 
-        console.log("studentclasslist",studentclasslist);
             
         const mddatas = studentclasslist;
         
@@ -59,13 +58,13 @@ function Studentlist ({item,deletedata,studentclasslist,updatestatus,updatesstcl
     return (
         <>
         
-        <TouchableOpacity style={{backgroundColor: '#fff', marginTop: 40}}
+        <TouchableOpacity style={{backgroundColor: '#fff', marginTop: 60}}
         onPress={() => setVisible(! visible)}
         >
          <View style={{justifyContent: 'center', alignItems: 'center', marginTop: -30}}>
             <Avatar.Image 
                 source={{uri: item?.pic}}
-                    size={90}
+                    size={60}
             />
         </View>
          
@@ -84,6 +83,8 @@ function Studentlist ({item,deletedata,studentclasslist,updatestatus,updatesstcl
                 <Menu.Item style={{marginLeft: 10}} leadingIcon="delete-forever-outline" title="Delete" onPress={()=> deletedata(item?.id,item?.fullname)} />
                 <Menu.Item disabled={currentphone == undefined ? true: false} style={{marginLeft: 10}} leadingIcon="phone" title="Call Parent" onPress={() => Linking.openURL(`tel:${item?.fgaurdain?.mobile}`)} />
 
+                
+                <View style={{marginHorizontal: 20}}>
                 <DropDownPicker
                     open={openstatus}
                     value={status}
@@ -145,8 +146,11 @@ function Studentlist ({item,deletedata,studentclasslist,updatestatus,updatesstcl
                         borderWidth: 1,
                         //backgroundColor: "#F5F7F6",
                         minHeight: 40,
+                        marginBottom: 20
                     }}
                   />
+
+                  </View>
             </View>
         )}
         </>
