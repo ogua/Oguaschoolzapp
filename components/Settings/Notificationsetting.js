@@ -50,7 +50,7 @@ function Notificationsettings() {
   
 
     useEffect(()=>{
-      DeviceEventEmitter.removeAllListeners("event.test");
+      //DeviceEventEmitter.removeAllListeners("event.test");
 
       loaddata();
 

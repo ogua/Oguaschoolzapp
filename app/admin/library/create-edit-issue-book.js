@@ -64,7 +64,7 @@ function Createeditissuedbook() {
       loaddata();
 
       if(id == undefined){
-        isCreatedorEdit('Issued Books');
+        isCreatedorEdit('Issue Books');
         
       }else{
         loaddataedit();

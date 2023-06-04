@@ -11,7 +11,7 @@ import { useCallback } from 'react';
 import * as Animatable from 'react-native-animatable';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import DropDownPicker from 'react-native-dropdown-picker';
-import AnimatedMultistep from "react-native-animated-multistep";
+//import AnimatedMultistep from "react-native-animated-multistep";
 import * as Imagepicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { LocaleConfig, Calendar } from "react-native-calendars";

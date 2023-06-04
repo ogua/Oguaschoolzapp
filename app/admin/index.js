@@ -91,6 +91,7 @@ import Resultspersubject from '../../components/Results/Resultspersubject';
 import Questionaireone from '../../components/Questinnaire/Questionaireone';
 import Questionnairetwo from '../../components/Questinnaire/Questionnairetwo';
 import Sendtransactionbymail from '../../components/Accounts/Sendtransactionbymail';
+import Sendpushnotification from '../../components/Communicate/Sendpushnotification';
 
 const Drawer = createDrawerNavigator();
 
@@ -207,6 +208,8 @@ function Maindashboard() {
       <Drawer.Screen name="Messagetemplate" component={Messagetemplate} />
       <Drawer.Screen name="Sendmail" component={Sendmail} />
       <Drawer.Screen name="Sendsms" component={Sendsms} />
+      <Drawer.Screen name="Sendpushnotification" component={Sendpushnotification} />
+      
       
 
       <Drawer.Screen name="Schoolinformation" component={Schoolinformation} />

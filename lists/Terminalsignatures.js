@@ -12,7 +12,7 @@ function Terminalsiglist ({item,deletedata}) {
 
     return (
         <>
-        <TouchableWithoutFeedback style={{padding: 10}}
+        <TouchableOpacity style={{padding: 10}}
         onPress={() => setVisible(! visible)}
         >
 
@@ -42,7 +42,7 @@ function Terminalsiglist ({item,deletedata}) {
             </Card.Actions>
         </Card>
             
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
 
         {visible && (
             <View style={{backgroundColor: '#fff', borderBottomColor: '#000', borderBottomWidth: 1 }}>

@@ -1,7 +1,7 @@
 import { Stack, useRouter } from 'expo-router';
-import { ActivityIndicator, Alert, FlatList, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, DeviceEventEmitter, FlatList, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Button, Card, Chip, List, Menu, Provider, Searchbar, TextInput } from 'react-native-paper';
+import { ActivityIndicator, Button, Card, Chip, FAB, List, Menu, Provider, Searchbar, TextInput } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -12,17 +12,24 @@ import { useSelector } from 'react-redux';
 import { selecttoken } from '../../features/userinfoSlice';
 import Academiclistitem from './Academiclistitem';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import Academictermlist from '../../lists/Academictermlist';
 
 function Academicterm ({navigation}) {
     const token = useSelector(selecttoken);
     const [search, setSearch] = useState();
-    const [isloading, setLoading] = useState(true);
+    const [isloading, setLoading] = useState(false);
     const [academicterm, setAcadmicterm] = useState([]);
     const [filterterm, setFilterterm] = useState([]);
     const router = useRouter();
     const[refreshing, setRefreshing] = useState(true);
 
     useEffect(()=> {
+
+      // DeviceEventEmitter.addListener("subject.added", (event)=>{
+      //   console.log('how many time');
+      //   loaddata();
+      //   DeviceEventEmitter.removeAllListeners("event.test");
+      // });
 
         loaddata();
 
@@ -40,9 +47,16 @@ function Academicterm ({navigation}) {
         }
         })
           .then(function (response) {
+
+            setLoading(false);
+            
+            if(response.data.planexpire){
+              alert(response.data.planexpire);
+            }
+
             setAcadmicterm(response.data.data);
             setFilterterm(response.data.data);
-            setLoading(false);
+            
           })
           .catch(function (error) {
             setLoading(false);
@@ -51,7 +65,7 @@ function Academicterm ({navigation}) {
     }
 
 
-    const deletedata = (id) => {
+    const sdeletedata = (id) => {
 
       setLoading(true);
 
@@ -94,11 +108,11 @@ function Academicterm ({navigation}) {
         }
     };
 
-    const deleteiterm = (id,delname) => {
+    const deletedata = (id,delname) => {
 
       return Alert.alert(
           "Are your sure?",
-          "Are you sure you want to delete "+delname+" info",
+          "You want to delete "+delname+" info",
           [
             {
               text: "No",
@@ -114,10 +128,18 @@ function Academicterm ({navigation}) {
                   }
                   })
                     .then(function (response) {
+
+                      setLoading(false);
+                      
+                      if(response.data.planexpire){
+                        alert(response.data.planexpire);
+                        return;
+                      }
+
                       const newData = academicterm.filter((item) => item.id != id);
                       setFilterterm(newData);
                       setAcadmicterm(newData);
-                      setLoading(false);
+                      
                     })
                     .catch(function (error) {
                       setLoading(false);
@@ -130,29 +152,23 @@ function Academicterm ({navigation}) {
 
   }
 
-
     return (
       <Provider>
-      <SafeAreaView >
-        <ScrollView
-        refreshControl={
-            <RefreshControl refreshing={isloading} onRefresh={loaddata} />
-        }
-        >
+      <SafeAreaView style={{flexGrow: 1}}> 
+        <ScrollView>
         <Stack.Screen
          options={{
-            headerTitle: 'Academic Term'
+            headerTitle: 'Academic Term',
+          //   headerRight: ()=>(
+          //     <TouchableOpacity style={{flexDirection: 'row', marginRight: 10}} onPress={()=> router.push('/admin/Academics/create')}>
+          //         <Ionicons name='add-circle' size={22} color="#17a2b8"/>
+          //         <Text style={{fontSize: 18}}>New</Text>
+          //     </TouchableOpacity>
+          // )
          }}
          />
-            {isloading ? null : (
-           <View style={{alignItems: 'flex-end', marginRight: 20, marginVertical: 20}}>
-                <View style={{alignItems: 'center'}}>
-                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/Academics/create')}>
-                        <Ionicons name='add-circle' size={22} color="#17a2b8"/>
-                        <Text style={{fontSize: 18}}>New</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>)}
+  
+            <>
 
             <View>
                 <Searchbar
@@ -165,38 +181,32 @@ function Academicterm ({navigation}) {
             <Card>
                 <Card.Content>
 
-                <SwipeListView
-                  data={filterterm}
-                  ItemSeparatorComponent={()=> (<View style={styles.separator} />)}
-                  renderItem={ (item, rowMap) => <Academiclistitem deletedata={deletedata} items={item} />}
-                  renderHiddenItem={ (data, rowMap) => (
-                      <View style={styles.rowBack}>
-                          <TouchableOpacity onPress={() => deleteiterm(data.item.id, data.item.name)}>
-                            <MaterialCommunityIcons name="delete-circle" size={30} color="red" />
-                          </TouchableOpacity>
-                          <TouchableOpacity onPress={()=> router.push(`/admin/Academics/edit-academic?id=${data.item.id}`)}>
-                              <MaterialCommunityIcons name="circle-edit-outline" color="#1782b6" size={30} />
-                          </TouchableOpacity>
-                      </View>
-                  )}
-                  leftOpenValue={95}
-                  rightOpenValue={-95}
-              />
+          {isloading ? <ActivityIndicator size="large" /> : (
 
+          
 
-                    {/* <FlatList
+                    <FlatList
                         data={filterterm}
-                        renderItem={({item})=> <Academiclistitem deletedata={deletedata} items={item} /> }
+                        initialNumToRender={5}
+                        refreshControl={
+                          <RefreshControl refreshing={isloading} onRefresh={loaddata} />
+                         }
+                        refreshing={true}
+                        renderItem={({item})=> <Academictermlist deletedata={deletedata} item={item} /> }
                         ItemSeparatorComponent={()=> (<View style={styles.separator} />)}
                         keyExtractor={item => item.id}
-                    /> */}
+                    />
 
-                       {/* <TouchableOpacity style={{backgroundColor: '#ccc', padding: 10}}>
-                            <Text>item 1</Text>
-                        </TouchableOpacity> */}
+                        )}
                 </Card.Content>
             </Card> 
+            </>
         </ScrollView>
+        <FAB
+          icon="plus"
+          style={styles.fab}
+          onPress={()=> router.push('/admin/Academics/create')}
+        />
       </SafeAreaView>
       </Provider>
     )
@@ -206,7 +216,12 @@ function Academicterm ({navigation}) {
 export default Academicterm;
 
 const styles = StyleSheet.create({
-
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 80,
+  },
     separator: {
         height: 0.5,
         backgroundColor: 'rgba(0,0,0,0.4)',

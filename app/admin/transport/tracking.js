@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Redirect, Stack, useRouter, useSearchParams } from 'expo-router';
 import { useRef, useState } from 'react';
 import { ActivityIndicator, Alert, DeviceEventEmitter, Dimensions, KeyboardAvoidingView, Linking, PermissionsAndroid, SafeAreaView, ScrollView, StyleSheet, Text, ToastAndroid, View } from 'react-native'
-import { Avatar, Button, Card, Divider, TextInput } from 'react-native-paper';
+import { Avatar, Button, Card, Divider, Modal, TextInput } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import MapView, { AnimatedRegion, Marker } from "react-native-maps";
@@ -53,19 +53,23 @@ function Trackroute() {
     const mapref = useRef(null);
     const markerRef = useRef();
 
+    const [mylocation, setmylocation] = useState(null);
+    const [mylocationadd, setmylocationadd] = useState(null);
+    const [usemylocation, setusemylocation] = useState(false);
 
     const [state, setState] = useState({
       coordinate: new AnimatedRegion({
-          latitude: origin.latitude,
-          longitude: origin.longitude,
+          latitude: origin?.latitude ?? 5.5981754,
+          longitude: origin?.longitude ?? -0.1125837,
           latitudeDelta: 0.005,
           longitudeDelta: 0.005
       }),
-
   })
 
 
-   const { coordinate } = state
+   const { coordinate } = state;
+
+   const [openmodal, setopenmodal] = useState(false);
 
 
     useEffect(()=> {
@@ -80,7 +84,7 @@ function Trackroute() {
         //   {edgePadding: {top: 50, right: 50, bottom: 50, left: 50}});
 
         
-    },[origin,destination]);
+    },[origin,destination,usemylocation]);
    
 
 
@@ -153,13 +157,30 @@ const getdriverlocation = () => {
                 })
             })
 
-
-
+      // fetchaddress(lat, lng);
 
   }).catch(function(error){
       
       console.log("error",error);
   });
+}
+
+
+const fetchaddress = (lat, lng) => {
+  fetch(
+    'https://maps.googleapis.com/maps/api/geocode/json?address=' +
+      lat +
+      ',' +
+      lng +
+      '&key=' +
+      'AIzaSyAJYTDdNireWqKZ5Y8yNbwqW8YMAreLjTo',
+  )
+    .then(response => response.json())
+    .then(responseJson => {
+     // console.log("responseJson",responseJson?.results[0]);
+     // console.log("responseJson",responseJson?.results[0]?.formatted_address);
+      dispatch(setOrgaddress(responseJson?.results[0]?.formatted_address));
+    });
 }
 
 
@@ -254,7 +275,7 @@ const animate = (latitude, longitude) => {
 
     
 
-        <ScrollView style={{marginBottom: 30}} keyboardShouldPersistTaps='always'
+        <ScrollView keyboardShouldPersistTaps='always'
         >
         {isloading ? <ActivityIndicator size="large" color="#1782b6" /> : (
         <Card>
@@ -269,9 +290,14 @@ const animate = (latitude, longitude) => {
             enablePoweredByContainer={false}
             onPress={(data, details = null) => {
               const location = JSON.stringify(details?.geometry?.location);
+              
+              setmylocation({latitude: parseFloat(JSON.stringify(details?.geometry?.location.lat)),longitude: parseFloat(JSON.stringify(details?.geometry?.location.lng))});
+              setmylocationadd(data.description);
 
-              dispatch(setDestination({latitude: parseFloat(JSON.stringify(details?.geometry?.location.lat)),longitude: parseFloat(JSON.stringify(details?.geometry?.location.lng))}));
-              dispatch(setdaddress(data.description))
+              setusemylocation(true);
+
+              //dispatch(setDestination({latitude: parseFloat(JSON.stringify(details?.geometry?.location.lat)),longitude: parseFloat(JSON.stringify(details?.geometry?.location.lng))}));
+             // dispatch(setdaddress(data.description))
 
             }}
             styles={{
@@ -288,15 +314,18 @@ const animate = (latitude, longitude) => {
 
         {destination && (
         
-        <View style={{height: SCREEN_HEIGHT/2}}>
-
+        <View style={{height: SCREEN_HEIGHT}}>
+        
+        <TouchableOpacity onPress={()=> setusemylocation(false)} style={{position: 'absolute', zIndex: 1000, right: 0, top: 10}}>
+          <Ionicons name="locate-sharp" size={40} />
+        </TouchableOpacity>
         
         <MapView style={styles.map}
             ref={mapref}
             mapType="mutedStandard"
                 initialRegion={{
-                    latitude: parseFloat(origin?.latitude),
-                    longitude: parseFloat(origin?.longitude),
+                    latitude: parseFloat(origin?.latitude ?? 5.5981754),
+                    longitude: parseFloat(origin?.longitude ?? -0.1125837),
                     latitudeDelta: 0.005,
                     longitudeDelta: 0.005,
                 }}
@@ -306,7 +335,7 @@ const animate = (latitude, longitude) => {
 
                   <MapViewDirections
                     origin={{latitude: parseFloat(origin.latitude),longitude: parseFloat(origin.longitude)}}
-                    destination={{latitude: parseFloat(destination.latitude),longitude: parseFloat(destination.longitude)}}
+                    destination={{latitude: parseFloat(usemylocation ? mylocation?.latitude : destination.latitude),longitude: parseFloat(usemylocation ? mylocation?.longitude : destination.longitude)}}
                     apikey="AIzaSyAJYTDdNireWqKZ5Y8yNbwqW8YMAreLjTo"
                     mode="DRIVING"
                     strokeWidth={3}
@@ -337,6 +366,7 @@ const animate = (latitude, longitude) => {
                   title="Drivers Location"
                   //description={address}
                   identifier='origin'
+                  onPress={()=> setopenmodal(true)}
                   >
                   <Image source={require('../../../assets/bus.png')}
                   resizeMode="contain"
@@ -350,13 +380,16 @@ const animate = (latitude, longitude) => {
 
                 )}
                    
+              {destination && (
 
-                    <Marker.Animated
-                        coordinate={{latitude: parseFloat(destination.latitude),longitude: parseFloat(destination.longitude)}}
-                        title={`Your Location Ariving in ${time}`}
-                       // description={address}
-                        identifier='destination'
-                       />
+                  <Marker.Animated
+                  coordinate={{latitude: parseFloat(usemylocation ? mylocation?.latitude : destination.latitude),longitude: parseFloat(usemylocation ? mylocation?.longitude : destination.longitude)}}
+                  title={`Your Location Ariving in ${time}`}
+                  identifier='destination'
+                />
+
+              )}    
+                    
     
             </MapView>
           
@@ -367,37 +400,53 @@ const animate = (latitude, longitude) => {
                         
       <Divider style={{marginVertical: 20}} />
 
-      <TouchableOpacity>
-        <Text style={{fontSize: 18}}>Drivers name</Text>
-        <Text>{route.assignedto}</Text>
+
+      <Modal
+          visible={openmodal}
+          onDismiss={() => {
+            setopenmodal(!openmodal);
+          }}
+          animationType="slide"
+          transparent={true}
+        >
+          <View style={styles.modalContainer}>
+
+          <TouchableOpacity>
+        <Text style={{fontSize: 18, color: '#fff'}}>Drivers name</Text>
+        <Text style={{color: '#fff'}}>{route.assignedto}</Text>
       </TouchableOpacity>
 
       <Divider style={{marginVertical: 20}} />
 
       <TouchableOpacity>
-        <Text style={{fontSize: 18}}>Drivers contact</Text>
-        <Text onPress={() => Linking.openURL(`tel:${route?.contact}`)}>{route.contact}</Text>
+        <Text style={{fontSize: 18,color: '#fff'}}>Drivers contact</Text>
+        <Text onPress={() => Linking.openURL(`tel:${route?.contact}`)} style={{color: '#fff'}}>{route.contact}</Text>
       </TouchableOpacity>
 
       <Divider style={{marginVertical: 20}} />
 
       <TouchableOpacity>
-        <Text style={{fontSize: 18}}>Vehicle Current Location</Text>
-        <Text>{originaddress}</Text>
+        <Text style={{fontSize: 18,color: '#fff'}}>Vehicle Current Location</Text>
+        <Text style={{color: '#fff'}}>{originaddress}</Text>
       </TouchableOpacity>
 
       <Divider style={{marginVertical: 20}} />
 
        <TouchableOpacity>
-        <Text style={{fontSize: 18}}>Distance / Time Remaining</Text>
+        <Text style={{fontSize: 18,color: '#fff'}}>Distance / Time Remaining</Text>
         {distance !== "" && (
-           <Text>{distance}</Text>
+           <Text style={{color: '#fff'}}>{distance}</Text>
         )}
        
       </TouchableOpacity> 
 
+
+
+          </View>
             
-                
+        </Modal>
+
+  
 
        </Card.Content>
         </Card>
@@ -411,8 +460,11 @@ const animate = (latitude, longitude) => {
 export default Trackroute;
 
 const styles = StyleSheet.create({
+  modalContainer: {
+    padding: 20,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
     map: {
-      width: '100%',
-      height: '100%'
+      ...StyleSheet.absoluteFillObject,
     },
 });

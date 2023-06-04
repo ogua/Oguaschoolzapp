@@ -4,7 +4,7 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
    ScrollView, StyleSheet, Text, TouchableOpacity, 
    View, DeviceEventEmitter, Alert } from 'react-native'
 import { useEffect } from 'react';
-import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar } from 'react-native-paper';
+import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar, ActivityIndicator, FAB } from 'react-native-paper';
 import { useState } from 'react';
 import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -33,11 +33,11 @@ function Calllogs () {
 
     useEffect(()=> {
       
-      DeviceEventEmitter.addListener("subject.added", (event)=>{
-        console.log('how many time');
-        loaddata();
-        DeviceEventEmitter.removeAllListeners("event.test");
-      });
+      // DeviceEventEmitter.addListener("subject.added", (event)=>{
+      //   console.log('how many time');
+      //   loaddata();
+      //   DeviceEventEmitter.removeAllListeners("event.test");
+      // });
 
        loaddata();
 
@@ -123,18 +123,19 @@ function Calllogs () {
 
     return (
       <Provider>
-      <SafeAreaView>
+      <SafeAreaView style={{flexGrow: 1}}>
         <Stack.Screen options={{
             headerTitle: 'Call Logs'
         }}
         />
         <ScrollView
         refreshControl={
-            <RefreshControl refreshing={isloading} onRefresh={loaddata} />
+            <RefreshControl refreshing={false} onRefresh={loaddata} />
         }
         >
-        {isloading ? null : (
-           <View style={{marginVertical: 20}}>
+        {isloading ? <ActivityIndicator size="large" /> : (
+          <>
+           {/* <View style={{marginVertical: 20}}>
                 <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>
                     
                     <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.push('/admin/Frontdesk/create-edit-calllog')}>
@@ -142,7 +143,7 @@ function Calllogs () {
                         <Text style={{fontSize: 18}}>New</Text>
                     </TouchableOpacity>
                 </View>
-            </View>)}
+            </View> */}
 
             <Searchbar
                 placeholder='Search....'
@@ -164,8 +165,14 @@ function Calllogs () {
                 />
                 </Card.Content>
             </Card> 
-
+        </>)}            
         </ScrollView>
+        <FAB
+          icon="plus"
+          style={styles.fab}
+          onPress={()=> router.push('/admin/Frontdesk/create-edit-calllog')}
+        />
+        
       </SafeAreaView>
       </Provider>
     )
@@ -174,7 +181,12 @@ function Calllogs () {
 export default Calllogs;
 
 const styles = StyleSheet.create({
-
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 80,
+  },
     separator: {
         height: 0.5,
         backgroundColor: 'rgba(0,0,0,0.4)',

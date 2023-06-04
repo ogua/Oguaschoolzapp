@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Redirect, Stack, useRouter, useSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, SafeAreaView, Text, View } from 'react-native'
+import { ActivityIndicator, DeviceEventEmitter, SafeAreaView, Text, View } from 'react-native'
 import { Button, Card, TextInput } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { schoolzapi } from '../../../components/constants';
@@ -57,6 +57,7 @@ function Editcalendar() {
       })
         .then(function (response) {
           setLoading(false);
+
           showMessage({
             message: 'Info recorded Successfully!',
             type: "success",
@@ -89,7 +90,7 @@ function Editcalendar() {
               onChangeText={(e) => setName(e)}
               value={name} />
 
-              {isloading ? <ActivityIndicator size="large" color="#1782b6" /> : (
+              {isloading ? <ActivityIndicator size="large" color="#1782b6" style={{marginTop: 20}} /> : (
                 <Button mode="contained" onPress={updatedata} style={{marginTop: 20}}>
                   Save
                 </Button>

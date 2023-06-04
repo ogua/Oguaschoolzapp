@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { Redirect, Stack, useRouter, useSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, DeviceEventEmitter, KeyboardAvoidingView, PermissionsAndroid, SafeAreaView, ScrollView, StyleSheet, Text, ToastAndroid, View } from 'react-native'
-import { Avatar, Button, Card, TextInput } from 'react-native-paper';
+import {  Alert, DeviceEventEmitter, KeyboardAvoidingView, PermissionsAndroid, SafeAreaView, ScrollView, StyleSheet, Text, ToastAndroid, View } from 'react-native'
+import { ActivityIndicator, Avatar, Button, Card, TextInput } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { schoolzapi } from '../../../components/constants';
 import { selecttoken } from '../../../features/userinfoSlice';
@@ -335,7 +335,8 @@ function Createeditfeemaster() {
         <Stack.Screen
             options={{
                 headerTitle: creatoredit,
-                presentation: 'formSheet',
+                //headerShown: false,
+                presentation: "card",
                 headerRight: () => (
                     <>
                       <TouchableOpacity onPress={refresh}>
@@ -491,7 +492,7 @@ function Createeditfeemaster() {
         />          
 
 
-        {issubmitting ? <ActivityIndicator size="large" color="#1782b6" /> : (
+        {issubmitting ? <ActivityIndicator size="large" color="#1782b6" style={{marginTop: 30}} /> : (
         <Button mode="contained" onPress={id == undefined ? createdata : updatedata} style={{marginTop: 30}}>
         Save
         </Button>

@@ -1,4 +1,4 @@
-import {View,StyleSheet, FlatList } from 'react-native';
+import {View,StyleSheet, FlatList, Linking } from 'react-native';
 
 import {
     useTheme,
@@ -23,6 +23,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout, selectpermissions, selectroles, selectstaffrole, selectuser, selectuserpermission } from '../features/userinfoSlice';
 import { showMessage } from "react-native-flash-message";
 
+import * as Sharing from 'expo-sharing';
+
 
  function Drawercontent(props) {
  const [ispressed, setIspressed] = useState(false);
@@ -35,6 +37,8 @@ import { showMessage } from "react-native-flash-message";
  const role = useSelector(selectroles);
  const driver = useSelector(selectstaffrole);
 
+ const fileUri = require('../assets/logo.png');
+
  const handlelogout = () => {
   
   dispatch(logout());
@@ -44,7 +48,7 @@ import { showMessage } from "react-native-flash-message";
       position: 'bottom',
   });
 
-  router.push("/login");
+  router.push("/expo-auth-session");
  // return <Redirect href="/login" />;
  };
 
@@ -237,15 +241,15 @@ const setitemfocus = (itemid) => {
     permission: 'viewaccountmanagement',
     role: '',
     children: [
-      {
-        key: 61,
-        name: 'Online Fee Payment',
-        icon: 'circle-outline',
-        route: 'All Students',
-        permission: 'viewonlinefeepayment',
-        role: '',
-        children: []
-      },
+      // {
+      //   key: 61,
+      //   name: 'Online Fee Payment',
+      //   icon: 'circle-outline',
+      //   route: 'All Students',
+      //   permission: 'viewonlinefeepayment',
+      //   role: '',
+      //   children: []
+      // },
       {
         key: 62,
         name: 'Fees',
@@ -320,7 +324,7 @@ const setitemfocus = (itemid) => {
       },
       {
         key: 619,
-        name: 'Transaction By Mail',
+        name: 'Transaction Report',
         icon: 'circle-outline',
         route: 'Sendtransactionbymail',
         permission: 'viewtransactions',
@@ -629,15 +633,15 @@ const setitemfocus = (itemid) => {
         role: '',
         children: []
       },
-      {
-        key: 124,
-        name: 'Waypoint Transfer',
-        icon: 'circle-outline',
-        route: 'All Students',
-        permission: 'viewtransportation',
-        role: '',
-        children: []
-      },
+      // {
+      //   key: 124,
+      //   name: 'Waypoint Transfer',
+      //   icon: 'circle-outline',
+      //   route: 'All Students',
+      //   permission: 'viewtransportation',
+      //   role: '',
+      //   children: []
+      // },
     ]
   },
   {
@@ -649,15 +653,15 @@ const setitemfocus = (itemid) => {
     role: '',
     children: []
   },
-  {
-    key: 102,
-    name: 'Live Class',
-    icon: 'google-classroom',
-    route: 'Zoommeetings',
-    permission: 'viewonlineclass',
-    role: '',
-    children: []
-  },
+  // {
+  //   key: 102,
+  //   name: 'Live Class',
+  //   icon: 'google-classroom',
+  //   route: 'Zoommeetings',
+  //   permission: 'viewonlineclass',
+  //   role: '',
+  //   children: []
+  // },
   {
     key: 21,
     name: 'Home work',
@@ -812,6 +816,15 @@ const setitemfocus = (itemid) => {
         permission: 'viewsendmail',
         role: '',
         children: []
+      },
+      {
+        key: 185,
+        name: 'Send Notification',
+        icon: 'circle-outline',
+        route: 'Sendpushnotification',
+        permission: 'viewsendmail',
+        role: '',
+        children: []
       }
     ]
   },
@@ -915,7 +928,7 @@ function checkpermission(){
                             size={30}
                         />
 
-                        <Text style={{fontSize: 15, marginLeft: 10}}>OSMS</Text>
+                        <Text style={{fontSize: 15, marginLeft: 10}}>OguaSchoolz</Text>
                     </View>
 
                     <View style={styles.userInfoSection}>
@@ -1447,7 +1460,56 @@ function checkpermission(){
           
             <Drawer.Section style={styles.bottomDrawerSection}>
             
+                
+                
                 {checkpermission()}
+
+                {/* <DrawerItem 
+                    icon={({color, size}) => (
+                        <Icon 
+                        name="share" 
+                        color={color}
+                        size={size}
+                        />
+                    )}
+                    label="Share"
+                    onPress={() => {
+
+                      Sharing.isAvailableAsync().then((available) => {
+                        if (available) {
+
+                          Sharing.shareAsync("https://oguaschoolz.com/images/logo.png")
+                            .then((data) => {
+                              alert('Shared');
+                            })
+                            .catch((err) => {
+                              alert('Error sharing image');
+                              console.log(JSON.stringify(err));
+                            });
+
+
+                          //alert('Sharing is available');
+                        } else {
+                          alert('Sharing is NOT available');
+                        }
+                      });
+
+                    }}
+                /> */}
+
+                 <DrawerItem 
+                    icon={({color, size}) => (
+                        <Icon 
+                        name="help" 
+                        color={color}
+                        size={size}
+                        />
+                    )}
+                    label="Help"
+                    onPress={() => Linking.openURL(`https://api.whatsapp.com/send?phone=+233545819229&text=Hello%20OguaSchoolz%20Please%20i%20need%20your%20help`)}
+                />
+
+
                 
                 <DrawerItem 
                     icon={({color, size}) => (
@@ -1460,6 +1522,8 @@ function checkpermission(){
                     label="Sign Out"
                     onPress={() => {handlelogout()}}
                 />
+
+                  
 
             </Drawer.Section>
         </View>

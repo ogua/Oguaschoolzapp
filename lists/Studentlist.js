@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ActivityIndicator, Linking, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Avatar, Button, Dialog, Divider, List, Menu,MD3Colors, Portal,ProgressBar, Snackbar, Text } from "react-native-paper";
+import { ActivityIndicator, Linking, StyleSheet, TouchableOpacity, View, Text } from "react-native";
+import { Avatar, Button, Dialog, Divider, List, Menu,MD3Colors, Portal,ProgressBar, Snackbar } from "react-native-paper";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from "expo-router";
 import { useSelector } from "react-redux";
@@ -82,7 +82,7 @@ function Studentlist ({item,deletedata,studentclasslist,updatestatus,updatesstcl
                 <Menu.Item disabled={item?.phone == "" ? true: false} style={{marginLeft: 10}} leadingIcon="eye" title="View" onPress={()=> router.push(`/admin/admission/view-student?id=${item?.id}`)} />
                 <Menu.Item style={{marginLeft: 10}} leadingIcon="delete-forever-outline" title="Delete" onPress={()=> deletedata(item?.id,item?.fullname)} />
                 <Menu.Item disabled={currentphone == undefined ? true: false} style={{marginLeft: 10}} leadingIcon="phone" title="Call Parent" onPress={() => Linking.openURL(`tel:${item?.fgaurdain?.mobile}`)} />
-
+                <Menu.Item style={{marginLeft: 10}} leadingIcon="book" title="Previous Results" onPress={() => router.push( `/admin/student/student-results?stndid=${item?.student_id}&fullname=${item?.fullname}`)} />
                 
                 <View style={{marginHorizontal: 20}}>
                 <DropDownPicker

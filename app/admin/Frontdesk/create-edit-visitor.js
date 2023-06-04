@@ -158,7 +158,7 @@ function Createeditvisitor() {
               position: 'bottom',
             });
           
-          DeviceEventEmitter.emit('subject.added', {});
+       //   DeviceEventEmitter.emit('subject.added', {});
           router.back();
             
           })
@@ -206,7 +206,7 @@ function Createeditvisitor() {
       data.append('outtime',outtime);
       data.append('note',note);
 
-      console.log(data);
+    //  console.log(data);
 
       //return;
     
@@ -222,7 +222,7 @@ function Createeditvisitor() {
       })
         .then(function (response) {
           setIssubmitting(false);
-          DeviceEventEmitter.emit('subject.added', {});
+     //     DeviceEventEmitter.emit('subject.added', {});
           router.back();
         })
         .catch(function (error) {

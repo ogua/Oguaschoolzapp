@@ -48,6 +48,11 @@ function Feepayment () {
         })
         .then(function (results) {
             setLoading(false);
+
+            if(results.data.planexpire){
+              alert(results.data.planexpire);
+            }
+
             setData(results.data.data);
             setFilterdata(results.data.data);
 

@@ -4,7 +4,7 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
    ScrollView, StyleSheet, Text, TouchableOpacity, 
    View, DeviceEventEmitter, Alert } from 'react-native'
 import { useEffect } from 'react';
-import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar } from 'react-native-paper';
+import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar, ActivityIndicator } from 'react-native-paper';
 import { useState } from 'react';
 import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -301,6 +301,10 @@ function Allstoppedstudents () {
          }}
         />
 
+
+        {isloading ? <ActivityIndicator size="large" /> : (
+          <>
+
        <Searchbar
             placeholder='Search....'
             mode="outlined"
@@ -323,7 +327,7 @@ function Allstoppedstudents () {
 
         <ScrollView
         refreshControl={
-            <RefreshControl refreshing={isloading} onRefresh={loaddata} />
+            <RefreshControl refreshing={false} onRefresh={loaddata} />
         }
         >
                 <Card>
@@ -341,6 +345,8 @@ function Allstoppedstudents () {
             </Card> 
 
         </ScrollView>
+        </>
+        )}
       </SafeAreaView>
       </Provider>
     )

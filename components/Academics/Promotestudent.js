@@ -71,10 +71,10 @@ function Promotestudent () {
       }
       })
         .then(function (response) {
-          console.log(response.data.data);
+         // console.log(response.data.data);
           setData(response.data.data);
           setFilterdata(response.data.data);
-          setLoading(false);
+         
           
         })
         .catch(function (error) {
@@ -93,9 +93,9 @@ function Promotestudent () {
         }
         })
           .then(function (response) {
-            console.log(response.data.data);
-            loaddropdown(response.data.data);
+
             setLoading(false);
+            loaddropdown(response.data.data);
           })
           .catch(function (error) {
             console.log(error);

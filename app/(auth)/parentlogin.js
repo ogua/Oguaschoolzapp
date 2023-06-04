@@ -114,24 +114,24 @@ function Parentlogin() {
 
             <View style={styles.formtitle}>
                 <Text style={styles.logintext}>Parent User</Text>
-                <Button onPress={()=> router.push("/login")}>
-                    <Ionicons name="person" size={13} style={{marginRight: 5}} />Main login
+                <Button onPress={()=> router.push("/expo-auth-session")}>
+                    <Ionicons name="person" size={23} style={{marginRight: 5}} />Main login
                 </Button>
             </View>
             <View style={styles.formcontainer}>
                 <View style={styles.formgroup}>
                     <Text>Student ID</Text>
                     <View style={styles.inputextcontainer}>
-                        <Ionicons name="mail" style={styles.formgroundinputicon} size={20} color="#fff" />
-                       <TextInput ref={emailref} name="email" onChangeText={ (e) => setemail(e) } style={styles.formgroundinput} id="email"  />
+                        <Ionicons name="mail" style={styles.formgroundinputicon} size={20} color="#000" />
+                       <TextInput ref={emailref} placeholder='Enter Student ID' name="email" onChangeText={ (e) => setemail(e) } style={styles.formgroundinput} id="email"  />
                     </View>
                 </View>
 
                 <View style={styles.formgroup}>
                     <Text>Phone number</Text>
                     <View style={styles.inputextcontainer}>
-                        <Ionicons name="key-outline" style={styles.formgroundinputicon} size={20} color="#fff" />
-                        <TextInput name="password" secureTextEntry={true} id="password" onChangeText={(e) => setpassword(e)} style={styles.formgroundinput} />
+                        <Ionicons name="key-outline" style={styles.formgroundinputicon} size={20} color="#000" />
+                        <TextInput name="password" placeholder='Enter Your Phone number' secureTextEntry={true} id="password" onChangeText={(e) => setpassword(e)} style={styles.formgroundinput} />
                     </View>
                 </View>
 
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexWrap: 'wrap',
         color: '#fff',
-        fontSize: 18,
+        fontSize:20,
         padding: 10
     },
 

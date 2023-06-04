@@ -72,7 +72,7 @@ function Promotestudentlist ({item,classdata}) {
     return (
         <>
         
-        <TouchableOpacity style={{backgroundColor: `${promote ? '#ADD8E6' : '#fff'}`, marginTop: 40}}>
+        <TouchableOpacity style={{backgroundColor: `${promote ? '#ADD8E6' : '#fff'}`, marginTop: 40, padding: 15}}>
          <View style={{justifyContent: 'center', alignItems: 'center', marginTop: -30}}>
             <Avatar.Image 
                 source={{uri: item?.pic}}
@@ -127,7 +127,6 @@ function Promotestudentlist ({item,classdata}) {
                </Button>
             ) : (
                 <Button mode="contained" onPress={() => promotestudent(item?.id,item?.fullname,value)} style={{marginTop: 20}}>
-                <ActivityIndicator color="#fff" size="large" />
                 Promote
                </Button>
             )}

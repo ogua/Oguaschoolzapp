@@ -11,7 +11,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { TimePickerModal } from 'react-native-paper-dates';
 import { useCallback } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
-import MultiSelect from 'react-native-multiple-select';
+//import MultiSelect from 'react-native-multiple-select';
 import { cos } from 'react-native-reanimated';
 import { TouchableOpacity } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';

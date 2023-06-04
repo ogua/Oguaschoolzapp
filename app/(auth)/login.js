@@ -35,7 +35,10 @@ function login() {
         iosClientId: "358977683240-u6klp13p2b43uvrc248h3sn8p5jknmmt.apps.googleusercontent.com",
         webClientId: "358977683240-mhquda12rihlb2i5u7f6rm19d426f597.apps.googleusercontent.com",
         expoClientId: "358977683240-gjfsfa4k8htcubkmorcnatbr51pidu3e.apps.googleusercontent.com",
-    }
+        // redirectUri: makeRedirectUri({
+        //     scheme: 'oguaschoolz-app'
+        // })
+    },
     );
 
     //console.log("user",user);
@@ -166,14 +169,14 @@ function login() {
             <View style={styles.formtitle}>
                 <Text style={styles.logintext}>Login User</Text>
                 <Button onPress={()=> router.push("/parentlogin")}>
-                    <Ionicons name="person" size={13} style={{marginRight: 5}} />Parent Login
+                    <Ionicons name="person" size={23} style={{marginRight: 5}} />Parent Login
                 </Button>
             </View>
             <View style={styles.formcontainer}>
                 <View style={styles.formgroup}>
                     <Text>Email or Student ID</Text>
                     <View style={styles.inputextcontainer}>
-                        <Ionicons name="mail" style={styles.formgroundinputicon} size={20} color="#fff" />
+                        <Ionicons name="mail" style={styles.formgroundinputicon} size={20} color="#000" />
                        <TextInput ref={emailref} name="email" onChangeText={ (e) => setemail(e) } style={styles.formgroundinput} id="email" placeholder='Enter Email or Student ID' />
                     </View>
                 </View>
@@ -181,7 +184,7 @@ function login() {
                 <View style={styles.formgroup}>
                     <Text>Password</Text>
                     <View style={styles.inputextcontainer}>
-                        <Ionicons name="key-outline" style={styles.formgroundinputicon} size={20} color="#fff" />
+                        <Ionicons name="key-outline" style={styles.formgroundinputicon} size={20} color="#000" />
                        <TextInput name="password" secureTextEntry={true} id="password" onChangeText={(e) => setpassword(e)} placeholder='Enter Password' style={styles.formgroundinput} />
                     </View>
                 </View>
@@ -190,13 +193,15 @@ function login() {
                     {issumit ? <ActivityIndicator size="large" color="#fff" /> : <Text style={styles.loginbtntext}>Login</Text>}
                 </TouchableOpacity>
 
-                <Text style={styles.forgotpassword} onPress={cleartoken}>Forgot Password ?</Text>
+                <Text style={styles.forgotpassword}>Forgot Password ?</Text>
                 
-                <TouchableOpacity style={styles.loginwithgoogle} onPress={promptAsync}>
+                {/* <TouchableOpacity style={styles.loginwithgoogle} onPress={() => router.push("/expo-auth-session")}>
                     <Text style={styles.logingoogletext}>
                         <Ionicons name="logo-google" size={20} color="red" /> Login with google
                     </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
+
+                <Button onPress={() => router.push("/expo-auth-session")}>Login with google</Button>
 
             </View>
         </ScrollView>
@@ -229,7 +234,7 @@ const styles = StyleSheet.create({
     logintext: {
         fontSize: 35,
         fontWeight: 600,
-        color: '#1782b6'
+        color: '#1782b6',
     },
     loginparent: {
         
@@ -258,7 +263,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexWrap: 'wrap',
         color: '#fff',
-        fontSize: 18,
+        fontSize: 20,
         padding: 10
     },
 

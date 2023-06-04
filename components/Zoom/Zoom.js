@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ZoomUs from "react-native-zoom-us";
+// import ZoomUs from "react-native-zoom-us";
 import { Button, Alert } from "react-native";
 
 

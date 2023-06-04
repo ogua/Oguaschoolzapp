@@ -18,7 +18,7 @@ import { LocaleConfig, Calendar } from "react-native-calendars";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { showMessage } from "react-native-flash-message";
 import { ScrollView } from 'react-native-gesture-handler';
-import MultiSelect from 'react-native-multiple-select';
+//import MultiSelect from 'react-native-multiple-select';
 import { selectschool, selecttoken, selectuser, setRoles } from '../../../features/userinfoSlice';
 import { schoolzapi } from '../../../components/constants';
 
@@ -141,6 +141,7 @@ function Createeditstaff() {
 
   const [fathernumber, setfathernumber] = useState("");
     const [salary, setsalary] = useState("");
+    const [ssnit, setssnit] = useState("");
     const [zipcode, setzipcode] = useState("");
     const [mobile, setmobile] = useState("");
     const [email, setemail] = useState("");
@@ -292,6 +293,7 @@ function Createeditstaff() {
 
             setsalarygrade(results[0].data.data.salarygrade);
             setsalary((results[0].data.data.salary));
+            setssnit((results[0].data.data.ssnit));
 
             setacctitle((results[0].data.data.acctitle));
             setaccnumber(results[0].data.data.accnum);
@@ -320,7 +322,7 @@ function Createeditstaff() {
       
        setassignclass(mdata);
     
-       setisloading(false); 
+       //setisloading(false); 
     }
 
     const loadstsubjects = (stsubject) => {
@@ -447,6 +449,7 @@ function Createeditstaff() {
 
       data.append('salarygrade',salarygrade);
       data.append('salary',salary);
+      data.append('ssnit',ssnit);
 
       data.append('acctitle',acctitle);
       data.append('accnumber',accnumber);
@@ -1240,6 +1243,14 @@ const checkPermissions = async () => {
               mode="outlined"
               value={salary}
               onChangeText={(e) => setsalary(e)}
+              />
+
+             <Text>SSNIT #</Text>
+              <TextInput
+                style={styles.Forminput}
+                mode="outlined"
+                value={ssnit}
+                onChangeText={(e) => setssnit(e)}
               />
               
               </View>

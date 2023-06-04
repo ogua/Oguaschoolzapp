@@ -152,7 +152,7 @@ const hideDialog = () => setShowdialog(false);
               position: 'bottom',
             });
           
-            DeviceEventEmitter.emit('subject.added', {});
+           // DeviceEventEmitter.emit('subject.added', {});
             router.back();
             
           })
@@ -206,7 +206,7 @@ const hideDialog = () => setShowdialog(false);
             position: 'bottom',
           });
         
-          DeviceEventEmitter.emit('subject.added', {});
+        //  DeviceEventEmitter.emit('subject.added', {});
           router.back();
 
           

@@ -19,7 +19,7 @@ function Createeditsubject() {
     const {id} = useSearchParams();
 
     useEffect(()=>{
-      DeviceEventEmitter.removeAllListeners("event.test");
+     // DeviceEventEmitter.removeAllListeners("event.test");
 
       if(id == undefined){
         isCreatedorEdit('New Class');
@@ -81,7 +81,7 @@ function Createeditsubject() {
               position: 'bottom',
             });
           
-          DeviceEventEmitter.emit('subject.added', {});
+         // DeviceEventEmitter.emit('subject.added', {});
           router.back();
           })
           .catch(function (error) {
@@ -107,7 +107,7 @@ function Createeditsubject() {
       })
         .then(function (response) {
           setLoading(false);
-          DeviceEventEmitter.emit('subject.added', {});
+         // DeviceEventEmitter.emit('subject.added', {});
           router.back();
         })
         .catch(function (error) {

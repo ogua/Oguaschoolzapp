@@ -141,6 +141,8 @@ function AddStaff() {
 
   const [fathernumber, setfathernumber] = useState("");
     const [salary, setsalary] = useState("");
+    const [ssnit, setssnit] = useState("");
+    
     const [zipcode, setzipcode] = useState("");
     const [mobile, setmobile] = useState("");
     const [email, setemail] = useState("");
@@ -332,6 +334,7 @@ function AddStaff() {
 
       data.append('salarygrade',salarygrade);
       data.append('salary',salary);
+      data.append('ssnit',ssnit);
 
       data.append('acctitle',acctitle);
       data.append('accnumber',accnumber);
@@ -1130,10 +1133,18 @@ const checkPermissions = async () => {
 
               <Text>Salary</Text>
               <TextInput
-              style={styles.Forminput}
-              mode="outlined"
-              value={salary}
-              onChangeText={(e) => setsalary(e)}
+                style={styles.Forminput}
+                mode="outlined"
+                value={salary}
+                onChangeText={(e) => setsalary(e)}
+              />
+
+              <Text>SSNIT #</Text>
+              <TextInput
+                style={styles.Forminput}
+                mode="outlined"
+                value={ssnit}
+                onChangeText={(e) => setssnit(e)}
               />
               
               </View>

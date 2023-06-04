@@ -4,7 +4,7 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
    ScrollView, StyleSheet, Text, TouchableOpacity, 
    View, DeviceEventEmitter, Alert } from 'react-native'
 import { useEffect } from 'react';
-import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar } from 'react-native-paper';
+import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar, FAB } from 'react-native-paper';
 import { useState } from 'react';
 import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -33,11 +33,11 @@ function Issuebooks () {
 
     useEffect(()=> {
       
-      DeviceEventEmitter.addListener("subject.added", (event)=>{
-        console.log('how many time');
-        loaddata();
-        DeviceEventEmitter.removeAllListeners("event.test");
-      });
+      // DeviceEventEmitter.addListener("subject.added", (event)=>{
+      //   console.log('how many time');
+      //   loaddata();
+      //   DeviceEventEmitter.removeAllListeners("event.test");
+      // });
 
        loaddata();
 
@@ -194,7 +194,7 @@ function Issuebooks () {
 
     return (
       <Provider>
-      <SafeAreaView>
+      <SafeAreaView style={{flexGrow: 1}}>
         <Stack.Screen options={{
             headerTitle: 'Issued Books'
         }}
@@ -204,7 +204,7 @@ function Issuebooks () {
             <RefreshControl refreshing={isloading} onRefresh={loaddata} />
         }
         >
-        {isloading ? null : (
+        {/* {isloading ? null : (
            <View style={{marginVertical: 20}}>
                 <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>
                     
@@ -213,7 +213,7 @@ function Issuebooks () {
                         <Text style={{fontSize: 18}}>New</Text> 
                     </TouchableOpacity>
                 </View>
-            </View>)}
+            </View>)} */}
 
             <Searchbar
                 placeholder='Search....'
@@ -237,6 +237,11 @@ function Issuebooks () {
             </Card> 
 
         </ScrollView>
+        <FAB
+          icon="plus"
+          style={styles.fab}
+          onPress={()=> router.push('/admin/library/create-edit-issue-book')}
+        />
       </SafeAreaView>
       </Provider>
     )
@@ -245,7 +250,12 @@ function Issuebooks () {
 export default Issuebooks;
 
 const styles = StyleSheet.create({
-
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 80,
+  },
     separator: {
         height: 0.5,
         backgroundColor: 'rgba(0,0,0,0.4)',

@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { Redirect, Stack, useRouter } from 'expo-router';
+import { Redirect, Stack, useRouter, useSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, SafeAreaView,
+import { ActivityIndicator, Alert, DeviceEventEmitter, FlatList, SafeAreaView,
    StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Button, Card, List, Modal, Portal, Switch, TextInput, Provider, Dialog } from 'react-native-paper';
 import { useSelector } from 'react-redux';
@@ -20,10 +20,9 @@ import { showMessage } from "react-native-flash-message";
 function Createacademicterm() {
 
     const token = useSelector(selecttoken);
-    const [academicterm, setTerm] = useState();
     const [termselected, setselectedTerm] = useState("");
     const [termid, setselectedTermid] = useState();
-    const [creating, iscreatordeit] = useState(true);
+    const [submitting, setsubmitting] = useState(false);
     const [isloading, setLoading] = useState(false);
     const [startdate, setstartdate] = useState();
     const [enddate, setenddate] = useState();
@@ -53,21 +52,63 @@ function Createacademicterm() {
     };
 
     const [openterm, setOpenterm] = useState(false);
-    const [term, setterm] = useState();
+    const [term, setterm] = useState(0);
     const [termitem, settermitems] = useState([]);
+    const [creatoredit, isCreatedorEdit] = useState();
+    const {id} = useSearchParams();
+
 
     useEffect(()=> {
 
       loaddata();
+      
+      if(id == undefined){
+        isCreatedorEdit('New Academic Term');
+      }else{
+        loadedit();
+        isCreatedorEdit('Edit Academic Term');
+      }
 
     },[]);
+
+    const loadedit = () => {
+      setLoading(true);
+      
+      axios.get(schoolzapi+'/academicyear/show/'+id,
+      {
+          headers: {Accept: 'application/json',
+          Authorization: "Bearer "+token
+      }
+      }).then(function (results) {
+        //console.log(results.data.data.termid);
+
+         // setterm(results.data.data.termid);
+          setterm(parseInt(results.data.data.termid));
+          setstartdate(results.data.data.fromdate);
+          setenddate(results.data.data.todate);
+
+          if(results.data.data.status === "1"){
+            setIsSwitchOn(true);
+          }else{
+            setIsSwitchOn(false);
+          }
+
+
+          setLoading(false);
+          
+      }).catch(function(error){
+          setLoading(false);
+          console.log(error);
+      });
+  }
+
 
 
     function loaddata(){
 
       setLoading(true);
 
-      axios.get(schoolzapi+'/academicyear',
+      axios.get(schoolzapi+'/academicterms',
         {
             headers: {Accept: 'application/json',
             Authorization: "Bearer "+token
@@ -91,7 +132,7 @@ function Createacademicterm() {
       
       let mdata = [];
 
-       mddatas.map(item =>  mdata.push({ label: item?.term, value: item?.id}))
+       mddatas.map(item =>  mdata.push({ label: item?.name, value: item?.id}))
       
        settermitems(mdata);
 
@@ -101,15 +142,12 @@ function Createacademicterm() {
 
     const createdata = () => {
 
-        setLoading(true);
 
         if (term.length == 0 ) {
 
           Alert.alert('Alert!', 'Term cant be empty.', [
               {text: 'Okay'}
           ]);
-
-          setLoading(false);
 
           return;
        }
@@ -119,8 +157,6 @@ function Createacademicterm() {
         Alert.alert('Alert!', 'Start Date cant be empty.', [
             {text: 'Okay'}
         ]);
-
-        setLoading(false);
 
         return;
      }
@@ -132,10 +168,10 @@ function Createacademicterm() {
           {text: 'Okay'}
       ]);
 
-      setLoading(false);
-
       return;
    }
+
+   setsubmitting(true);
 
 
       const formdata = {
@@ -156,21 +192,91 @@ function Createacademicterm() {
         }
         })
           .then(function (response) {
-            setLoading(false);
+            setsubmitting(false);
             showMessage({
               message: 'Info recorded Successfully!',
               type: "success",
               position: 'bottom',
             });
           
-          DeviceEventEmitter.emit('subject.added', {});
+         // DeviceEventEmitter.emit('subject.added', {});
           router.back();
           })
           .catch(function (error) {
-            setLoading(false);
+            setsubmitting(false);
             console.log(error);
           });
     }
+
+
+    const updatedata = () => {
+
+
+      if (term.length == 0 ) {
+
+        Alert.alert('Alert!', 'Term cant be empty.', [
+            {text: 'Okay'}
+        ]);
+
+        return;
+     }
+
+     if (startdate.length == 0 ) {
+
+      Alert.alert('Alert!', 'Start Date cant be empty.', [
+          {text: 'Okay'}
+      ]);
+
+      return;
+   }
+
+
+   if (enddate.length == 0 ) {
+
+    Alert.alert('Alert!', 'End date cant be empty.', [
+        {text: 'Okay'}
+    ]);
+
+    return;
+ }
+
+ setsubmitting(true);
+
+
+    const formdata = {
+          semester: term,
+          fromdate: startdate,
+          todate: enddate,
+          status: isSwitchOn ? 1 : 0
+    }
+
+
+      axios.patch(schoolzapi+'/academicyear/'+id,
+      formdata,
+      {
+          headers: {Accept: 'application/json',
+          Authorization: "Bearer "+token
+      }
+      })
+        .then(function (response) {
+
+          setsubmitting(false);
+
+          showMessage({
+            message: 'Info updated Successfully!',
+            type: "success",
+            position: 'bottom',
+          });
+        
+      //  DeviceEventEmitter.emit('subject.added', {});
+        router.back();
+
+        })
+        .catch(function (error) {
+          setsubmitting(false);
+          console.log(error);
+        });
+  }
 
 
   const renderitem = (item) => (
@@ -202,17 +308,19 @@ function Createacademicterm() {
       <SafeAreaView>
         <Stack.Screen
             options={{
-                headerTitle: 'New Academic Term',
+                headerTitle: creatoredit,
                 presentation: 'formSheet'
             }}
         />
 
         <Card>
             <Card.Content>
+            {isloading ? <ActivityIndicator size="large" /> : (
+              <>
+              
             <Animatable.View
              animation="bounceIn"
             >
-
                     <DropDownPicker
                         open={openterm}
                         value={term}
@@ -326,12 +434,17 @@ function Createacademicterm() {
               
 
         
-            {isloading ? <ActivityIndicator size="large" color="#1782b6" /> : (
-                <Button mode="contained" onPress={createdata} style={{marginTop: 20}}>
+            {submitting ? <ActivityIndicator size="large" color="#1782b6" /> : (
+                <Button mode="contained" onPress={id == undefined ? createdata : updatedata} style={{marginTop: 20}}>
                 Save
                 </Button>
-              )} 
+              )}
+
+          
             </Animatable.View>
+
+            </>
+            )}
             </Card.Content>
         </Card>
 

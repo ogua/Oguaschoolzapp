@@ -12,7 +12,7 @@ function Teachingloglist ({item,deletedata}) {
 
     return (
         <>
-        <TouchableWithoutFeedback style={{backgroundColor: '#fff', padding: 10}}
+        <TouchableOpacity style={{backgroundColor: '#fff', padding: 10}}
         onPress={() => setVisible(! visible)}
         >
 
@@ -34,7 +34,7 @@ function Teachingloglist ({item,deletedata}) {
             </Card.Content>
         </Card>
             
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
 
         {visible && (
             <View style={{backgroundColor: '#fff', borderBottomColor: '#000', borderBottomWidth: 1 }}>

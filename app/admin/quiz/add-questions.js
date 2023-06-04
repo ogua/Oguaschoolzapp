@@ -15,7 +15,7 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
   import { schoolzapi } from '../../../components/constants';
   import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
   import DropDownPicker from 'react-native-dropdown-picker';
-  import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
+  //import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
   import {produce} from "immer";
 
   

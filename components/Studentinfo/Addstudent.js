@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { Redirect, Stack, useRouter, useSearchParams, useNavigation } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, SafeAreaView,
+import { Alert, FlatList, SafeAreaView,
    StyleSheet, Text, TouchableOpacity, View, PermissionsAndroid, Image, DeviceEventEmitter, RefreshControl } from 'react-native'
-import { Button, Card, Divider, List, Modal, Portal, Switch, TextInput, Provider, Avatar, Dialog } from 'react-native-paper';
+import { ActivityIndicator, Button, Card, Divider, List, Modal, Portal, Switch, TextInput, Provider, Avatar, Dialog } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { DatePickerInput, DatePickerModal } from 'react-native-paper-dates';
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -650,7 +650,7 @@ const checkPermissions = async () => {
           refreshControl={
             <RefreshControl refreshing={isloading} onRefresh={loaddata} />
         }
-          >
+          style={{padding: 10}}>
             {/* IF STATE IS ONE SHOW PERSONAL INFORMATION */}
             {step === 1 && (
               <>
@@ -1298,7 +1298,7 @@ const checkPermissions = async () => {
 
 
          {issubmitting ? <ActivityIndicator size="large" style={{marginTop: 30, marginBottom: 50}} /> : (
-            <Button mode="contained" style={{marginTop: 30, marginBottom: 50}} onPress={createdata}>Add Student</Button>
+            <Button mode="contained" style={{marginTop: 30, marginBottom: 50, marginHorizontal: 10}} onPress={createdata}>Add Student</Button>
          )}
 
 

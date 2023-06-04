@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Redirect, Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, SafeAreaView, Text, View } from 'react-native'
+import { ActivityIndicator, DeviceEventEmitter, SafeAreaView, Text, View } from 'react-native'
 import { Button, Card, TextInput } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { schoolzapi } from '../../../components/constants';
@@ -31,14 +31,21 @@ function Editaddcalendar() {
         }
         })
           .then(function (response) {
+
             setLoading(false);
+
+            if(response.data.planexpire){
+              alert(response.data.planexpire);
+              return;
+            }
+
             showMessage({
               message: 'Info recorded Successfully!',
               type: "success",
               position: 'bottom',
             });
           
-            DeviceEventEmitter.emit('subject.added', {});
+           // DeviceEventEmitter.emit('subject.added', {});
             router.back();
           })
           .catch(function (error) {
@@ -64,7 +71,7 @@ function Editaddcalendar() {
               mode="outlined"
               value={name} />
 
-            {isloading ? <ActivityIndicator size="large" color="#1782b6" /> : (
+            {isloading ? <ActivityIndicator size="large" color="#1782b6" style={{marginTop: 20}} /> : (
                 <Button mode="contained" onPress={createdata} style={{marginTop: 20}}>
                 Save
                 </Button>

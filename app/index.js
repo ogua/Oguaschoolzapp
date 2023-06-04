@@ -53,7 +53,7 @@ async function unregisterBackgroundFetchAsync() {
 
   };
 
-   return <Redirect href="/login" />;
+   return <Redirect href="/expo-auth-session" />;
 }
 
 export default index;

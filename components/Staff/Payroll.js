@@ -4,7 +4,7 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
    ScrollView, StyleSheet, Text, TouchableOpacity, 
    View, DeviceEventEmitter, Alert, ActivityIndicator } from 'react-native'
 import { useEffect } from 'react';
-import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar, TextInput } from 'react-native-paper';
+import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar, TextInput, FAB } from 'react-native-paper';
 import { useState } from 'react';
 import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -163,7 +163,7 @@ function Allpayroll () {
 
     return (
       <Provider>
-      <SafeAreaView>
+      <SafeAreaView style={{flexGrow: 1}}>
         <Stack.Screen options={{
             headerTitle: 'All Payroll'
         }}
@@ -187,9 +187,9 @@ function Allpayroll () {
             />
         </View>
 
-             <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginVertical: 10, marginRight: 20}}>
+             {/* <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginVertical: 10, marginRight: 20}}>
                      <Button  onPress={()=> router.push('/admin/staff/record-staff-payroll')}>Record Payroll</Button>
-              </View>
+              </View> */}
 
 
             <Searchbar
@@ -213,6 +213,11 @@ function Allpayroll () {
             </Card> 
 
         </ScrollView>
+        <FAB
+          icon="plus"
+          style={styles.fab}
+          onPress={()=> router.push('/admin/staff/record-staff-payroll')}
+        />
       </SafeAreaView>
       </Provider>
     )
@@ -221,7 +226,12 @@ function Allpayroll () {
 export default Allpayroll;
 
 const styles = StyleSheet.create({
-
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 80,
+  },
     separator: {
         height: 0.5,
         backgroundColor: 'rgba(0,0,0,0.4)',

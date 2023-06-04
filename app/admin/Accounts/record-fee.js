@@ -75,7 +75,8 @@ function Recordfee () {
             const student = response[0];
             const fee = response[1];
 
-            //console.log("fee",fee.data.data);
+           // console.log("fee",fee.data.data);
+
 
             setstudent(student.data.data);
             setfee(fee.data.data);

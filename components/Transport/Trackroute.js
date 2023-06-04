@@ -89,11 +89,11 @@ function Trackroute () {
 
     useEffect(()=> {
       
-      DeviceEventEmitter.addListener("subject.added", (event)=>{
-        console.log('how many time');
-        loaddata();
-        DeviceEventEmitter.removeAllListeners("event.test");
-      });
+      // DeviceEventEmitter.addListener("subject.added", (event)=>{
+      //   console.log('how many time');
+      //   loaddata();
+      //   DeviceEventEmitter.removeAllListeners("event.test");
+      // });
 
        loaddata();
 

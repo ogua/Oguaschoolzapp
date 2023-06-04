@@ -1,11 +1,11 @@
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useFocusEffect, useRouter } from 'expo-router';
 import { ActivityIndicator, Button, FlatList, Image, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selecttoken,selectcurrency, selectuserpermission, selectstaffrole } from '../../features/userinfoSlice';
+import { selecttoken,selectcurrency, selectuserpermission, selectstaffrole, selectuser } from '../../features/userinfoSlice';
 import {setOrigin, setDestination, setHeading, updateroute } from '../../features/examSlice';
 
 import { LOCATION_TASK_NAME, schoolzapi } from '../../components/constants';
@@ -26,6 +26,7 @@ function Dashboard() {
     const [dashbaord, Setdashboard] = useState();
     const [loading, Setisloading] = useState(true);
     const token = useSelector(selecttoken);
+    const user = useSelector(selectuser);
     const currency = useSelector(selectcurrency);
     const [expectedfees, Setexpectedfees] = useState("");
     const permission = useSelector(selectuserpermission);
@@ -36,6 +37,7 @@ function Dashboard() {
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
     const responseListener = useRef();
+
 
     async function schedulePushNotification() {
         await Notifications.scheduleNotificationAsync({
@@ -81,6 +83,29 @@ function Dashboard() {
         return token;
       }
 
+
+    useEffect(() => {
+
+        const formdata = {
+            token: expoPushToken
+        }
+
+        axios.post(schoolzapi+'/mobile-tokens',
+        formdata,
+      {
+          headers: {Accept: 'application/json',
+          Authorization: "Bearer "+token
+      }
+      })
+        .then(function (response) {
+            console.log("token added");
+        })
+        .catch(function (error) {
+          console.log("token error",error);
+        });
+
+
+    },[expoPushToken]);
 
 
     useEffect(() => {
@@ -164,6 +189,13 @@ function Dashboard() {
         loaddata();
     },[]);
 
+
+    useFocusEffect(() => {
+        if(user == null){
+            router.replace("/expo-auth-session");
+        }    
+    });
+
     const loaddata = () => {
         axios.get(schoolzapi+'/dashboard',
         {
@@ -174,7 +206,7 @@ function Dashboard() {
           .then(function (response) {
             Setdashboard(response.data);
             Setisloading(false);
-            Setexpectedfees(parseInt(dashbaord?.arrears) + parseInt(dashbaord?.amountleft));
+            Setexpectedfees(parseInt(response.data?.arrears) + parseInt(response.data?.amountleft));
           })
           .catch(function (error) {
             Setisloading(false);

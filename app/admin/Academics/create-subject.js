@@ -18,7 +18,7 @@ function Createsubject() {
     const {id} = useSearchParams();
 
     useEffect(()=>{
-      DeviceEventEmitter.removeAllListeners("event.test");
+     // DeviceEventEmitter.removeAllListeners("event.test");
 
       if(id == undefined){
         isCreatedorEdit('New Subject');
@@ -79,7 +79,7 @@ function Createsubject() {
               position: 'bottom',
             });
           
-            DeviceEventEmitter.emit('subject.added', {});
+          //  DeviceEventEmitter.emit('subject.added', {});
             router.back();
           })
           .catch(function (error) {
@@ -105,7 +105,7 @@ function Createsubject() {
       })
         .then(function (response) {
           setLoading(false);
-          DeviceEventEmitter.emit('subject.added', {});
+         // DeviceEventEmitter.emit('subject.added', {});
           router.back();
         })
         .catch(function (error) {

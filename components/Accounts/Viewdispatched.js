@@ -35,10 +35,10 @@ function Viewdispatched () {
 
     useEffect(()=> {
       
-      DeviceEventEmitter.addListener("subject.added", (event)=>{
-        loaddata();
-        DeviceEventEmitter.removeAllListeners("event.test");
-      });
+      // DeviceEventEmitter.addListener("subject.added", (event)=>{
+      //   loaddata();
+      //   DeviceEventEmitter.removeAllListeners("event.test");
+      // });
 
        loaddata();
 

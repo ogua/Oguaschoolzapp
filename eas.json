@@ -15,7 +15,10 @@
     "preview": {
       "distribution": "internal"
     },
-    "production": {}
+    "production": {},
+    "your-build-profile": {
+      "releaseChannel": "ogua-schoolz"
+    }
   },
   "submit": {
     "production": {}

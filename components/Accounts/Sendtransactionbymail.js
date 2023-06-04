@@ -4,7 +4,7 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
    ScrollView, StyleSheet, Text, TouchableOpacity, 
    View, DeviceEventEmitter, Alert, ActivityIndicator } from 'react-native'
 import { useEffect } from 'react';
-import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar, TextInput } from 'react-native-paper';
+import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar, TextInput, Checkbox } from 'react-native-paper';
 import { useState } from 'react';
 import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -67,6 +67,9 @@ function Sendtransactionbymail () {
     const [totstudent, settotstudent] = useState("");
 
     const [fetchingclass, setfetchingclass] = useState(false);
+
+    const [excel, setexcel] = useState(false);
+    const [pdf, setpdf] = useState(false);
 
 
     function getstudentclass() {
@@ -179,7 +182,9 @@ function Sendtransactionbymail () {
         const formdata = {
             email,
             fromdate: attdate,
-            todate: reopenattdate
+            todate: reopenattdate,
+            excel: excel ?? 'excel',
+            pdf: pdf ?? 'pdf'
         }
 
         setissubmitting(true);
@@ -213,7 +218,7 @@ function Sendtransactionbymail () {
       <Provider>
       <SafeAreaView>
         <Stack.Screen options={{
-            headerTitle: 'Transaction By Mail'
+            headerTitle: 'Transaction Report'
         }}
         />
         <ScrollView>
@@ -299,13 +304,16 @@ function Sendtransactionbymail () {
         keyboardType="email-address"
         mode="outlined"
         onChangeText={(e) => setemail(e)}
-        value={email} />        
+        value={email} /> 
 
 
+        <Checkbox.Item label='Excel Format' status={excel ? 'checked' : 'unchecked'} style={{marginTop: 20}} onPress={()=> setexcel(!excel)} />  
+
+        <Checkbox.Item label='Pdf Format' status={pdf ? 'checked' : 'unchecked'} onPress={()=> setpdf(!pdf)} />    
 
 
                     {issubmitting ? <ActivityIndicator size="large"  style={{marginTop: 40}} /> : (
-                        <Button onPress={sendmail} mode="contained" style={{marginTop: 40}}>Send Mail</Button>
+                        <Button onPress={sendmail} mode="contained" style={{marginTop: 40}}>Send Report</Button>
                     )}
 
          

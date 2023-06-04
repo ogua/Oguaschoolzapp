@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Redirect, Stack, useRouter, useSearchParams } from 'expo-router';
 import { useRef, useState } from 'react';
 import { ActivityIndicator, Alert, DeviceEventEmitter, Dimensions, KeyboardAvoidingView, Linking, PermissionsAndroid, SafeAreaView, ScrollView, StyleSheet, Text, ToastAndroid, View } from 'react-native'
-import { Avatar, Button, Card, Divider, TextInput } from 'react-native-paper';
+import { Avatar, Button, Card, Divider, Modal, TextInput } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import MapView, { AnimatedRegion, Marker } from "react-native-maps";
@@ -39,7 +39,7 @@ function Trackingdriver() {
     const [distance, setdistance] = useState("");
     const [time, settime] = useState("");
     
-
+    const [openmodal, setopenmodal] = useState(false);
 
     const [heading, setheading] = useState(100); 
     const origin = useSelector(seleteorigin);
@@ -56,8 +56,8 @@ function Trackingdriver() {
 
     const [state, setState] = useState({
       coordinate: new AnimatedRegion({
-          latitude: origin.latitude,
-          longitude: origin.longitude,
+          latitude: origin.latitude ?? 5.5981754,
+          longitude: origin.longitude ?? -0.1125837,
           latitudeDelta: 0.005,
           longitudeDelta: 0.005
       }),
@@ -102,10 +102,11 @@ function getLiveLocation(){
 
     dispatch(setOrigin({latitude: location.coords.latitude,longitude: location.coords.longitude}));
 
-    setheading(location.coords.heading);
-
-    getdriverlocation(location.coords.latitude,location.coords.longitude,location.coords.heading);
+    setheading(location.coords.heading);    
     
+    fetchaddress(location.coords.latitude,location.coords.longitude,location.coords.heading);  
+
+
 
   }
     
@@ -114,13 +115,14 @@ function getLiveLocation(){
 }
 
 
-const getdriverlocation = (lat,lng,heading) => {
+const getdriverlocation = (lat,lng,heading,address) => {
 
   const formdata = {
     id,
     lat,
     lng,
-    heading
+    heading,
+    address
   }
 
   axios.post(schoolzapi+'/driver-add-cordinates',
@@ -140,7 +142,9 @@ const getdriverlocation = (lat,lng,heading) => {
                     latitudeDelta: 0.005,
                     longitudeDelta: 0.005
                 })
-            })
+            });
+
+           // fetchaddress(lat, lng);
 
   }).catch(function(error){
       
@@ -148,6 +152,24 @@ const getdriverlocation = (lat,lng,heading) => {
   });
 }
 
+
+const fetchaddress = (lat, lng, heading) => {
+  fetch(
+    'https://maps.googleapis.com/maps/api/geocode/json?address=' +
+      lat +
+      ',' +
+      lng +
+      '&key=' +
+      'AIzaSyAJYTDdNireWqKZ5Y8yNbwqW8YMAreLjTo',
+  )
+    .then(response => response.json())
+    .then(responseJson => {
+      //console.log(responseJson?.results[0]);
+      dispatch(setOrgaddress(responseJson?.results[0]?.formatted_address));
+      getdriverlocation(lat, lng, heading,responseJson?.results[0]?.formatted_address);
+
+    });
+}
 
 
 const animate = (latitude, longitude) => {
@@ -237,7 +259,7 @@ const animate = (latitude, longitude) => {
 
         />
 
-            <TouchableOpacity onPress={() => router.back()} style={{marginBottom: 20, marginLeft: 20, marginTop: 30}}>
+            <TouchableOpacity onPress={() => router.back()} style={{marginLeft: 20, marginTop: 30}}>
                 <Ionicons name="close-circle-outline" size={30} />
              </TouchableOpacity>    
 
@@ -324,6 +346,7 @@ const animate = (latitude, longitude) => {
                   title={`Your Location Ariving in ${time}`}
                   //description={address}
                   identifier='origin'
+                  onPress={()=> setopenmodal(true)}
                   >
                   <Image source={require('../../../assets/bus.png')}
                   resizeMode="contain"
@@ -353,6 +376,55 @@ const animate = (latitude, longitude) => {
                     
     
             </MapView>
+
+       <Modal
+          visible={openmodal}
+          onDismiss={() => {
+            setopenmodal(!openmodal);
+          }}
+          animationType="slide"
+          transparent={true}
+        >
+          <View style={styles.modalContainer}>
+
+          <Text style={{fontSize: 18, color: '#fff'}}>Your Details</Text>
+
+          <Divider style={{marginVertical: 20}} />
+
+          <TouchableOpacity>
+        <Text style={{fontSize: 18, color: '#fff'}}>Your name</Text>
+        <Text style={{color: '#fff'}}>{route.assignedto}</Text>
+      </TouchableOpacity>
+
+      <Divider style={{marginVertical: 20}} />
+
+      <TouchableOpacity>
+        <Text style={{fontSize: 18,color: '#fff'}}>Contact</Text>
+        <Text onPress={() => Linking.openURL(`tel:${route?.contact}`)} style={{color: '#fff'}}>{route.contact}</Text>
+      </TouchableOpacity>
+
+      <Divider style={{marginVertical: 20}} />
+
+      <TouchableOpacity>
+        <Text style={{fontSize: 18,color: '#fff'}}>Current Location</Text>
+        <Text style={{color: '#fff'}}>{originaddress}</Text>
+      </TouchableOpacity>
+
+      <Divider style={{marginVertical: 20}} />
+
+       <TouchableOpacity>
+        <Text style={{fontSize: 18,color: '#fff'}}>Distance / Time Remaining</Text>
+        {distance !== "" && (
+           <Text style={{color: '#fff'}}>{distance}</Text>
+        )}
+       
+      </TouchableOpacity> 
+
+
+
+          </View>
+            
+        </Modal>
           
         </View>
 
@@ -382,8 +454,11 @@ const animate = (latitude, longitude) => {
 export default Trackingdriver;
 
 const styles = StyleSheet.create({
+  modalContainer: {
+    padding: 20,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
     map: {
-      width: '100%',
-      height: '100%'
+      ...StyleSheet.absoluteFillObject,
     },
 });

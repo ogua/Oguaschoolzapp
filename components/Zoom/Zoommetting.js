@@ -13,7 +13,7 @@ import * as Imagepicker from 'expo-image-picker';
 import { schoolzapi } from '../constants';
 import { selecttoken } from '../../features/userinfoSlice';
 import Elearninglist from '../../lists/elearninglist';
-import ZoomUs from "react-native-zoom-us";
+//import ZoomUs from "react-native-zoom-us";
 import Zoom from './Zoom';
 
 

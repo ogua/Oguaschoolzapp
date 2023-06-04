@@ -26,7 +26,7 @@ function Academicyearlistitem ({items,deletedata,updatedatastatus}) {
             setIsSwitchOn(1);
         }
        // console.log(items.id);
-        updatedatastatus(items.id,isSwitchOn);
+        updatedatastatus(items.id,isSwitchOn,items.term);
 
     };
 
@@ -56,10 +56,10 @@ function Academicyearlistitem ({items,deletedata,updatedatastatus}) {
         title={items.term}
         titleEllipsizeMode="head"
         description={()=> (
-              <View>
+              <>
                 <Text> From {items.fromdate}</Text>
                 <Text> To {items.todate}</Text>
-                </View>
+                </>
         )}
         left={props => <Ionicons name="calendar" {...props} size={20} />}
         right={props => <Switch value={items.status === `1` ? true : false} onValueChange={onToggleSwitch} />}
@@ -69,8 +69,8 @@ function Academicyearlistitem ({items,deletedata,updatedatastatus}) {
 
         {visible && (
             <View style={{backgroundColor: '#fff', borderBottomColor: '#000', borderBottomWidth: 1 }}>
-                <Menu.Item style={{marginLeft: 10}} leadingIcon="square-edit-outline" onPress={()=> router.push(`/admin/Academics/edit-academic?id=${items.id}`)} title="Edit" />
-                <Menu.Item style={{marginLeft: 10}} leadingIcon="delete-forever-outline" onPress={showDialog} title="Delete" />
+                <Menu.Item style={{marginLeft: 10}} leadingIcon="square-edit-outline" onPress={()=> router.push(`/admin/Academics/create-academic-term?id=${items.id}`)} title="Edit" />
+                <Menu.Item style={{marginLeft: 10}} leadingIcon="delete-forever-outline" onPress={() => deletedata(items?.id,items?.term)} title="Delete" />
             </View>
         )}
 

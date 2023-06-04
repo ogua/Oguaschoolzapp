@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { Redirect, Stack, useRouter, useSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, DeviceEventEmitter, KeyboardAvoidingView, PermissionsAndroid, SafeAreaView, ScrollView, StyleSheet, Text, ToastAndroid, View } from 'react-native'
-import { Avatar, Button, Card, TextInput, Dialog, Portal, Provider } from 'react-native-paper';
+import {  Alert, DeviceEventEmitter, KeyboardAvoidingView, PermissionsAndroid, SafeAreaView, ScrollView, StyleSheet, Text, ToastAndroid, View } from 'react-native'
+import { ActivityIndicator, Avatar, Button, Card, TextInput, Dialog, Portal, Provider } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -17,6 +17,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { LocaleConfig, Calendar } from "react-native-calendars";
 import { selecttoken } from '../../features/userinfoSlice';
 import { schoolzapi } from '../constants';
+import { showMessage } from "react-native-flash-message";
 
 
 function Schoolinformation() {
@@ -24,6 +25,7 @@ function Schoolinformation() {
     const token = useSelector(selecttoken);
     const [file, setFile] = useState(null);
     const [backfile, setbackFile] = useState(null);
+    const [sigfile, setsigfile] = useState(null);
     const [logo, setlogo] = useState("");
     const [backdrop, setbackdrop] = useState("");
     const [name, setname] = useState("");
@@ -40,16 +42,17 @@ function Schoolinformation() {
     const [ownersfullname, setownersfullname] = useState("");
     const [oemail, setoemail] = useState("");
     const [ophone, setophone] = useState("");
-    const [currency, setcurrency] = useState("");
     const [plan, setplan] = useState("");
     const [expiry, setexpiry] = useState("");
     const [classscore, setclassscore] = useState("");
     const [examscore, setexamscore] = useState("");
-    const [signaturetype, setsignaturetype] = useState("");
     const [signature, setsignature] = useState("");
     const [initial, setinitial] = useState("");
 
 
+    const [opennationality, setOpennationality] = useState(false);
+    const [nationality, setnationality] = useState("");
+    const [nationalityitem, setnationalityitems] = useState([]);
 
     
     const [trandate, settrandate] = useState("");
@@ -68,11 +71,30 @@ function Schoolinformation() {
     const [selecteddate, setSelecteddate] = useState(false);
     
 
-    const [opentrantype, setOpentrantype] = useState(false);
-    const [trantype, settrantype] = useState("");
-    const [trantypeitems, settrantypeItems] = useState([
-      { label: 'Diposite', value: 'Diposite'},
-      { label: 'Withdraw', value: 'Withdraw'}
+    const [openschtype, setOpenschtype] = useState(false);
+    const [schtype, setschtype] = useState("");
+    const [schtypeitems, setschtypeitems] = useState([
+      { label: 'Basic School', value: 'Basic School'},
+      { label: 'Secondary School', value: 'Secondary School'}
+    ]);
+
+
+    const [opensignaturetype, setOpensignaturetype] = useState(false);
+    const [signaturetype, setsignaturetype] = useState("");
+    const [signaturetypeitems, setsignaturetypeitems] = useState([
+      { label: 'initials', value: 'initials'},
+      { label: 'Image', value: 'Image'}
+    ]);
+
+    const [opencurrency, setOpencurrency] = useState(false);
+    const [currency, setcurrency] = useState("");
+    const [currencyitems, setcurrencyitems] = useState([
+      {label: "Cedis (Gh¢)", value:"Gh¢"},
+      {label: "Dollars (USD)", value:"USD"},
+      {label: "Euro (EUR)", value:"EUR"},
+      {label: "Nairas (NGN)", value:"NGN"},
+      {label: "Pounds (GGP)", value:"GGP"},
+      {label: "Yen (JPY)", value:"JPY"}
     ]);
     
     const [openstatus, setOpenstatus] = useState(false);
@@ -98,66 +120,99 @@ function Schoolinformation() {
 
     },[]);
 
-    const loaddata = () => {
-      setLoading(true);
-      
-      axios.get(schoolzapi+'/school-information',
+    function schoolinfo() {
+
+      return axios.get(schoolzapi+'/school-information',
       {
           headers: {Accept: 'application/json',
           Authorization: "Bearer "+token
       }
-      }).then(function (results) {
+      });
+  }
+
+  function countries() {
+
+    return axios.get(schoolzapi+'/countries',
+    {
+        headers: {Accept: 'application/json',
+        Authorization: "Bearer "+token
+    }
+    });
+}
+
+
+
+    const loaddata = () => {
+      setLoading(true);
+
+      Promise.all([schoolinfo(), countries()])
+      .then(function (results) {
 
         // console.log(results.data.data.status);
-          setlogo(results.data.data.logo);
-          setbackdrop(results.data.data.backdrop);
-          setname(results.data.data.name);
-          setmoto(results.data.data.schoolmoto);
-          setschooltype(results.data.data.schtype);
-          setphone(results.data.data.phonenumber);
-          settax(results.data.data.fax);
-          setemail(results.data.data.email);
-          setwebsite(results.data.data.website);
-          setcountry(results.data.data.country);
-          settowncity(results.data.data.towncity);
-          setstateprovince(results.data.data.stateprovince);
-          setaddress(results.data.data.address);
-          setownersfullname(results.data.data.ownersfullname);
-          setoemail(results.data.data.oemail);
-          setophone(results.data.data.phone);
-          setcurrency(results.data.data.name);
-          setplan(results.data.data.plan);
-          setexpiry(results.data.data.expiry);
-          setclassscore(results.data.data.classscore);
-          setexamscore(results.data.data.examscore);
-          setsignaturetype(results.data.data.signaturetype);
-          setsignature(results.data.data.signature);
-          setinitial(results.data.data.initial);
+          setlogo(results[0].data.data.logo);
+          setbackdrop(results[0].data.data.backdrop);
+          setname(results[0].data.data.name);
+          setmoto(results[0].data.data.schoolmoto);
+          setschooltype(results[0].data.data.schtype);
+          setschtype(results[0].data.data.schtype);
+          setphone(results[0].data.data.phonenumber);
+          settax(results[0].data.data.fax);
+          setemail(results[0].data.data.email);
+          setwebsite(results[0].data.data.website);
+          setcountry(results[0].data.data.country);
+          settowncity(results[0].data.data.towncity);
+          setstateprovince(results[0].data.data.stateprovince);
+          setaddress(results[0].data.data.address);
+          setownersfullname(results[0].data.data.ownersfullname);
+          setoemail(results[0].data.data.oemail);
+          setophone(results[0].data.data.phone);
+          setcurrency(results[0].data.data.name);
+          setplan(results[0].data.data.plan);
+          setexpiry(results[0].data.data.expiry);
+          setclassscore(results[0].data.data.classscore);
+          setexamscore(results[0].data.data.examscore);
+          setsignaturetype(results[0].data.data.signaturetype);
+          setsignature(results[0].data.data.signature);
+          setinitial(results[0].data.data.initial);
 
 
 
 
 
           
-          setemail(results.data.data.email);
-          setzipcode(results.data.data.zipcode);
-          setphone(results.data.data.phone);
+          setemail(results[0].data.data.email);
+          setzipcode(results[0].data.data.zipcode);
+          setphone(results[0].data.data.phone);
           
-          setref(results.data.data.ref);
-          settax(results.data.data.tax);
-          setaddress(results.data.data.address);
-          setcurrency(results.data.data.currency);
-          settowncity(results.data.data.towncity);
-          setcountry(results.data.data.country);
-          setprovince(results.data.data.province);
-          setimgFile(results.data.data.file);
+          setref(results[0].data.data.ref);
+          //settax(results[0].data.data.tax);
+         // setaddress(results[0].data.data.address);
+        //  setcurrency(results[0].data.data.currency);
+        //  settowncity(results[0].data.data.towncity);
+         // setcountry(results[0].data.data.country);
+          setprovince(results[0].data.data.province);
+          setimgFile(results[0].data.data.file);
 
-          setLoading(false);
-          
+          loadcountries(results[1].data.data);
+
       }).catch(function(error){
           setLoading(false);
           console.log(error);
       });
+  }
+
+
+  const loadcountries = (studclass) => {
+      
+    const mddatas = studclass;
+    
+    let mdata = [];
+  
+     mddatas.map(item =>  mdata.push({ label: item, value: item}))
+    
+     setnationalityitems(mdata);
+  
+     setLoading(false); 
   }
 
 
@@ -221,6 +276,54 @@ function Schoolinformation() {
       }
     }
 
+    async function seletebackdrop() {
+      try {
+        const result = await checkPermissions();
+  
+        if (result) {
+          const result = await DocumentPicker.getDocumentAsync({
+            copyToCacheDirectory: false,
+          });
+  
+          if (result.type === 'success') {
+            // Printing the log realted to the file
+            console.log('res : ' + JSON.stringify(result));
+            // Setting the state to show single file attributes
+            setbackFile(result);
+            setbackdrop(result.uri);
+          }
+        }
+      } catch (err) {
+        setbackFile(null);
+        console.warn(err);
+        return false;
+      }
+    }
+
+    async function seletesignature() {
+      try {
+        const result = await checkPermissions();
+  
+        if (result) {
+          const result = await DocumentPicker.getDocumentAsync({
+            copyToCacheDirectory: false,
+          });
+  
+          if (result.type === 'success') {
+            // Printing the log realted to the file
+            console.log('res : ' + JSON.stringify(result));
+            // Setting the state to show single file attributes
+            setsigfile(result);
+            setsignature(result.uri);
+          }
+        }
+      } catch (err) {
+        setsigfile(null);
+        console.warn(err);
+        return false;
+      }
+    }
+
     const createdata = () => {
 
         if(name == ""){
@@ -255,9 +358,19 @@ function Schoolinformation() {
       if(backfile != null){
 
         data.append('backdrop', {
-          uri: file.uri,
-          name: file.name,
-          type: file.mimeType
+          uri: backfile.uri,
+          name: backfile.name,
+          type: backfile.mimeType
+        });
+
+      }
+
+      if(sigfile != null){
+
+        data.append('signature', {
+          uri: sigfile.uri,
+          name: sigfile.name,
+          type: sigfile.mimeType
         });
 
       }
@@ -265,19 +378,33 @@ function Schoolinformation() {
       
 //1598
       data.append('name',name);
+      data.append('schoolmoto',moto);
+      data.append('schtype',schtype);
+      data.append('phonenumber',phone);
+      data.append('fax',tax);
       data.append('email',email);
       data.append('zipcode',zipcode);
-      data.append('phone',phone);
+      
       data.append('website',website);
       data.append('ref',ref);
-      data.append('tax',tax);
       data.append('address',address);
       data.append('currency',currency);
       data.append('towncity',towncity);
       data.append('country',country);
-      data.append('province',province);
+      data.append('stateprovince',stateprovince);
+      data.append('postaladd',address);
 
-        axios.post(link,
+
+      data.append('ownersfullname',ownersfullname);
+      data.append('oemail',oemail);
+      data.append('phone',ophone);
+      data.append('classscore',classscore);
+      data.append('examscore',examscore);
+      data.append('signaturetype',signaturetype);
+      data.append('initial',initial);
+      
+
+        axios.post(schoolzapi+"/save-school-information",
         data,
         {
             headers: {Accept: 'application/json',
@@ -289,13 +416,11 @@ function Schoolinformation() {
 
             setIssubmitting(false);
 
-            if( response.data.error !== undefined){
-                alert(response.data.error);
-            }else{
-                ToastAndroid.show('info saved successfully!', ToastAndroid.SHORT);
-                DeviceEventEmitter.emit('subject.added', {});
-                router.back();
-            }
+            showMessage({
+              message: 'Info updated Successfully!',
+              type: "success",
+              position: 'bottom',
+          });
            
             
           })
@@ -339,7 +464,7 @@ function Schoolinformation() {
          /> : null} 
   
 
-        <Button icon="file" onPress={selectFile} uppercase={false} mode="outlined"
+        <Button icon="file" onPress={seletebackdrop} uppercase={false} mode="outlined"
          style={{marginVertical: 20}}>
           Terminal Report backdrop (png)
         </Button>
@@ -365,13 +490,48 @@ function Schoolinformation() {
         onChangeText={(e) => setmoto(e)}
         />
 
-        <TextInput
+        {/* <TextInput
         label="School Type"
         style={styles.Forminputhelp}
         mode="outlined"
         value={schooltype}
         onChangeText={(e) => setschooltype(e)}
-        />
+        /> */}
+
+           <Text>School Type</Text>
+                 <DropDownPicker
+                        searchable
+                         open={openschtype}
+                         value={schtype}
+                         items={schtypeitems}
+                         setOpen={setOpenschtype}
+                         setValue={setschtype}
+                         setItems={setschtypeitems}
+                         placeholder={""}
+                         placeholderStyle={{
+                             color: "#456A5A",
+                         }}
+                         listMode="MODAL"
+                         dropDownContainerStyle={{
+                             borderWidth: 0,
+                             borderRadius: 30,
+                             backgroundColor: "#fff"
+                         }}
+                         labelStyle={{
+                             color: "#456A5A",
+                         }}
+                         listItemLabelStyle={{
+                             color: "#456A5A",
+                         }}
+                         style={{
+                             borderWidth: 1,
+                             //backgroundColor: "#F5F7F6",
+                             marginTop: 10,
+                             marginBottom: 20,
+                             minHeight: 40,
+                         }}
+                   />
+
 
         <TextInput
         label="Country code with Phone"
@@ -409,14 +569,39 @@ function Schoolinformation() {
         onChangeText={(e) => setwebsite(e)}
 />
 
-
-        <TextInput
-        label="Country"
-        style={styles.Forminputhelp}
-        mode="outlined"
-        value={country}
-        onChangeText={(e) => setcountry(e)}
-/>
+              <Text>Country</Text>
+                 <DropDownPicker
+                        searchable
+                         open={opennationality}
+                         value={country}
+                         items={nationalityitem}
+                         setOpen={setOpennationality}
+                         setValue={setcountry}
+                         setItems={setnationalityitems}
+                         placeholder={""}
+                         placeholderStyle={{
+                             color: "#456A5A",
+                         }}
+                         listMode="MODAL"
+                         dropDownContainerStyle={{
+                             borderWidth: 0,
+                             borderRadius: 30,
+                             backgroundColor: "#fff"
+                         }}
+                         labelStyle={{
+                             color: "#456A5A",
+                         }}
+                         listItemLabelStyle={{
+                             color: "#456A5A",
+                         }}
+                         style={{
+                             borderWidth: 1,
+                             //backgroundColor: "#F5F7F6",
+                             marginTop: 10,
+                             marginBottom: 20,
+                             minHeight: 40,
+                         }}
+                   />
 
 
         <TextInput
@@ -471,13 +656,41 @@ function Schoolinformation() {
    />
 
 
-<TextInput
-        label="Currency"
-        style={styles.Forminputhelp}
-        mode="outlined"
-        value={currency}
-        onChangeText={(e) => setcurrency(e)}
-   />
+<Text>Currency</Text>
+                 <DropDownPicker
+                        searchable
+                         open={opencurrency}
+                         value={currency}
+                         items={currencyitems}
+                         setOpen={setOpencurrency}
+                         setValue={setcurrency}
+                         setItems={setcurrencyitems}
+                         placeholder={""}
+                         placeholderStyle={{
+                             color: "#456A5A",
+                         }}
+                         listMode="MODAL"
+                         dropDownContainerStyle={{
+                             borderWidth: 0,
+                             borderRadius: 30,
+                             backgroundColor: "#fff"
+                         }}
+                         labelStyle={{
+                             color: "#456A5A",
+                         }}
+                         listItemLabelStyle={{
+                             color: "#456A5A",
+                         }}
+                         style={{
+                             borderWidth: 1,
+                             //backgroundColor: "#F5F7F6",
+                             marginTop: 10,
+                             marginBottom: 20,
+                             minHeight: 40,
+                         }}
+                   />
+
+
 
 <TextInput
         label="Plan"
@@ -519,17 +732,42 @@ function Schoolinformation() {
 
 
 <Text style={{fontSize: 15, fontWeight: 500, marginTop: 20}}>School Fees Receipt Signature</Text>
-<TextInput
-        label="Signature type"
-        style={styles.Forminputhelp}
-        mode="outlined"
-        value={signaturetype}
-        onChangeText={(e) => setsignaturetype(e)}
-   />
+                 <DropDownPicker
+                        searchable
+                         open={opensignaturetype}
+                         value={signaturetype}
+                         items={signaturetypeitems}
+                         setOpen={setOpensignaturetype}
+                         setValue={setsignaturetype}
+                         setItems={setsignaturetypeitems}
+                         placeholder={""}
+                         placeholderStyle={{
+                             color: "#456A5A",
+                         }}
+                         listMode="MODAL"
+                         dropDownContainerStyle={{
+                             borderWidth: 0,
+                             borderRadius: 30,
+                             backgroundColor: "#fff"
+                         }}
+                         labelStyle={{
+                             color: "#456A5A",
+                         }}
+                         listItemLabelStyle={{
+                             color: "#456A5A",
+                         }}
+                         style={{
+                             borderWidth: 1,
+                             //backgroundColor: "#F5F7F6",
+                             marginTop: 10,
+                             marginBottom: 20,
+                             minHeight: 40,
+                         }}
+                   />
  
  {signaturetype == 'Image' ? (
   <> 
-        <Button icon="file" onPress={selectFile} uppercase={false} mode="outlined"
+        <Button icon="file" onPress={seletesignature} uppercase={false} mode="outlined"
          style={{marginVertical: 20}}>
           Signature (png)
         </Button>
