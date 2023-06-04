@@ -4,7 +4,7 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
    ScrollView, StyleSheet, Text, TouchableOpacity, 
    View, DeviceEventEmitter, Alert } from 'react-native'
 import { useEffect } from 'react';
-import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar } from 'react-native-paper';
+import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar, FAB } from 'react-native-paper';
 import { useState } from 'react';
 import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -133,13 +133,9 @@ function Incomeexpense () {
         }
         >
         {isloading ? null : (
-           <View style={{marginVertical: 20}}>
-                <View style={{flexDirection: 'row',justifyContent: "space-around"}}>
-                    
-                    <Button onPress={() => router.push('/admin/Accounts/create-edit-income-expense')}>Income</Button>
-
+           <View style={{marginVertical: 10}}>
+                    {/* <Button onPress={() => router.push('/admin/Accounts/create-edit-income-expense')}>Income</Button> */}
                     <Button onPress={() => router.push('/admin/Accounts/create-income-expense-cat')}>Income Expense Category</Button>
-                </View>
             </View>)}
 
             <Searchbar
@@ -164,6 +160,11 @@ function Incomeexpense () {
             </Card> 
 
         </ScrollView>
+        <FAB
+          icon="plus"
+          style={styles.fab}
+          onPress={() => router.push('/admin/Accounts/create-edit-income-expense')}
+        />
       </SafeAreaView>
       </Provider>
     )
@@ -172,7 +173,12 @@ function Incomeexpense () {
 export default Incomeexpense;
 
 const styles = StyleSheet.create({
-
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 30,
+  },
     separator: {
         height: 0.5,
         backgroundColor: 'rgba(0,0,0,0.4)',

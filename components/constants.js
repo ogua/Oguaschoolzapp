@@ -7,7 +7,6 @@ if(__DEV__){
     
 }
 
-
 export const LOCATION_TASK_NAME = 'background-location-task';
 export const BACKGROUND_FETCH_TASK = 'background-FETCH-task';
 export const tokenname = 'usertoken';

@@ -16,6 +16,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { selecttoken } from '../../features/userinfoSlice';
 import { schoolzapi } from '../constants';
 import { LocaleConfig, Calendar } from "react-native-calendars";
+import { showMessage } from "react-native-flash-message";
 
 function Dispatchfees() {
 
@@ -210,7 +211,12 @@ function Dispatchfees() {
                   if(response.data.error !== undefined){
                       alert(response.data.error);
                   }else{
-                      ToastAndroid.show(response.data.data, ToastAndroid.SHORT);
+
+                      showMessage({
+                        message: response.data.data,
+                        type: "success",
+                        position: 'bottom',
+                      });
                   }
                   
                 })
@@ -264,7 +270,12 @@ function Dispatchfees() {
           if(response.data.error !== undefined){
             alert(response.data.error);
           }else{
-              ToastAndroid.show(response.data.data, ToastAndroid.SHORT);
+            
+              showMessage({
+                message: response.data.data,
+                type: "success",
+                position: 'bottom',
+              });
           }
         })
         .catch(function (error) {

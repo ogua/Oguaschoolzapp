@@ -183,8 +183,8 @@ function Sendtransactionbymail () {
             email,
             fromdate: attdate,
             todate: reopenattdate,
-            excel: excel ?? 'excel',
-            pdf: pdf ?? 'pdf'
+            excel: excel ? 'excel' : '',
+            pdf: pdf ? 'pdf' : ''
         }
 
         setissubmitting(true);

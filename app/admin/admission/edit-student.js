@@ -681,10 +681,10 @@ const checkPermissions = async () => {
              style={{padding: 15, backgroundColor: '#fff'}}
             horizontal
             >
-              <Button textColor={step === 1 ? `blue` : `#000`} onPress={() => setupcurrentstep(1)}>Personal Information</Button>
-              <Button textColor={step === 2 ? `blue` : `#000`} onPress={() => setupcurrentstep(2)}>Academic Information</Button>
-              <Button textColor={step === 3 ? `blue` : `#000`} onPress={() => setupcurrentstep(3)}>Guardian Information</Button>
-              <Button textColor={step === 4 ? `blue` : `#000`} onPress={() => setupcurrentstep(4)}>Payment Information</Button>
+              <Button style={{marginRight: 20}} mode="elevated" textColor={step === 1 ? `blue` : `#000`} onPress={() => setupcurrentstep(1)}>Personal Information</Button>
+              <Button style={{marginRight: 20}} mode="elevated" textColor={step === 2 ? `blue` : `#000`} onPress={() => setupcurrentstep(2)}>Academic Information</Button>
+              <Button style={{marginRight: 20}} mode="elevated" textColor={step === 3 ? `blue` : `#000`} onPress={() => setupcurrentstep(3)}>Guardian Information</Button>
+              <Button style={{marginRight: 50}} mode="elevated" textColor={step === 4 ? `blue` : `#000`} onPress={() => setupcurrentstep(4)}>Payment Information</Button>
 
             </ScrollView>
         </View>

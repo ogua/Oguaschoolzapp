@@ -20,9 +20,9 @@ import { showMessage } from "react-native-flash-message";
 function Createeditfeemaster() {
 
     const token = useSelector(selecttoken);
-    const [amount, setamount] = useState("");
+    const [amount, setamount] = useState("0");
     const [year, setYear] = useState("");
-    const [ofee, setofee] = useState("");
+    const [ofee, setofee] = useState("0");
 
     const [openstudentclass, setOpenstudentclass] = useState(false);
     const [studentclass, setstudentclass] = useState("");
@@ -350,7 +350,7 @@ function Createeditfeemaster() {
         <ScrollView style={{marginBottom: 30}}
         >
         <KeyboardAvoidingView
-            behavior="height"
+            behavior="position"
             >
         {isloading ? <ActivityIndicator size="large" color="#1782b6" /> : (
         <Card>

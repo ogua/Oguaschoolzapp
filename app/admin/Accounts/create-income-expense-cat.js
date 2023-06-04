@@ -4,7 +4,7 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
    ScrollView, StyleSheet, Text, TouchableOpacity, 
    View, DeviceEventEmitter, Alert, Dimensions} from 'react-native'
 import { useEffect } from 'react';
-import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar, Divider } from 'react-native-paper';
+import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar, Divider, FAB } from 'react-native-paper';
 import { useState } from 'react';
 import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -209,7 +209,7 @@ function Incomeexpensecategory () {
 
     return (
       <Provider>
-      <SafeAreaView>
+      <SafeAreaView style={{flexGrow: 1}}>
         <Stack.Screen options={{
             headerTitle: 'Category',
             headerLeft: () => (
@@ -225,13 +225,14 @@ function Incomeexpensecategory () {
             <RefreshControl refreshing={isloading} onRefresh={loaddata} />
         }
         >
-        {isloading ? null : (
+
+        {/* {isloading ? null : (
            <View style={{marginVertical: 10}}>
                 <View style={{flexDirection: 'row',justifyContent: "flex-end", alignItems: 'center'}}>
                     <Ionicons name='add-circle' size={22} color="#17a2b8"/>
                     <Button onPress={() => router.push('/admin/Accounts/income-expense-cat')}>Income Expense Category</Button>
                 </View>
-            </View>)}
+            </View>)} */}
 
             
             
@@ -278,6 +279,11 @@ function Incomeexpensecategory () {
             </Card> 
 
         </ScrollView>
+        <FAB
+          icon="plus"
+          style={styles.fab}
+          onPress={() => router.push('/admin/Accounts/income-expense-cat')}
+        />
       </SafeAreaView>
       </Provider>
     )
@@ -286,7 +292,12 @@ function Incomeexpensecategory () {
 export default Incomeexpensecategory;
 
 const styles = StyleSheet.create({
-
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 50,
+  },
     separator: {
         height: 0.5,
         backgroundColor: 'rgba(0,0,0,0.4)',

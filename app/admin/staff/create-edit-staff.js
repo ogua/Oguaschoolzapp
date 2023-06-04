@@ -731,12 +731,12 @@ const checkPermissions = async () => {
             style={{padding: 15, backgroundColor: '#fff'}}
             horizontal
             >
-              <Button textColor={step === 1 ? `blue` : `#000`} onPress={() => setupcurrentstep(1)}>Personal Information</Button>
-              <Button textColor={step === 2 ? `blue` : `#000`} onPress={() => setupcurrentstep(2)}>Contact Persons Information</Button>
-              <Button textColor={step === 3 ? `blue` : `#000`} onPress={() => setupcurrentstep(3)}>Payroll Information</Button>
-              <Button textColor={step === 4 ? `blue` : `#000`} onPress={() => setupcurrentstep(4)}>Bank Information</Button>
-              <Button textColor={step === 5 ? `blue` : `#000`} onPress={() => setupcurrentstep(5)}>Assign Classes and Subjects</Button>
-              <Button textColor={step === 6 ? `blue` : `#000`} onPress={() => setupcurrentstep(6)}>Document</Button>  
+              <Button style={{marginRight: 20}} mode="elevated" textColor={step === 1 ? `blue` : `#000`} onPress={() => setupcurrentstep(1)}>Personal Information</Button>
+              <Button style={{marginRight: 20}} mode="elevated" textColor={step === 2 ? `blue` : `#000`} onPress={() => setupcurrentstep(2)}>Contact Persons Information</Button>
+              <Button style={{marginRight: 20}} mode="elevated" textColor={step === 3 ? `blue` : `#000`} onPress={() => setupcurrentstep(3)}>Payroll Information</Button>
+              <Button style={{marginRight: 20}} mode="elevated" textColor={step === 4 ? `blue` : `#000`} onPress={() => setupcurrentstep(4)}>Bank Information</Button>
+              <Button style={{marginRight: 20}} mode="elevated" textColor={step === 5 ? `blue` : `#000`} onPress={() => setupcurrentstep(5)}>Assign Classes and Subjects</Button>
+              <Button style={{marginRight: 50}} mode="elevated" textColor={step === 6 ? `blue` : `#000`} onPress={() => setupcurrentstep(6)}>Document</Button>  
             </ScrollView>
         </View>
 

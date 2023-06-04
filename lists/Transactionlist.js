@@ -58,7 +58,7 @@ function Transactionlist ({item,deletedata,studentclasslist,revertfee}) {
                 </View>
 
             {role[0] !== "Student" && (
-                <Button onPress={()=> revertfee(item?.id,item?.stdntid,(currency+item?.amountpaid))} icon="refresh" textColor="red">Revert</Button>
+                <Button onPress={()=> revertfee(item?.id,item?.stdntid,(currency+item?.amountpaid))} icon="refresh" textColor="red" style={{marginTop: 20}}>Revert</Button>
             )}
             
                 

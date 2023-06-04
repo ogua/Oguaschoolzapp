@@ -149,10 +149,11 @@ function Academicyear () {
           console.log(response.data);
 
           const newData = academicyear.filter((item) => item.id != id);
-          setfilteritem(newData);
+          
           setAcadmicterm(newData);
-          loaddata();
-          //setLoading(false);
+          setfilteritem(newData);
+         // loaddata();
+          setLoading(false);
         })
         .catch(function (error) {
           setLoading(false);
@@ -181,7 +182,7 @@ function Academicyear () {
                   })
                     .then(function (response) {
                       const newData = academicyear.filter((item) => item.id != id);
-                      setFilterterm(newData);
+                      setfilteritem(newData);
                       setAcadmicterm(newData);
                       setLoading(false);
                     })

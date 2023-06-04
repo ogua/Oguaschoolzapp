@@ -11,13 +11,14 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import * as Imagepicker from 'expo-image-picker';
 import { schoolzapi } from '../constants';
-import { selecttoken } from '../../features/userinfoSlice';
+import { selectcurrency, selecttoken } from '../../features/userinfoSlice';
 import Transactionlist from '../../lists/Transactionlist';
 import { useRef } from 'react';
 
 function Transactionspermonth () {
 
     const token = useSelector(selecttoken);
+    const currency = useSelector(selectcurrency);
     const [search, setSearch] = useState();
     const [isloading, setLoading] = useState(true);
     const [data, setData] = useState([]);
@@ -30,6 +31,7 @@ function Transactionspermonth () {
     const hideDialog = () => setShowdialog(false);
     const [showsnakbar, setShowsnakbar] = useState(false);
     const [active, setActive] = useState("");
+    const [total, settotal] = useState("0.00");
     const fromdate = useRef();
 
     const [txtfromdate, settxtfromdate] = useState("");
@@ -50,10 +52,14 @@ function Transactionspermonth () {
         }
         })
         .then(function (results) {
-            setLoading(false);
 
             setData(results.data.data);
             setFilterdata(results.data.data);
+            const data = results.data.data;
+            const total = data.reduce((total,crval) => total = total + crval.amountpaid,0);
+            settotal(total);
+
+            setLoading(false);
 
         }).catch(function(error){
             setLoading(false);
@@ -243,7 +249,7 @@ function Transactionspermonth () {
 
     return (
       <Provider>
-      <SafeAreaView>
+      <SafeAreaView style={{flexGrow: 1}}>
         <Stack.Screen
         options={{
             headerTitle: 'Transactions per month',
@@ -284,6 +290,9 @@ function Transactionspermonth () {
             </Card> 
 
         </ScrollView>
+        <View style={{position: 'absolute', bottom: 20, left: 20}}>
+            <Button mode="contained">Total {currency} {total}.00</Button>       
+        </View>
       </SafeAreaView>
       </Provider>
     )

@@ -11,7 +11,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import * as Imagepicker from 'expo-image-picker';
 import { schoolzapi } from '../constants';
-import { selecttoken } from '../../features/userinfoSlice';
+import { selectcurrency, selecttoken } from '../../features/userinfoSlice';
 import Visitorslist from '../../lists/Visitorslist';
 import Studentlist from '../../lists/Studentlist';
 import Normallist from '../../lists/Normallist';
@@ -20,6 +20,7 @@ import Dispatchedfeelist from '../../lists/Dispatchedfeelist';
 function Debtors () {
 
     const token = useSelector(selecttoken);
+    const currency = useSelector(selectcurrency);
     const [search, setSearch] = useState();
     const [isloading, setLoading] = useState(true);
     const [data, setData] = useState([]);
@@ -32,13 +33,14 @@ function Debtors () {
     const hideDialog = () => setShowdialog(false);
     const [showsnakbar, setShowsnakbar] = useState(false);
     const [active, setActive] = useState("");
+    const [total, settotal] = useState("0.00");
 
     useEffect(()=> {
       
-      DeviceEventEmitter.addListener("subject.added", (event)=>{
-        loaddata();
-        DeviceEventEmitter.removeAllListeners("event.test");
-      });
+      // DeviceEventEmitter.addListener("subject.added", (event)=>{
+      //   loaddata();
+      //   DeviceEventEmitter.removeAllListeners("event.test");
+      // });
 
        loaddata();
 
@@ -77,6 +79,14 @@ function Debtors () {
             setData(acct.data.data);
             setFilterdata(acct.data.data);
             setStudentclass(studeclass.data.data);
+
+            const datas = acct.data.data;
+            const owe = datas.reduce((owe,crval) => owe = owe + crval.owed, 0);
+
+            console.log("owe",owe);
+            settotal(owe);
+
+
 
         }).catch(function(error){
             setLoading(false);
@@ -195,10 +205,13 @@ function Debtors () {
 
     return (
       <Provider>
-      <SafeAreaView>
+      <SafeAreaView style={{flexGrow: 1}}>
         <Stack.Screen
         options={{
-            headerTitle: 'Debtors'
+            headerTitle: 'Debtors',
+            // headerRight: () => (
+            //   <Text>Owings {currency} {total}.00</Text>
+            // )
            }}
         />
 
@@ -226,7 +239,7 @@ function Debtors () {
         refreshControl={
             <RefreshControl refreshing={isloading} onRefresh={loaddata} />
         }
-        > 
+        >
                 <Card>
                 <Card.Content>
                 <FlatList
@@ -240,8 +253,10 @@ function Debtors () {
                 />
                 </Card.Content>
             </Card> 
-
         </ScrollView>
+        {/* <View style={{position: 'absolute', bottom: 40, left: 20,zIndex: 1000}}>
+            <Button mode="contained">Total Owings {currency} {total}.00</Button>       
+        </View> */}
       </SafeAreaView>
       </Provider>
     )
