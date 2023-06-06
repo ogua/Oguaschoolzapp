@@ -1506,7 +1506,13 @@ function checkpermission(){
                         />
                     )}
                     label="Help"
-                    onPress={() => Linking.openURL(`https://api.whatsapp.com/send?phone=+233545819229&text=Hello%20OguaSchoolz%20Please%20i%20need%20your%20help`)}
+                    onPress={() => {
+                      setitemfocus(`44430`);
+                      setsubFocus(0);
+                      props.navigation.navigate("Help");
+
+                    }}
+                   // onPress={() => Linking.openURL(`https://api.whatsapp.com/send?phone=+233545819229&text=Hello%20OguaSchoolz%20Please%20i%20need%20your%20help`)}
                 />
 
 

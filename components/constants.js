@@ -1,7 +1,7 @@
-export const schoolzapi = "http://192.168.43.132/api";
-//export const schoolzapi = "https:oguaschoolz.com/api";
-export const oguaschoolz = "http://192.168.43.132";
-//export const oguaschoolz = "https:oguaschoolz.com";
+//export const schoolzapi = "http://192.168.43.132/api";
+export const schoolzapi = "https:oguaschoolz.com/api";
+//export const oguaschoolz = "http://192.168.43.132";
+export const oguaschoolz = "https:oguaschoolz.com";
 
 if(__DEV__){
     

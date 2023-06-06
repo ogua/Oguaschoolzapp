@@ -17,6 +17,7 @@ import { LocaleConfig, Calendar } from "react-native-calendars";
 import DropDownPicker from 'react-native-dropdown-picker';
 import Recordattendancelist from '../../lists/Recordattendancelist';
 import { selecttranemail, setTranemail } from '../../features/examSlice';
+import { showMessage } from "react-native-flash-message";
 
 
 
@@ -202,7 +203,13 @@ function Sendtransactionbymail () {
            
             setissubmitting(false);
 
-            console.log(response.data.data);
+            showMessage({
+                message: response.data.data,
+                type: "success",
+                position: 'bottom',
+              });
+
+           // console.log(response.data.data);
 
           })
           .catch(function (error) {

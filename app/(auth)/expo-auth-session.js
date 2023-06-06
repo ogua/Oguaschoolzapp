@@ -255,12 +255,13 @@ function login() {
                 <Text style={styles.forgotpassword}>Forgot Password ?</Text>
 
                 {googlesinin ? <ActivityIndicator size="large" /> : (
-
-                    <TouchableOpacity style={styles.loginwithgoogle} onPress={promptAsync}>
-                        <Text style={styles.logingoogletext}>
-                            <Ionicons name="logo-google" size={20} color="red" /> Login with google
-                        </Text>
-                    </TouchableOpacity>
+                    <></>
+                    
+                    // <TouchableOpacity style={styles.loginwithgoogle} onPress={promptAsync}>
+                    //     <Text style={styles.logingoogletext}>
+                    //         <Ionicons name="logo-google" size={20} color="red" /> Login with google
+                    //     </Text>
+                    // </TouchableOpacity>
 
                 )}
                 
@@ -306,6 +307,7 @@ const styles = StyleSheet.create({
     },
     formcontainer: {
         margin: 20,
+        marginTop: 50,
     },
 
     formgroup: {

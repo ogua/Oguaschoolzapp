@@ -8,7 +8,7 @@
     ],
     "name": "OguaSchoolz",
     "slug": "oguaschoolz-app",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "orientation": "portrait",
     "icon": "./assets/logo-128.png",
     "primaryColor": "#fff",
@@ -19,6 +19,7 @@
     },
     "android": {
       "package": "com.oguaschoolz.app",
+      "appStoreUrl": "https://play.google.com/store/apps/details?id=com.oguaschoolz.app",
       "permissions": [
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE",
@@ -26,7 +27,7 @@
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.FOREGROUND_SERVICE"
       ],
-      "versionCode": 2,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo-128.png",
         "backgroundColor": "#fff"
@@ -34,6 +35,7 @@
     },
     "ios": {
       "supportsTablet": true,
+      "appStoreUrl": "https://play.google.com/store/apps/details?id=com.oguaschoolz.app",
       "bundleIdentifier": "com.oguaschoolz.app",
       "buildNumber": "1.1.0",
       "infoPlist": {

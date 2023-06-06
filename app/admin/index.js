@@ -92,6 +92,7 @@ import Questionaireone from '../../components/Questinnaire/Questionaireone';
 import Questionnairetwo from '../../components/Questinnaire/Questionnairetwo';
 import Sendtransactionbymail from '../../components/Accounts/Sendtransactionbymail';
 import Sendpushnotification from '../../components/Communicate/Sendpushnotification';
+import Help from '../../components/Help';
 
 const Drawer = createDrawerNavigator();
 
@@ -216,6 +217,10 @@ function Maindashboard() {
       <Drawer.Screen name="Smssettings" component={Smssettings} />
       <Drawer.Screen name="Notificationsettings" component={Notificationsettings} />
       <Drawer.Screen name="Mailsettings" component={Mailsettings} />
+
+      <Drawer.Screen name="Help" component={Help} />
+
+      
       
       
       

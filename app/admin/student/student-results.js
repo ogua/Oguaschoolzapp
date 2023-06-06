@@ -126,21 +126,21 @@ return (
          {monitor.map((item,index)=> (
             <>
             {item.resultstype == 'Sample 1' ? (
-                <Sampleoneinfo stndid={stndid} termid={item.term} stclassid={item.stclassid} term={item.termnama} stclass={item.stclass} from={item.fromdate} to={item.todate} />
+                <Sampleoneinfo key={index} stndid={stndid} termid={item.term} stclassid={item.stclassid} term={item.termnama} stclass={item.stclass} from={item.fromdate} to={item.todate} />
             ) : (
                 <>
                 {item.resultstype == 'Sample 2' ? (
                     <>
                     {user.uniqueid == '3cddf152-0b10-468c-9686-2bc9464019c6' ? (
-                        <Tinysampletwo stndid={stndid} termid={item.term} stclassid={item.stclassid} term={item.termnama} stclass={item.stclass} from={item.fromdate} to={item.todate} />
+                        <Tinysampletwo key={index} stndid={stndid} termid={item.term} stclassid={item.stclassid} term={item.termnama} stclass={item.stclass} from={item.fromdate} to={item.todate} />
                     ) : (
-                      <Sampletwoinfo stndid={stndid} termid={item.term} stclassid={item.stclassid} term={item.termnama} stclass={item.stclass} from={item.fromdate} to={item.todate} />
+                      <Sampletwoinfo key={index} stndid={stndid} termid={item.term} stclassid={item.stclassid} term={item.termnama} stclass={item.stclass} from={item.fromdate} to={item.todate} />
                     )}
                     
                     </>
                 ) : (
                     <>
-                      <Normalreportinfo stndid={stndid} termid={item.term} stclassid={item.stclassid} term={item.termnama} stclass={item.stclass}/>
+                      <Normalreportinfo key={index} stndid={stndid} termid={item.term} stclassid={item.stclassid} term={item.termnama} stclass={item.stclass}/>
                     </>
                 )}
                 
