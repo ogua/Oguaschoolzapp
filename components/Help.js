@@ -12,7 +12,7 @@ import * as Sharing from 'expo-sharing';
 function Help () {
 
     const SURELY_URL = 'https://oguaschoolz.com';
-    const APP_STORE_URL = "https://play.google.com/store/apps/details?id=com.oguaschoolz.app";
+    const APP_STORE_URL = "https://play.google.com/store/apps/details?id=com.oguaschoolz.app&showAllReviews=true";
 
     const [isloading,setisloading] = useState(false);
     

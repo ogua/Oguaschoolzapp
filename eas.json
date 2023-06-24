@@ -13,7 +13,16 @@
       }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": true,
+        "cache": {
+          "key": "181121"
+        }
+      }
     },
     "production": {},
     "your-build-profile": {

@@ -5,7 +5,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selecttoken,selectcurrency, selectuserpermission, selectstaffrole, selectuser } from '../../features/userinfoSlice';
+import { selecttoken,selectcurrency, selectuserpermission, selectstaffrole, selectuser, selectroles } from '../../features/userinfoSlice';
 import {setOrigin, setDestination, setHeading, updateroute } from '../../features/examSlice';
 
 import { LOCATION_TASK_NAME, schoolzapi } from '../../components/constants';
@@ -13,6 +13,15 @@ import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
+
+import * as Updates from 'expo-updates';
+
+import {
+    BannerAd,
+    BannerAdSize,
+    TestIds,
+    } from "react-native-google-mobile-ads";
+import { Snackbar } from 'react-native-paper';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -23,9 +32,10 @@ Notifications.setNotificationHandler({
 });
 
 function Dashboard() {
-    const [dashbaord, Setdashboard] = useState();
+    const [dashbaord, Setdashboard] = useState("");
     const [loading, Setisloading] = useState(true);
     const token = useSelector(selecttoken);
+    const mrole = useSelector(selectroles);
     const user = useSelector(selectuser);
     const currency = useSelector(selectcurrency);
     const [expectedfees, Setexpectedfees] = useState("");
@@ -37,7 +47,8 @@ function Dashboard() {
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
     const responseListener = useRef();
-
+    const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-5448171275225637~4193774452';
+    const [updateIsAvailable, setUpdateAvailable] = useState(false);
 
     async function schedulePushNotification() {
         await Notifications.scheduleNotificationAsync({
@@ -149,6 +160,29 @@ function Dashboard() {
   
       }, []);
 
+      useFocusEffect(() => {
+        onFetchUpdateAsync();   
+      });
+      
+
+      async function onFetchUpdateAsync() {
+        try {
+          const update = await Updates.checkForUpdateAsync();
+    
+          if (update.isAvailable) {
+            await Updates.fetchUpdateAsync();
+          //  await Updates.reloadAsync();
+            setUpdateAvailable(true);
+          }else{
+            setUpdateAvailable(false);
+          }
+        } catch (error) {
+          // You can also add an alert() to see the error message in case of an error when fetching updates.
+          console.log("error",error);
+          alert(`Error fetching latest Expo update: ${error}`);
+        }
+      }
+
       function initail(){
 
         TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
@@ -217,14 +251,28 @@ function Dashboard() {
 
 
    return (
-    <SafeAreaView>
+    <SafeAreaView style={{flexGrow: 1}}>
+
+        {mrole[0] !== 'Student' && (
+                    <>
+                       {dashbaord !== "" && (
+                        <>
+                            {dashbaord?.expiry !== "true" && (
+                                <Text style={{color: 'red', padding: 10, position: 'absolute', bottom: 40, zIndex: 2000, backgroundColor: '#fff'}}>Your current plan ({ dashbaord.planname ?? '' }) { dashbaord.expiry ?? '' }, if you would like to extend it, please click on make payment to extend the expiration date. thank you.</Text>
+                            )}
+
+                        </>
+                       )}                        
+                    </>
+        )}
+
         {loading ? (
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 200}}>
                 <ActivityIndicator size="large" />
             </View>
         ) : (
 
-            <ScrollView style={{marginBottom: 50, paddingLeft: 20, paddingRight: 20}}
+            <ScrollView style={{marginBottom: updateIsAvailable ? 130 : 80, paddingLeft: 20, paddingRight: 20}}
             refreshControl={
                 <RefreshControl refreshing={loading} onRefresh={loaddata} />
             }
@@ -242,8 +290,6 @@ function Dashboard() {
             await schedulePushNotification();
             }}
         /> */}
-                
-                
                 
                 
                 
@@ -466,11 +512,40 @@ function Dashboard() {
                 </View>
             </TouchableOpacity>
             )}
-
-
         </ScrollView>
 
         )}
+
+    
+
+    <View style={[styles.ad]}>
+            
+    <Snackbar
+        style={styles.update}
+        visible={updateIsAvailable}
+        onDismiss={() => {}}
+        action={{
+            label: 'Apply update',
+            onPress: async () => {
+                await Updates.reloadAsync();
+            },
+        }}
+     >
+      New update for you 🥳🎉.
+    </Snackbar>
+
+        </View>
+
+
+        <View style={[styles.ad,{marginRight: 20}]}>
+            
+            <BannerAd
+                unitId={adUnitId}
+                size={BannerAdSize.BANNER}
+                requestOptions={{ requestNonPersonalizedAdsOnly: true }}
+            />
+
+        </View>
     </SafeAreaView>
    );
 }
@@ -478,6 +553,16 @@ function Dashboard() {
 export default Dashboard;
 
 const styles = StyleSheet.create({
+    update: {
+        position: 'absolute',
+        right: 18,
+        bottom: 50,
+    },
+    ad: {
+        position: 'absolute',
+        right: 0,
+        bottom: 10,
+    },
  container: {
     flexDirection: 'column',
      flex: 1,

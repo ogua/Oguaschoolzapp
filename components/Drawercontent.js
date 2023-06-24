@@ -1,4 +1,4 @@
-import {View,StyleSheet, FlatList, Linking } from 'react-native';
+import {View,StyleSheet, FlatList, Linking, Platform } from 'react-native';
 
 import {
     useTheme,
@@ -22,6 +22,11 @@ import { Redirect, useRouter } from 'expo-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, selectpermissions, selectroles, selectstaffrole, selectuser, selectuserpermission } from '../features/userinfoSlice';
 import { showMessage } from "react-native-flash-message";
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+  } from "react-native-google-mobile-ads";
 
 import * as Sharing from 'expo-sharing';
 
@@ -38,6 +43,12 @@ import * as Sharing from 'expo-sharing';
  const driver = useSelector(selectstaffrole);
 
  const fileUri = require('../assets/logo.png');
+
+ const osver = Platform.constants['Release'];
+
+ const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-5448171275225637~4193774452';
+
+ //console.log("osver",osver);
 
  const handlelogout = () => {
   
@@ -1532,6 +1543,20 @@ function checkpermission(){
                   
 
             </Drawer.Section>
+
+
+            <View style={{marginLeft: 15, marginBottom: 10}}>
+
+              <BannerAd
+                  unitId={adUnitId}
+                  size={'250x50'}
+                  requestOptions={{ requestNonPersonalizedAdsOnly: true }}
+              />
+
+            </View>
+
+            
+
         </View>
     );
 }

@@ -15,6 +15,12 @@ import { schoolzapi } from '../../components/constants';
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import { makeRedirectUri } from 'expo-auth-session';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import {
+    BannerAd,
+    BannerAdSize,
+    TestIds,
+    } from "react-native-google-mobile-ads";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -30,6 +36,7 @@ function login() {
     const dispatch = useDispatch();
     const user = useSelector(selectuser);
     const token = useSelector(selecttoken);
+    const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-5448171275225637~4193774452';
 
     const [request, response, promptAsync] = Google.useAuthRequest({
         androidClientId: "358977683240-u6klp13p2b43uvrc248h3sn8p5jknmmt.apps.googleusercontent.com",
@@ -163,7 +170,7 @@ function login() {
         console.log("user 3",JSON.parse(user))
     }
 
-    const Userlogin = async () => {
+    const Userlogin = () => {
 
         Setsubmiitting(true);
 
@@ -177,7 +184,7 @@ function login() {
         {
             headers: {Accept: 'application/json'}
         })
-          .then(async (response) => {
+          .then((response) => {
 
             if(response.data.error){
                // ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
@@ -193,7 +200,7 @@ function login() {
 
               //  await AsyncStorage.setItem('token', response.data.token);
                
-                dispatch(setUser(response.data.user));
+                
                 dispatch(setToken(response.data.token));
                 dispatch(setRoles(response.data.roles));
                 dispatch(setUserpermission(response.data.userpermission));
@@ -201,7 +208,7 @@ function login() {
                 dispatch(setCurrency(response.data.currency));
                 dispatch(setSchool(response.data.school));
                 dispatch(setStaffrole(response.data.staffrole));
-                
+                dispatch(setUser(response.data.user));
 
                 Setsubmiitting(false);
                 router.push('/admin/');
@@ -211,14 +218,14 @@ function login() {
           })
           .catch(function (error) {
             Setsubmiitting(false);
-            console.log(error);
+            console.log("error",error);
             //console.log(schoolzapi+'/auth-login');
           });
         
     }
 
     return (
-      <SafeAreaView>
+      <SafeAreaView style={{flexGrow: 1}}>
         <Stack.Screen options={{
             headerShown: false
         }} />
@@ -271,6 +278,16 @@ function login() {
 
             </View>
         </ScrollView>
+
+        <View style={styles.ad}>
+            <BannerAd
+                unitId={adUnitId}
+                size={BannerAdSize.BANNER}
+                requestOptions={{ requestNonPersonalizedAdsOnly: true }}
+            />
+
+        </View>
+        
       </SafeAreaView>
     )
 }
@@ -278,6 +295,11 @@ function login() {
 export default login;
 
 const styles = StyleSheet.create({
+    ad: {
+        position: 'absolute',
+        right: 17,
+        bottom: 10,
+    },
     loginwithgoogle: {
         backgroundColor: '#1782b6',
         padding: 10,
