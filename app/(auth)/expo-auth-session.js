@@ -1,13 +1,13 @@
 import { Redirect, Stack, useFocusEffect, useRouter } from 'expo-router';
 import { Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, 
-    TextInput, ToastAndroid, View } from 'react-native';
-import {ActivityIndicator, Button} from 'react-native-paper';
+     ToastAndroid, View } from 'react-native';
+import {ActivityIndicator, Button, TextInput} from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser, setToken, setRoles,  setUserpermission, setPermissions, setMenu, setCurrency, selecttoken, setSchool, setStaffrole } from '../../features/userinfoSlice';
+import { setUser, setToken, setRoles,  setUserpermission, setPermissions, setMenu, setCurrency, selecttoken, setSchool, setStaffrole, setAccstatus, setPrinttype } from '../../features/userinfoSlice';
 import { selectuser } from '../../features/userinfoSlice';
 import { storeData, removeusertoken, gettokendata, selectusertoken } from '../../features/usertokenSlice';
 import { showMessage } from "react-native-flash-message";
@@ -24,7 +24,7 @@ import {
 
 WebBrowser.maybeCompleteAuthSession();
 
-function login() {
+function Authlogin() {
     
     const [email, setemail] = useState("");
     const [googleemail, setgoogleemail] = useState("");
@@ -36,7 +36,7 @@ function login() {
     const dispatch = useDispatch();
     const user = useSelector(selectuser);
     const token = useSelector(selecttoken);
-    const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-5448171275225637~4193774452';
+    const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-5448171275225637/7712155558';
 
     const [request, response, promptAsync] = Google.useAuthRequest({
         androidClientId: "358977683240-u6klp13p2b43uvrc248h3sn8p5jknmmt.apps.googleusercontent.com",
@@ -209,6 +209,8 @@ function login() {
                 dispatch(setSchool(response.data.school));
                 dispatch(setStaffrole(response.data.staffrole));
                 dispatch(setUser(response.data.user));
+                dispatch(setAccstatus(response.data.accstatus));
+                dispatch(setPrinttype(response.data.printtype));
 
                 Setsubmiitting(false);
                 router.push('/admin/');
@@ -240,23 +242,15 @@ function login() {
             </View>
             <View style={styles.formcontainer}>
                 <View style={styles.formgroup}>
-                    <Text>Email or Student ID</Text>
-                    <View style={styles.inputextcontainer}>
-                        <Ionicons name="mail" style={styles.formgroundinputicon} size={20} color="#000" />
-                       <TextInput ref={emailref} name="email" onChangeText={ (e) => setemail(e) } style={styles.formgroundinput} id="email" placeholder='Enter Email or Student ID' />
-                    </View>
+                       <TextInput left={<TextInput.Icon icon="mail" />} ref={emailref} mode="outlined" name="email" onChangeText={ (e) => setemail(e) } id="email" placeholder='Enter Email or Student ID' />                       
                 </View>
 
                 <View style={styles.formgroup}>
-                    <Text>Password</Text>
-                    <View style={styles.inputextcontainer}>
-                        <Ionicons name="key-outline" style={styles.formgroundinputicon} size={20} color="#000" />
-                       <TextInput name="password" secureTextEntry={true} id="password" onChangeText={(e) => setpassword(e)} placeholder='Enter Password' style={styles.formgroundinput} />
-                    </View>
+                    <TextInput left={<TextInput.Icon icon="key" />} name="password" mode="outlined" secureTextEntry={true} id="password" onChangeText={(e) => setpassword(e)} placeholder='Enter Password' />
                 </View>
 
                 <TouchableOpacity style={styles.loginbtn} onPress={Userlogin}>
-                    {issumit ? <ActivityIndicator size="large" color="#fff" /> : <Text style={styles.loginbtntext}>Login</Text>}
+                    {issumit ? <ActivityIndicator color="#fff" /> : <Text style={styles.loginbtntext}>Login</Text>}
                 </TouchableOpacity>
 
                 <Text style={styles.forgotpassword}>Forgot Password ?</Text>
@@ -292,7 +286,7 @@ function login() {
     )
 }
 
-export default login;
+export default Authlogin;
 
 const styles = StyleSheet.create({
     ad: {

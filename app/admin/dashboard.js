@@ -14,8 +14,6 @@ import * as TaskManager from 'expo-task-manager';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 
-import * as Updates from 'expo-updates';
-
 import {
     BannerAd,
     BannerAdSize,
@@ -47,7 +45,7 @@ function Dashboard() {
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
     const responseListener = useRef();
-    const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-5448171275225637~4193774452';
+    const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-5448171275225637/7712155558';
     const [updateIsAvailable, setUpdateAvailable] = useState(false);
 
     async function schedulePushNotification() {
@@ -161,27 +159,25 @@ function Dashboard() {
       }, []);
 
       useFocusEffect(() => {
-        onFetchUpdateAsync();   
+       // onFetchUpdateAsync();   
       });
       
 
-      async function onFetchUpdateAsync() {
-        try {
-          const update = await Updates.checkForUpdateAsync();
+    //   async function onFetchUpdateAsync() {
+    //     try {
+    //       const update = await Updates.checkForUpdateAsync();
     
-          if (update.isAvailable) {
-            await Updates.fetchUpdateAsync();
-          //  await Updates.reloadAsync();
-            setUpdateAvailable(true);
-          }else{
-            setUpdateAvailable(false);
-          }
-        } catch (error) {
-          // You can also add an alert() to see the error message in case of an error when fetching updates.
-          console.log("error",error);
-          alert(`Error fetching latest Expo update: ${error}`);
-        }
-      }
+    //       if (update.isAvailable) {
+    //         await Updates.fetchUpdateAsync();
+    //         setUpdateAvailable(true);
+    //       }else{
+    //         setUpdateAvailable(false);
+    //       }
+    //     } catch (error) {
+    //       console.log("error",error);
+    //       alert(`Error fetching latest Expo update: ${error}`);
+    //     }
+    //   }
 
       function initail(){
 
@@ -272,7 +268,7 @@ function Dashboard() {
             </View>
         ) : (
 
-            <ScrollView style={{marginBottom: updateIsAvailable ? 130 : 80, paddingLeft: 20, paddingRight: 20}}
+            <ScrollView style={{marginBottom: 30, paddingLeft: 20, paddingRight: 20}}
             refreshControl={
                 <RefreshControl refreshing={loading} onRefresh={loaddata} />
             }
@@ -518,7 +514,7 @@ function Dashboard() {
 
     
 
-    <View style={[styles.ad]}>
+    {/* <View style={[styles.ad]}>
             
     <Snackbar
         style={styles.update}
@@ -534,10 +530,10 @@ function Dashboard() {
       New update for you 🥳🎉.
     </Snackbar>
 
-        </View>
+        </View> */}
 
 
-        <View style={[styles.ad,{marginRight: 20}]}>
+        {/* <View style={[styles.ad,{marginRight: 20}]}>
             
             <BannerAd
                 unitId={adUnitId}
@@ -545,7 +541,7 @@ function Dashboard() {
                 requestOptions={{ requestNonPersonalizedAdsOnly: true }}
             />
 
-        </View>
+        </View> */}
     </SafeAreaView>
    );
 }

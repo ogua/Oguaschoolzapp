@@ -40,8 +40,8 @@ function Feelistitem ({item,deletedata,updatedatastatus}) {
         titleEllipsizeMode="head"
         description={item?.feecode}
         left={props => <Ionicons name="cash" {...props} size={20} />}
-        right={props => <Switch value={item?.status === `1` ? true : false} 
-         />}
+        // right={props => <Switch value={item?.status === `1` ? true : false} 
+        //  />}
     />
 
 {/* onValueChange={onToggleSwitch} */}

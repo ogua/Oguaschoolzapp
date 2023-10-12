@@ -10,14 +10,13 @@ import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import * as Imagepicker from 'expo-image-picker';
-import { schoolzapi } from '../../../components/constants';
-import { selecttoken } from '../../../features/userinfoSlice';
-import Incomeexpenslist from '../../../lists/Incomeexpenselist';
-import Incomeexpensetypelist from '../../../lists/incomeexpensetype';
 import { showMessage } from "react-native-flash-message";
+import { selecttoken } from '../../features/userinfoSlice';
+import { schoolzapi } from '../constants';
+import Incomeexpensetypelist from '../../lists/incomeexpensetype';
 
 
-function Incomeexpensecategory () {
+function Expensecategory () {
 
     const token = useSelector(selecttoken);
     const [search, setSearch] = useState();
@@ -50,14 +49,14 @@ function Incomeexpensecategory () {
 
     },[]);
 
-    function getincome() {
-      return axios.get(schoolzapi+'/income',
-      {
-          headers: {Accept: 'application/json',
-          Authorization: "Bearer "+token
-      }
-      });
-   }
+//     function getincome() {
+//       return axios.get(schoolzapi+'/income',
+//       {
+//           headers: {Accept: 'application/json',
+//           Authorization: "Bearer "+token
+//       }
+//       });
+//    }
 
    function getexpense() {
     return axios.get(schoolzapi+'/expense',
@@ -71,18 +70,17 @@ function Incomeexpensecategory () {
 
     const loaddata = () => {
         setLoading(true);
-          Promise.all([getincome(), getexpense()])
+          Promise.all([getexpense()])
           .then(function (response) {
 
-            const inc = response[0];
-            const exp = response[1];
+            //const inc = response[0];
+            const exp = response[0];
            
-            setData(inc.data.data);
-            setFilterdata(inc.data.data);
+            // setData(inc.data.data);
+            // setFilterdata(inc.data.data);
 
             setexData(exp.data.data);
             setexFilterdata(exp.data.data);
-
 
             setLoading(false);
           })
@@ -238,9 +236,6 @@ function Incomeexpensecategory () {
             
             <Card>
                 <Card.Content>
-
-                <View style={{height: SCREEN_HEIGHT/2}}>
-
                  <Searchbar
                     placeholder='Search Expenses'
                     mode="view"
@@ -256,25 +251,7 @@ function Incomeexpensecategory () {
                     }}
                     keyExtractor={item => item.id}
                 />
-                </View>
 
-                <Divider bold={true} style={{marginVertical: 30}} />
-
-                <Searchbar
-                    placeholder='Search Income'
-                    mode="view"
-                    onChangeText={(text) => searchFilterFunction(text)}
-                    value={search}
-                />
-                <FlatList
-                    data={filterdata}
-                    renderItem={({item})=> <Incomeexpensetypelist item={item} deletedata={deletedata} /> }
-                    ItemSeparatorComponent={()=> <View style={styles.separator} />}
-                      contentContainerStyle={{
-                         marginBottom: 10
-                    }}
-                    keyExtractor={item => item.id}
-                />
                 </Card.Content>
             </Card> 
 
@@ -289,7 +266,7 @@ function Incomeexpensecategory () {
     )
 }
 
-export default Incomeexpensecategory;
+export default Expensecategory;
 
 const styles = StyleSheet.create({
   fab: {

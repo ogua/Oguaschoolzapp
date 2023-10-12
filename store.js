@@ -1,24 +1,25 @@
+//import AsyncStorage from '@react-native-async-storage/async-storage';
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userinfoReducer from './features/userinfoSlice';
 import examReducer from "./features/examSlice";
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
-//import storageSession from 'reduxjs-toolkit-persist/lib/storage/session';
+
 
 const rootPersistConfig  = {
   key: 'root',
-  storage,
+  storage: storage
 }
 
 const userPersistConfig = {
   key: 'userinfo',
-  storage,
+ storage: storage
 }
 
 const examPersistConfig = {
   key: 'exam',
-  storage,
+ storage: storage
 }
 
 const rootReducer = combineReducers({

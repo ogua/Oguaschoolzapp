@@ -240,12 +240,7 @@ function Recordpayroll () {
       <SafeAreaView>
         <Stack.Screen
         options={{
-            headerTitle: 'Generate Payroll',
-            headerLeft: () => (
-                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> router.back()}>
-                        <Ionicons name="close-circle" size={30} />
-                    </TouchableOpacity>
-            )
+            headerTitle: 'Generate Payroll'
            }}
         />
 

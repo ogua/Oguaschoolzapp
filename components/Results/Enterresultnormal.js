@@ -16,7 +16,8 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
  // import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 import { selectroles, selecttoken, selectuser } from '../../features/userinfoSlice';
 import { schoolzapi } from '../constants';
-import {produce} from "immer";
+//import {produce} from "immer";
+import { useImmer } from "use-immer";
 import Resultenter from './Resultenter';
 
   
@@ -26,6 +27,7 @@ import Resultenter from './Resultenter';
     const role = useSelector(selectroles);
     const user = useSelector(selectuser);
     const [isloading, setLoading] = useState(false);
+    const [isShow, setisShow] = useState(false);
     const [issubmitting, setissubmitting] = useState(false);
     const router = useRouter();
 
@@ -43,13 +45,14 @@ import Resultenter from './Resultenter';
     const [classscore, setclassscore] = useState("");
     const [examscore, setexamscore] = useState("");
     
-    const examloop = [0,1,2,3,4,5,6,7,8,9];
-    const [loadresults, setloadresults] = useState([]);
+    const examloop = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14];
+    const [loadresults, setloadresults] = useImmer([]);
 
     const [grothimp,setgrowthimp] = useState("");
     const [areaneeded,setareaneeded] = useState("");
     const [groupwrk,setgroupwrk] = useState("");
     const [conduct,setconduct] = useState("");
+    const [position,setposition] = useState("");
 
 
 
@@ -115,6 +118,10 @@ import Resultenter from './Resultenter';
             position: 'bottom',
         });
 
+        setisShow(false);
+
+        setLoading(false);
+
     }else{
 
         loadsubject(response.data.subjects);
@@ -126,18 +133,22 @@ import Resultenter from './Resultenter';
         setclassscore(response.data.classscore);
         setexamscore(response.data.examscore);
 
-        setstudentclass(response.data.quanswers?.promotedto);
+        setstudentclass(parseInt(response.data.quanswers?.promotedto));
+        //console.log("promotedto",response.data.quanswers?.promotedto);
         setgrowthimp(response.data.quanswers?.growthnimprove);
         setareaneeded(response.data.quanswers?.areasneedwork);
         setgroupwrk(response.data.quanswers?.groupwork);
         setconduct(response.data.quanswers?.genremarknconduct);
-
+        setposition(response.data.quanswers?.position);
+        
 
         if(response.data.result?.results == null){
           loadexamresult([])
         }else{
           loadexamresult(response.data.result.results);
         }
+
+        setisShow(true);
       
 
     }
@@ -159,7 +170,9 @@ import Resultenter from './Resultenter';
     const mddatas = data;
     
     let mdata = [
-        { label: 'No Promotion', value: ''}
+        { label: 'No Promotion', value: ''},
+        { label: 'REPEATED', value: 145},
+        { label: 'PROBATION', value: 144}
     ];
 
      mddatas.map(item =>  mdata.push({ label: item?.name, value: item?.id}))
@@ -195,15 +208,13 @@ const loadexamresult = (data) => {
 }
 
 const changesubject = useCallback((indexx,value) => {
-    setloadresults(
-      produce((draft) => {
-        const subjects = draft.find((subject) => subject.id == ""+indexx);
-       // subjects.subject = value;
-        console.log("subjects",subjects);
-        console.log("indexx",indexx);
+    setloadresults((draft) => {
+      const subjects = draft.find((subject) => subject.id == ""+indexx);
+     // subjects.subject = value;
+      console.log("subjects",subjects);
+      console.log("indexx",indexx);
 
-      })
-    );
+    });
   }, []);
 
 
@@ -229,7 +240,8 @@ const changesubject = useCallback((indexx,value) => {
       conduct: conduct,
       studentid: studentinfo?.student_id,
       studentclass: stclass,
-      term: termid
+      term: termid,
+      position
     }
 
       
@@ -278,31 +290,34 @@ const changesubject = useCallback((indexx,value) => {
 return (
         <>
         {isloading ? <ActivityIndicator size="large" /> : (
-
+          <>
+            {isShow && (
+            <>
             <View style={styles.container}>
                 <Text style={{backgroundColor: '#1782b6', color: '#fff', padding: 15, width: '100%'}}>Enter Results For : { studentinfo?.fullname}</Text>
                 <ScrollView style={styles.dataWrapper}>
                     <View style={{marginTop: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
 
-                        <Avatar.Image 
+                        {/* <Avatar.Image 
                             source={{uri: studentinfo?.pic}}
                             size={50}
-                        />
+                        /> */}
 
                         <Text>{ studentinfo?.stclass}</Text>
 
                     </View>
 
-                    <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginBottom: 20}}>
+                    {/* <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginBottom: 20}}>
                         <TouchableOpacity style={{flexDirection: 'row',marginTop: 20}}>
                         <Ionicons name="add-circle" size={35} />
                         </TouchableOpacity>
-                    </View>                    
+                    </View>                     */}
 
                     {examloop.map((item,index) => (
                         <Resultenter key={index} schclassscore={classscore} schexamscore={examscore} stclass={stclass} termid={termid} examid={parseInt(loadresults[item]?.examid)} studentid={studentinfo?.id} stindex={studentinfo?.student_id} resubjectitems={subjectitems} resubject={parseInt(loadresults[item]?.subject)} id={loadresults[item]?.id} index={index}  classscore={loadresults[item]?.classscore} examscore={loadresults[item]?.examscore} />
                     ))}
 
+                            <Text style={{marginTop: 40}}>Promoted To</Text>
                              <DropDownPicker
                                 searchable
                                 open={openstudentclass}
@@ -311,7 +326,7 @@ return (
                                 setOpen={setOpenstudentclass}
                                 setValue={setstudentclass}
                                 setItems={setstudentclassItems}
-                                placeholder={"Promoted To"}
+                                placeholder={""}
                                 placeholderStyle={{
                                     color: "#456A5A",
                                 }}
@@ -329,16 +344,24 @@ return (
                                 }}
                                 style={{
                                     borderWidth: 1,
-                                    minHeight: 50,
-                                    marginTop: 40,
+                                    minHeight: 50
                                 }}
+                                />
+
+                            <TextInput
+                                style={styles.field}
+                                keyboardType="numeric"
+                                label='Position'
+                                mode='outlined'
+                                value={position == '0' ? "" : position}
+                                onChangeText={(e) => setposition(e)}
                                 />
 
                             <TextInput
                                 style={styles.field}
                                 multiline={true}
                                 numberOfLines={4}
-                                label="Growth & Improvement Observed"
+                                label={user?.uniqueid == "e6ddc0c0-2e7e-4735-bfe1-4ee02f53834f" ? 'Class Teachers Remarks' : 'Growth & Improvement Observed'}
                                 mode='outlined'
                                 value={grothimp}
                                 onChangeText={(e) => setgrowthimp(e)}
@@ -348,7 +371,7 @@ return (
                                 style={styles.field}
                                 multiline={true}
                                 numberOfLines={4}
-                                label="Areas Needing Additional Work"
+                                label={user?.uniqueid == "e6ddc0c0-2e7e-4735-bfe1-4ee02f53834f" ? 'Attitude' : 'Areas Needing Additional Work'}
                                 mode='outlined'
                                 value={areaneeded}
                                 onChangeText={(e) => setareaneeded(e)}
@@ -358,7 +381,7 @@ return (
                                 style={styles.field}
                                 multiline={true}
                                 numberOfLines={4}
-                                label="Group Work"
+                                label={user?.uniqueid == "e6ddc0c0-2e7e-4735-bfe1-4ee02f53834f" ? 'Interest' : 'Group Work'}
                                 mode='outlined'
                                 value={groupwrk}
                                 onChangeText={(e) => setgroupwrk(e)}
@@ -382,7 +405,9 @@ return (
                     
                 </ScrollView>
             </View>
-
+            </>
+            )}
+            </>
         )}
         
 

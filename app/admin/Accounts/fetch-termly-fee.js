@@ -22,7 +22,6 @@ function Fetchtermlyfee() {
 
     const token = useSelector(selecttoken);
     const [amount, setamount] = useState("");
-    const [year, setYear] = useState("");
     const [ofee, setofee] = useState("");
 
     const [openstudentclass, setOpenstudentclass] = useState(false);
@@ -45,12 +44,17 @@ function Fetchtermlyfee() {
     const router = useRouter();
     const {id,studentname} = useSearchParams();
 
+    const [openyear, setOpenyear] = useState(false);
+    const [year, setYear] = useState("");
+    const [yearitems, setyearItems] = useState([]);
+
   
 
     useEffect(()=>{
       DeviceEventEmitter.removeAllListeners("event.test");
 
       loaddata();
+      loadademicterm();
 
       if(id == undefined){
         isCreatedorEdit('New Fee master');
@@ -59,6 +63,23 @@ function Fetchtermlyfee() {
       }
 
     },[]);
+
+    const loadademicterm = () => {
+            
+        const mddatas = [0,1,2,3,4,5];
+        let mdata = [];
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+    
+        mdata.push(
+          { label: `${currentYear + 1} - ${currentYear + 2}`, value: currentYear + 1}
+          );
+    
+        mddatas.map(item =>  mdata.push(
+        { label: `${currentYear - item} - ${currentYear - item + 1}`, value: currentYear - item}
+        ))
+        setyearItems(mdata);
+    }
 
     
 
@@ -106,12 +127,18 @@ function Fetchtermlyfee() {
             return;
         }
 
+        if(year == ""){
+            alert('Acdemic year cant be empty');
+            return;
+        }
+
 
         setIssubmitting(true);
 
         const formdata = {
          studntid: id,
          term: acdemicterm,
+         year
         }
 
         axios.post(schoolzapi+'/fetch-termly-fee',
@@ -152,11 +179,12 @@ function Fetchtermlyfee() {
             options={{
                 headerTitle: 'Fetch Fee',
                 presentation: 'formSheet',
-                headerLeft: () => (
-                    <TouchableOpacity onPress={() => router.back()}>
-                          <Ionicons name="close-circle" size={30} style={{marginRight: 10}} />
-                    </TouchableOpacity>
-                ),
+                // headerLeft: () => (
+                //     <TouchableOpacity onPress={() => router.back()}>
+                //           <Ionicons name="close-circle" size={30} style={{marginRight: 10}} />
+                //     </TouchableOpacity>
+                // ),
+
                 // headerRight: () => (
                 //     <>
                 //       <TouchableOpacity onPress={refresh}>
@@ -186,7 +214,40 @@ function Fetchtermlyfee() {
                     setOpen={setOpenacdemicterm}
                     setValue={setacdemicterm}
                     setItems={setacdemictermItems}
-                    placeholder={"Choose Academic Term"}
+                    placeholder={""}
+                    placeholderStyle={{
+                        color: "#456A5A",
+                    }}
+                    listMode="MODAL"
+                    dropDownContainerStyle={{
+                        borderWidth: 0,
+                        borderRadius: 30,
+                        backgroundColor: "#fff"
+                    }}
+                    labelStyle={{
+                        color: "#000",
+                    }}
+                    listItemLabelStyle={{
+                        color: "#456A5A",
+                    }}
+                    style={{
+                        borderWidth: 1,
+                        //backgroundColor: "#F5F7F6",
+                        minHeight: 50,
+                        //marginBottom: 20
+                    }}
+                    />
+
+
+                <Text style={{fontSize: 15, fontWeight: 500, marginTop: 20}}>Academic Year</Text>
+                <DropDownPicker
+                    open={openyear}
+                    value={year}
+                    setValue={setYear}
+                    items={yearitems}
+                    setOpen={setOpenyear}
+                    setItems={setyearItems}
+                    placeholder={""}
                     placeholderStyle={{
                         color: "#456A5A",
                     }}
@@ -208,7 +269,7 @@ function Fetchtermlyfee() {
                         minHeight: 50,
                         marginBottom: 20
                     }}
-                    />
+                />
 
         {issubmitting ? <ActivityIndicator size="large" color="#1782b6" /> : (
         <Button mode="contained" onPress={createdata} style={{marginTop: 30}}>

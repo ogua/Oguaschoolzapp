@@ -15,6 +15,7 @@ function Transactionlist ({item,deletedata,studentclasslist,revertfee}) {
     const role = useSelector(selectroles);
     const currency = useSelector(selectcurrency);
     const [visible, setVisible] = useState(false);
+    const [isrevert, setisrevert] = useState(false);
     const router = useRouter();
 
 
@@ -58,8 +59,18 @@ function Transactionlist ({item,deletedata,studentclasslist,revertfee}) {
                 </View>
 
             {role[0] !== "Student" && (
-                <Button onPress={()=> revertfee(item?.id,item?.stdntid,(currency+item?.amountpaid))} icon="refresh" textColor="red" style={{marginTop: 20}}>Revert</Button>
-            )}
+                <>
+                {isrevert ? <ActivityIndicator /> : (
+                    <>
+                    <Button onPress={()=> {
+                    setisrevert(true);
+                    revertfee(item?.id,item?.stdntid,(currency+item?.amountpaid));
+                }
+                } icon="refresh" textColor="red" style={{marginTop: 20}}>Revert</Button>
+                    </>
+                )}
+                
+            </>)}
             
                 
         </View>

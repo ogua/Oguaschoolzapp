@@ -237,13 +237,13 @@ function Incomeexpensecat() {
             options={{
                 headerTitle: creatoredit,
                 presentation: 'formSheet',
-                headerLeft: () => (
-                  <>
-                    <TouchableOpacity onPress={() => router.back()} style={{marginHorizontal: 10}}>
-                      <Ionicons name="close-circle" size={30} />
-                    </TouchableOpacity>
-                  </>
-                )
+                // headerLeft: () => (
+                //   <>
+                //     <TouchableOpacity onPress={() => router.back()} style={{marginHorizontal: 10}}>
+                //       <Ionicons name="close-circle" size={30} />
+                //     </TouchableOpacity>
+                //   </>
+                // )
             }}
 
         />

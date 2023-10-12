@@ -189,13 +189,13 @@ function HostelInfo () {
         <Stack.Screen
          options={{
           headerTitle: hostelname,
-          headerLeft: () => (
-            <>
-              <TouchableOpacity onPress={() => router.back()} style={{marginRight: 15}}>
-                <Ionicons name="close-circle-outline" size={30} />
-              </TouchableOpacity>
-            </>
-          ),
+          // headerLeft: () => (
+          //   <>
+          //     <TouchableOpacity onPress={() => router.back()} style={{marginRight: 15}}>
+          //       <Ionicons name="close-circle-outline" size={30} />
+          //     </TouchableOpacity>
+          //   </>
+          // ),
           headerRight: () => (
             <View>
                  <View style={{flexDirection: 'row',justifyContent: 'flex-end', marginHorizontal: 20}}>

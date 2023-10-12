@@ -31,7 +31,7 @@ function Classroomslist ({item,deletedata}) {
             titleEllipsizeMode="middle"
             //description={item?.code}
             left={props => <Ionicons name="book" {...props} size={20} />}
-            right={props => <Ionicons name="ellipsis-vertical-sharp" {...props} size={20} />}
+            //right={props => <Ionicons name="ellipsis-vertical-sharp" {...props} size={20} />}
         />
             
         </TouchableOpacity>

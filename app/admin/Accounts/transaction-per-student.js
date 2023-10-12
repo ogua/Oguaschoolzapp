@@ -245,12 +245,12 @@ function Transactionstudent () {
       <SafeAreaView>
         <Stack.Screen
         options={{
-            headerTitle: '',
-            headerLeft: () => (
-              <TouchableOpacity onPress={() => router.back()}>
-                    <Ionicons name="close-circle" size={30} style={{marginRight: 10}} />
-              </TouchableOpacity>
-            ),
+            headerTitle: 'Transactions',
+            // headerLeft: () => (
+            //   <TouchableOpacity onPress={() => router.back()}>
+            //         <Ionicons name="close-circle" size={30} style={{marginRight: 10}} />
+            //   </TouchableOpacity>
+            // ),
             headerRight: () => (
               <TouchableOpacity onPress={refreshdata}>
                     <Ionicons name="refresh" size={30} style={{marginRight: 10}} />

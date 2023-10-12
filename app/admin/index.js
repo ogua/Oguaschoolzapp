@@ -1,4 +1,4 @@
-import { Redirect, Stack, useRouter } from 'expo-router';
+import { Redirect, Stack, useFocusEffect, useRouter } from 'expo-router';
 import { ActivityIndicator, FlatList, Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -93,6 +93,12 @@ import Questionnairetwo from '../../components/Questinnaire/Questionnairetwo';
 import Sendtransactionbymail from '../../components/Accounts/Sendtransactionbymail';
 import Sendpushnotification from '../../components/Communicate/Sendpushnotification';
 import Help from '../../components/Help';
+import Viewbill from '../../components/Accounts/Viewbill';
+import Billing from '../../components/Accounts/Billing';
+import Expense from '../../components/Accounts/Expense';
+import Income from '../../components/Accounts/Income';
+import Incomecategory from '../../components/Accounts/Incomecat';
+import Expensecategory from '../../components/Accounts/Expensecat';
 
 const Drawer = createDrawerNavigator();
 
@@ -101,6 +107,13 @@ function Maindashboard() {
   // token = useSelector(selecttoken);
   const router = useRouter();
   const [token, setToken] = useState();
+
+
+  useFocusEffect(() => {
+    if(user == null){
+        router.push("/expo-auth-session");
+    }    
+  });
 
     return (
     <Drawer.Navigator
@@ -152,6 +165,12 @@ function Maindashboard() {
       <Drawer.Screen name="Terninalreportsignature" component={Terninalreportsignature} />
       <Drawer.Screen name="Books" component={Books} />
       <Drawer.Screen name="Issuebooks" component={Issuebooks} />
+      <Drawer.Screen name="Billing" component={Billing} />
+      <Drawer.Screen name="ViewBill" component={Viewbill} />
+      <Drawer.Screen name="Expense" component={Expense} />
+      <Drawer.Screen name="Income" component={Income} />
+      <Drawer.Screen name="Incomecategory" component={Incomecategory} />
+      <Drawer.Screen name="Expensecategory" component={Expensecategory} />
 
       
       <Drawer.Screen name="Allstaff" component={Allstaff} />

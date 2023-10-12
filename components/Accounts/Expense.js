@@ -4,66 +4,64 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
    ScrollView, StyleSheet, Text, TouchableOpacity, 
    View, DeviceEventEmitter, Alert } from 'react-native'
 import { useEffect } from 'react';
-import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar, ActivityIndicator } from 'react-native-paper';
+import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar, FAB } from 'react-native-paper';
 import { useState } from 'react';
 import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import * as Imagepicker from 'expo-image-picker';
 import { schoolzapi } from '../constants';
-import { selectaccstatus, selecttoken } from '../../features/userinfoSlice';
-import Feepaymentlist from '../../lists/Feepaymentlist';
+import { selecttoken } from '../../features/userinfoSlice';
+import Incomeexpenslist from '../../lists/Incomeexpenselist';
 
-function Feepayment () {
+function Expense () {
 
     const token = useSelector(selecttoken);
     const [search, setSearch] = useState();
     const [isloading, setLoading] = useState(true);
     const [data, setData] = useState([]);
     const [filterdata, setFilterdata] = useState([]);
-    const [studentclass, setStudentclass] = useState([]);
     const router = useRouter();
     const [visible, setVisible] = useState(0);
     const [showdialog, setShowdialog] = useState(false);
     const showDialog = () => setShowdialog(true);
     const hideDialog = () => setShowdialog(false);
     const [showsnakbar, setShowsnakbar] = useState(false);
-    const [active, setActive] = useState("");
-    const accnt = useSelector(selectaccstatus);
 
+
+    
 
     useEffect(()=> {
+      
+      // DeviceEventEmitter.addListener("subject.added", (event)=>{
+      //   console.log('how many time');
+      //   loaddata();
+      //   DeviceEventEmitter.removeAllListeners("event.test");
+      // });
+
        loaddata();
 
     },[]);
-    
+
 
     const loaddata = () => {
-
         setLoading(true);
-        
-        axios.get(schoolzapi+'/student-info',
+        axios.get(schoolzapi+'/expense-list',
         {
             headers: {Accept: 'application/json',
             Authorization: "Bearer "+token
         }
         })
-        .then(function (results) {
-            
-
-            if(results.data.planexpire){
-              setLoading(false);
-              alert(results.data.planexpire);
-            }
-
-            setData(results.data.data);
-            setFilterdata(results.data.data);
-
+          .then(function (response) {
+           // console.log(response.data.data);
+            setData(response.data.data);
+            setFilterdata(response.data.data);
             setLoading(false);
-
-        }).catch(function(error){
+          })
+          .catch(function (error) {
             setLoading(false);
-        });
+            console.log(error.response);
+          });
     }
 
 
@@ -80,7 +78,7 @@ function Feepayment () {
                 text: "Yes Delete",
                 onPress: () => {
                     setLoading(true);
-                    axios.delete(schoolzapi+'/student-info/'+id,
+                    axios.delete(schoolzapi+'/income-expense/'+id,
                     {
                         headers: {Accept: 'application/json',
                         Authorization: "Bearer "+token
@@ -90,8 +88,8 @@ function Feepayment () {
                             const newData = data.filter((item) => item.id != id);
                             setFilterdata(newData);
                             setData(newData);
-                            loaddata();
-                            //setLoading(false);
+                            //loaddata();
+                            setLoading(false);
                         })
                         .catch(function (error) {
                         setLoading(false);
@@ -109,8 +107,8 @@ function Feepayment () {
           if (text) {
               
             const newData = data.filter(function (item) {
-              const itemData = item.fullname
-                ? item.fullname.toUpperCase()
+              const itemData = item.title
+                ? item.title.toUpperCase()
                 : ''.toUpperCase();
               const textData = text.toUpperCase();
               return itemData.indexOf(textData) > -1;
@@ -121,42 +119,35 @@ function Feepayment () {
             setFilterdata(data);
             setSearch(text);
           }
-    };
-
-
+      };
 
     return (
       <Provider>
-      <SafeAreaView>
-        <Stack.Screen
-         options={{
-          headerTitle: 'Fee Payment'
-         }}
-        />
-
-        {isloading ? <ActivityIndicator /> : (
-          <>
-          
-       <Searchbar
-            placeholder='Search....'
-            mode="outlined"
-            onChangeText={(text) => searchFilterFunction(text)}
-            value={search}
-        />
-
+      <SafeAreaView style={{flexGrow: 1}}>
+        <Stack.Screen options={{
+            headerTitle: 'Expenses'
+        }}/>
         <ScrollView
         refreshControl={
             <RefreshControl refreshing={isloading} onRefresh={loaddata} />
         }
         >
-                <Card>
+
+            <Searchbar
+                placeholder='Search....'
+                mode="outlined"
+                onChangeText={(text) => searchFilterFunction(text)}
+                value={search}
+            />
+            
+            <Card>
                 <Card.Content>
                 <FlatList
                     data={filterdata}
-                    renderItem={({item})=> <Feepaymentlist item={item} deletedata={deletedata} /> }
+                    renderItem={({item})=> <Incomeexpenslist item={item} deletedata={deletedata} /> }
                     ItemSeparatorComponent={()=> <View style={styles.separator} />}
                       contentContainerStyle={{
-                        marginBottom: 200
+                         marginBottom: 10
                     }}
                     keyExtractor={item => item.id}
                 />
@@ -164,17 +155,25 @@ function Feepayment () {
             </Card> 
 
         </ScrollView>
-        </>
-        )}
+        <FAB
+          icon="plus"
+          style={styles.fab}
+          onPress={() => router.push('/admin/Accounts/create-edit-income-expense')}
+        />
       </SafeAreaView>
       </Provider>
     )
 }
 
-export default Feepayment;
+export default Expense;
 
 const styles = StyleSheet.create({
-
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 30,
+  },
     separator: {
         height: 0.5,
         backgroundColor: 'rgba(0,0,0,0.4)',

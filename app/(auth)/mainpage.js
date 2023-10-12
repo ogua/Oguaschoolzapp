@@ -62,6 +62,8 @@ import Leave from '../../components/Staff/Leave';
 import Listexams from '../../components/Exams/Listexams';
 import Allpayroll from '../../components/Staff/Payroll';
 import Dashboard from '../admin/dashboard';
+import Billing from '../../components/Accounts/Billing';
+import Viewbill from '../../components/Accounts/Viewbill';
 
 const Drawer = createDrawerNavigator();
 
@@ -111,6 +113,8 @@ function Maindashboard() {
       <Drawer.Screen name="Terninalreportsignature" component={Terninalreportsignature} />
       <Drawer.Screen name="Books" component={Books} />
       <Drawer.Screen name="Issuebooks" component={Issuebooks} />
+      <Drawer.Screen name="Billing" component={Billing} />
+      <Drawer.Screen name="ViewBill" component={Viewbill} />
 
       <Drawer.Screen name="Staffattendance" component={Staffattendance} />
       <Drawer.Screen name="Allstaffattendance" component={Allstaffattendance} />

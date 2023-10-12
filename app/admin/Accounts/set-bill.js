@@ -12,18 +12,17 @@ import { useSelector } from 'react-redux';
 import * as Imagepicker from 'expo-image-picker';
 import { LocaleConfig, Calendar } from "react-native-calendars";
 import DropDownPicker from 'react-native-dropdown-picker';
-import { selecttoken, selectuser } from '../../../features/userinfoSlice';
+import { selectaccstatus, selecttoken, selectuser } from '../../../features/userinfoSlice';
 import { schoolzapi } from '../../../components/constants';
-import Enterresultnormal from '../../../components/Results/Enterresultnormal';
-import Enterresultsampleone from '../../../components/Results/Enterresultsampleone';
-import Enterresultsampletwo from '../../../components/Results/Enterresultsampletwo';
-import Tinnysampletwo from '../../../components/Results/Tinnysampletwo';
+import Billtwo from '../../../components/Accounts/Billtwo';
 
 
 
-function Resultreport () {
+
+function Setbill () {
 
     const token = useSelector(selecttoken);
+    const acctype = useSelector(selectaccstatus);
     const user = useSelector(selectuser);
     const [search, setSearch] = useState();
     const [isloading, setLoading] = useState(true);
@@ -39,12 +38,10 @@ function Resultreport () {
     const [studentitems, setstudentItems] = useState([]);
 
 
-    const {stclass,termid,resulttype} = useSearchParams();
+    const {stclass,term,year} = useSearchParams();
 
     useEffect(()=> {
-
        loaddata();
-
     },[]);
 
 
@@ -102,7 +99,6 @@ function Resultreport () {
                 
                 {isloading ? null : (
                 <>
-
                <DropDownPicker
                     searchable
                     open={openstudent}
@@ -131,58 +127,25 @@ function Resultreport () {
                         borderWidth: 1,
                         //backgroundColor: "#F5F7F6",
                         minHeight: 50,
-                        marginTop: 10,
+                      //  marginTop: 10,
                         marginBottom: 20
                     }}
                     />
 
-
-                    
-
                     {student && (
                         <>
-
-                        {resulttype == "Normal Report" ? (
+                        {acctype == "0" ? (
                             <>
-                            <Enterresultnormal key={student} termid={termid} stclass={stclass} resulttype={resulttype} student={student} />
+                            <Text>Accounts 0</Text>
                             </>
                         ) : (
                             <>
-                            {resulttype == 'Sample 1' ? (
-                                <>
-                                <Enterresultsampleone key={student} termid={termid} stclass={stclass} resulttype={resulttype} student={student} />
-                                </>
-                            ) : (
-                                <>
-                                {user.uniqueid == '3cddf152-0b10-468c-9686-2bc9464019c6' ? (
-                                    <>
-                                    <Tinnysampletwo key={student} termid={termid} stclass={stclass} resulttype={resulttype} student={student} />
-                                    </>
-                                ): (
-                                    <>
-                                      
-                                     {/* <Enterresultsampletwo key={student} termid={termid} stclass={stclass} resulttype={resulttype} student={student} />    */}
-                                     
-                                      <Text style={{textAlign: 'center', fontWeight: 500}}>Coming Soon. Loading...</Text>
-                                    {/* <ActivityIndicator size="large" /> */}
-
-                                    </>
-                                )}
-                                
-                                </>
-                            )}
+                              <Billtwo key={student} stclass={stclass} term={term} year={year} studentid={student}/>
                             </>
                         )}
-                        
-                       
-
                         </>
-
                     )}
-                    
 
-
-         
                     </>
                     )}
 
@@ -195,7 +158,7 @@ function Resultreport () {
     )
 }
 
-export default Resultreport;
+export default Setbill;
 
 const styles = StyleSheet.create({
 

@@ -55,12 +55,7 @@ function Academicyearlistitem ({items,deletedata,updatedatastatus}) {
     <List.Item
         title={items.term}
         titleEllipsizeMode="head"
-        description={()=> (
-              <>
-                <Text> From {items.fromdate}</Text>
-                <Text> To {items.todate}</Text>
-                </>
-        )}
+        description={`From ${items.fromdate} - To ${items.todate}`}
         left={props => <Ionicons name="calendar" {...props} size={20} />}
         right={props => <Switch value={items.status === `1` ? true : false} onValueChange={onToggleSwitch} />}
     />

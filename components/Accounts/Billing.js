@@ -18,7 +18,7 @@ import { schoolzapi } from '../constants';
 import { LocaleConfig, Calendar } from "react-native-calendars";
 import { showMessage } from "react-native-flash-message";
 
-function Dispatchfees() {
+function Billing() {
 
     const token = useSelector(selecttoken);
     const [selecteddate, setSelecteddate] = useState('');
@@ -182,7 +182,7 @@ function Dispatchfees() {
     }
 
 
-    const createdata = () => {
+    const setbill = () => {
 
         if(studentclass == ""){
           alert('student class cant be empty');
@@ -201,55 +201,7 @@ function Dispatchfees() {
       }
 
 
-      return Alert.alert(
-        "Are your sure?",
-        "Are you sure you want to dispatch fees",
-        [
-          {
-            text: "No",
-          },
-          {
-            text: "Yes Dispatch",
-            onPress: () => {
-              setIssubmitting(true);
-
-              const formdata = {
-               studentclass: studentclass,
-               acdemicterm: acdemicterm,
-               year: year
-              }
-      
-              axios.post(schoolzapi+'/dispatch-fees',
-              formdata,
-              {
-                  headers: {Accept: 'application/json',
-                  Authorization: "Bearer "+token
-              }
-              })
-                .then(function (response) {
-      
-                  setIssubmitting(false);
-      
-                  if(response.data.error !== undefined){
-                      alert(response.data.error);
-                  }else{
-
-                      showMessage({
-                        message: response.data.data,
-                        type: "success",
-                        position: 'bottom',
-                      });
-                  }
-                  
-                })
-                .catch(function (error) {
-                  setIssubmitting(false);
-                  console.log("error",error);
-                });
-            },
-          },
-        ]
-      );
+      router.push(`/admin/Accounts/set-bill?term=${acdemicterm}&year=${year}&stclass=${studentclass}`);
 
         
     }
@@ -323,7 +275,7 @@ function Dispatchfees() {
       <SafeAreaView>
         <Stack.Screen
             options={{
-                headerTitle: 'Dispatch Fees',
+                headerTitle: 'Billing',
                 presentation: 'formSheet',
                 headerRight: () => (
                     <>
@@ -344,42 +296,7 @@ function Dispatchfees() {
         <Card>
         <Card.Content>
 
-
-<Text style={{fontSize: 15, fontWeight: 500}}>Student Class</Text>
-               <DropDownPicker
-                    open={openstudentclass}
-                    value={studentclass}
-                    items={studentclassitems}
-                    setOpen={setOpenstudentclass}
-                    setValue={setstudentclass}
-                    setItems={setstudentclassItems}
-                    placeholder={"Student Class"}
-                    placeholderStyle={{
-                        color: "#456A5A",
-                    }}
-                    listMode="MODAL"
-                    dropDownContainerStyle={{
-                        borderWidth: 0,
-                        borderRadius: 30,
-                        backgroundColor: "#fff"
-                    }}
-                    labelStyle={{
-                        color: "#000",
-                    }}
-                    listItemLabelStyle={{
-                        color: "#456A5A",
-                    }}
-                    style={{
-                        borderWidth: 1,
-                        //backgroundColor: "#F5F7F6",
-                        minHeight: 50,
-                        marginTop: 10,
-                        marginBottom: 20
-                    }}
-                    /> 
-
-            
-            <Text style={{fontSize: 15, fontWeight: 500}}>Academic Term</Text>
+        <Text style={{fontSize: 15, fontWeight: 500}}>Academic Term</Text>
               <DropDownPicker
                     open={openacdemicterm}
                     value={acdemicterm}
@@ -387,7 +304,7 @@ function Dispatchfees() {
                     setOpen={setOpenacdemicterm}
                     setValue={setacdemicterm}
                     setItems={setacdemictermItems}
-                    placeholder={"Choose Academic Term"}
+                    placeholder={""}
                     placeholderStyle={{
                         color: "#456A5A",
                     }}
@@ -421,7 +338,7 @@ function Dispatchfees() {
          onChangeText={(e) => setYear(e)}
         />  */}
 
-        <Text style={{fontSize: 15, fontWeight: 500, marginTop: 20}}>Academic Year</Text>
+        <Text style={{fontSize: 15, fontWeight: 500}}>Academic Year</Text>
         <DropDownPicker
             open={openyear}
             value={year}
@@ -450,49 +367,48 @@ function Dispatchfees() {
                 //backgroundColor: "#F5F7F6",
                 minHeight: 50,
             }}
-        />         
+        />  
+
+
+        <Text style={{fontSize: 15, fontWeight: 500, marginTop: 20}}>Student Class</Text>
+               <DropDownPicker
+                    open={openstudentclass}
+                    value={studentclass}
+                    items={studentclassitems}
+                    setOpen={setOpenstudentclass}
+                    setValue={setstudentclass}
+                    setItems={setstudentclassItems}
+                    placeholder={""}
+                    placeholderStyle={{
+                        color: "#456A5A",
+                    }}
+                    listMode="MODAL"
+                    dropDownContainerStyle={{
+                        borderWidth: 0,
+                        borderRadius: 30,
+                        backgroundColor: "#fff"
+                    }}
+                    labelStyle={{
+                        color: "#000",
+                    }}
+                    listItemLabelStyle={{
+                        color: "#456A5A",
+                    }}
+                    style={{
+                        borderWidth: 1,
+                        //backgroundColor: "#F5F7F6",
+                        minHeight: 50,
+                        marginTop: 10,
+                       // marginBottom: 20
+                    }}
+                    />        
 
 
         {issubmitting ? <ActivityIndicator style={{marginTop: 40}} size="large" color="#1782b6" /> : (
-        <Button mode="contained" onPress={createdata} style={{marginTop: 40}}>
-        Dispatch Fees
+        <Button mode="contained" onPress={setbill} style={{marginTop: 40}}>
+           Set Bill
         </Button>
-        )}
-
-        <Button style={{marginTop: 20}} onPress={()=> {setisrevert(!isrevert)}}>{isrevert ? 'Hide Revert' : 'Revert Fee'}</Button>
-
-        {isrevert && (
-          <>
-          
-        <Divider bold={true} style={{marginTop: 30, borderColor: '#000', borderWidth: 0.5}} />
-
-        <View style={{marginTop: 40}}>
-          <View>
-          <Text style={{fontSize: 15, fontWeight: 500, marginBottom: 10}}>Choose revert Date</Text>
-            <Calendar
-               visible={true}
-                onDayPress={(day) => {
-                    setSelecteddate(day.dateString);
-                }}
-                markedDates={{
-                    [selecteddate]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}
-                }}
-                enableSwipeMonths={true}
-            />
-          </View>
-
-          {isreverting ? <ActivityIndicator style={{marginTop: 40}} size="large" color="#1782b6" /> : (
-
-          <Button mode="contained" onPress={revertdispatch} style={{marginTop: 40}}>
-              Revert Fees
-          </Button>
-
-          )}
-        </View>
-
-        </>
-        )}   
-        
+        )}        
 
 </Card.Content>
         </Card>
@@ -505,7 +421,7 @@ function Dispatchfees() {
     )
 }
 
-export default Dispatchfees;
+export default Billing;
 
 const styles = StyleSheet.create({
     Forminput: {

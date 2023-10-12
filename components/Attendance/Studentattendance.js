@@ -24,6 +24,7 @@ function Studentattendance () {
     const token = useSelector(selecttoken);
     const [search, setSearch] = useState();
     const [isloading, setLoading] = useState(true);
+    const [isatt, setisatt] = useState(false);
     const [data, setData] = useState([]);
     const [filterdata, setFilterdata] = useState([]);
     const router = useRouter();
@@ -48,6 +49,13 @@ function Studentattendance () {
        loaddata();
 
     },[]);
+
+
+    useEffect(()=> {
+
+        fetchstudent();
+ 
+     },[studentclass,attdate]);
 
 
     const loaddata = () => {
@@ -85,11 +93,20 @@ function Studentattendance () {
     const fetchstudent = () => {
 
         if(attdate == ""){
-            alert('Attendance Date Cant Be Empty');
+            //alert('Attendance Date Cant Be Empty');
             return;
         }
+
+        if(studentclass == ""){
+            //alert('Attendance Date Cant Be Empty');
+            return;
+        }
+
+        console.log("setisatt",attdate+" "+studentclass);
+
+        setFilterdata([]);
         
-        setLoading(true);
+        setisatt(true);
         axios.get(schoolzapi+'/record-attendance/'+attdate+'/'+studentclass,
         {
             headers: {Accept: 'application/json',
@@ -97,13 +114,13 @@ function Studentattendance () {
         }
         })
           .then(function (response) {
-            //console.log(response.data);
+           console.log("setisatt",response.data.data);
+           setisatt(false);
            setFilterdata(response.data.data);
-           setLoading(false);
            
           })
           .catch(function (error) {
-            setLoading(false);
+            setisatt(false);
             console.log(error);
           });
     }
@@ -167,7 +184,7 @@ function Studentattendance () {
                 setSelecteddate(day.dateString);
                 setattdate(day.dateString);
                 setShowdialog(false);
-                setstudentclass("");
+                //setstudentclass("");
                 }}
                 markedDates={{
                     [selecteddate]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}
@@ -197,7 +214,7 @@ function Studentattendance () {
                     setOpen={setOpenstudentclass}
                     setValue={setstudentclass}
                     setItems={setstudentclassItems}
-                    onChangeValue={fetchstudent}
+                    //onChangeValue={fetchstudent}
                     placeholder={"Student Class"}
                     placeholderStyle={{
                         color: "#456A5A",
@@ -226,6 +243,8 @@ function Studentattendance () {
                     )}
 
 
+                {isatt ? <ActivityIndicator /> : (
+                
                 <FlatList
                     data={filterdata}
                     renderItem={({item})=> <Recordattendancelist item={item} saveattendance={saveattendance} studentclass={studentclass} attdate={attdate} /> }
@@ -235,6 +254,8 @@ function Studentattendance () {
                     }}
                     keyExtractor={item => item.id}
                 />
+
+                )}
                 </Card.Content>
             </Card> 
 

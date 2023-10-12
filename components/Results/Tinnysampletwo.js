@@ -16,7 +16,7 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
  // import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 import { selectroles, selecttoken, selectuser } from '../../features/userinfoSlice';
 import { schoolzapi } from '../constants';
-import {produce} from "immer";
+//import {produce} from "immer";
 import Resultenter from './Resultenter';
 
   
@@ -25,6 +25,7 @@ import Resultenter from './Resultenter';
     const token = useSelector(selecttoken);
     const role = useSelector(selectroles);
     const user = useSelector(selectuser);
+    const [isShow, setisShow] = useState(false);
     const [isloading, setLoading] = useState(false);
     const [issubmitting, setissubmitting] = useState(false);
     const router = useRouter();
@@ -151,6 +152,7 @@ import Resultenter from './Resultenter';
             position: 'bottom',
         });
 
+        setisShow(false);
 
     }else{
 
@@ -214,6 +216,8 @@ import Resultenter from './Resultenter';
          setinteraction (response.data.ans.interaction); 
          setInteracts (response.data.ans.Interacts); 
          setaddinfo(response.data.ans.addinfo);
+
+         setisShow(true);
     }
 
     
@@ -357,15 +361,15 @@ import Resultenter from './Resultenter';
   }
 
 
-  const answerquetionnaire = useCallback((index,value) => {
-    setloadquestion(
-      produce((draft) => {
-        const question = draft.find((question) => question.id === index);
-        question.answer  = value;
-        console.log("draft",draft);
-      })
-    );
-}, []);
+//   const answerquetionnaire = useCallback((index,value) => {
+//     setloadquestion(
+//       produce((draft) => {
+//         const question = draft.find((question) => question.id === index);
+//         question.answer  = value;
+//         console.log("draft",draft);
+//       })
+//     );
+// }, []);
 
 
 
@@ -376,6 +380,9 @@ import Resultenter from './Resultenter';
 return (
         <>
         {isloading ? <ActivityIndicator size="large" /> : (
+          <>
+          {isShow && (
+            <>
             <View style={styles.container}>
                 <Text style={{backgroundColor: '#1782b6', color: '#fff', padding: 15, width: '100%'}}>Enter Results For : { studentinfo?.fullname}</Text>
                 <ScrollView>
@@ -996,7 +1003,9 @@ return (
                     
                 </ScrollView>
             </View>
-
+            </>
+          )}
+          </>                
         )}
         
 

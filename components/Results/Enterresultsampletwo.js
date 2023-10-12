@@ -16,7 +16,8 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
  // import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 import { selectroles, selecttoken, selectuser } from '../../features/userinfoSlice';
 import { schoolzapi } from '../constants';
-import {produce} from "immer";
+//import {produce} from "immer";
+import { useImmer } from "use-immer";
 import Resultenter from './Resultenter';
 
   
@@ -45,7 +46,7 @@ import Resultenter from './Resultenter';
     
     const examloop = [0,1,2,3,4,5,6,7,8,9];
     const [loadresults, setloadresults] = useState([]);
-    const [loadquestion, setloadquestion] = useState([]);
+    const [loadquestion, setloadquestion] = useImmer([]);
 
     const [grothimp,setgrowthimp] = useState("");
     const [areaneeded,setareaneeded] = useState("");
@@ -250,13 +251,11 @@ function loadquestions(){
 
 
   const answerquetionnaire = useCallback((index,value) => {
-    setloadquestion(
-      produce((draft) => {
-        const question = draft.find((question) => question.id === index);
-        question.answer  = value;
-        console.log("draft",draft);
-      })
-    );
+    setloadquestion((draft) => {
+      const question = draft.find((question) => question.id === index);
+      question.answer  = value;
+      console.log("draft",draft);
+    });
 }, []);
 
 const updateanswer = (index,newvalue) => {

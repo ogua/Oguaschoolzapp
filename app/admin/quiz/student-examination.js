@@ -16,7 +16,8 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
   import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
   import DropDownPicker from 'react-native-dropdown-picker';
   //import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
-  import {produce} from "immer";
+  //import {produce} from "immer";
+  import { useImmer } from "use-immer";
   import { selectexam, setExam } from '../../../features/examSlice'; 
 import Examquestions from '../../../components/Exams/Examquestions';
 import Studentexamslist from '../../../lists/Studentexamslist';

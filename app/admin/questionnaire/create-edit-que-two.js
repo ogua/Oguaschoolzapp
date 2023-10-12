@@ -15,7 +15,8 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { selecttoken } from '../../../features/userinfoSlice';
 import { schoolzapi } from '../../../components/constants';
 import { showMessage } from "react-native-flash-message";
-import {produce} from "immer";
+//import {produce} from "immer";
+import { useImmer } from "use-immer";
 
 
 
@@ -35,7 +36,11 @@ function Createeditquestiontwo () {
     const [order, setorder] = useState("");
     const [title, settitle] = useState("");
 
-    const [question, setquestion] = useState([]);
+   // const [question, setquestion] = useState([]);
+
+    const [question, setquestion] = useImmer([]);
+
+
 
     const [creatoredit, isCreatedorEdit] = useState("");
 
@@ -204,16 +209,26 @@ function Createeditquestiontwo () {
 
     const addmore = useCallback(()=>{
 
-      setquestion(
-        produce((draft) => {
-          draft.push(
-            {id: "que_" + Math.random(),
-            order: `0`,
-            question: '',
-            que_id: id
-          });
-        })
-      );
+      // setquestion(
+      //   produce((draft) => {
+      //     draft.push(
+      //       {id: "que_" + Math.random(),
+      //       order: `0`,
+      //       question: '',
+      //       que_id: id
+      //     });
+      //   })
+      // );
+      
+
+      setquestion(draft => {
+        draft.push(
+          {id: "que_" + Math.random(),
+          order: `0`,
+          question: '',
+          que_id: id
+        });
+      });
     
     
     },[]);

@@ -16,7 +16,8 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
   import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
   import DropDownPicker from 'react-native-dropdown-picker';
   //import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
-  import {produce} from "immer";
+  //import {produce} from "immer";
+  import { useImmer } from "use-immer";
 
   
   function Addquestions () {
@@ -25,7 +26,7 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
     const [search, setSearch] = useState();
     const [isloading, setLoading] = useState(true);
     const [isubmitting, setisubmitting] = useState(false);
-    const [data, setData] = useState(null);
+    const [data, setData] = useImmer(null);
     const router = useRouter();
     const [visible, setVisible] = useState(0);
     const {id} = useSearchParams();
@@ -265,21 +266,19 @@ const savequestions = () => {
 
 const addmore = useCallback(()=>{
 
-  setData(
-    produce((draft) => {
-      draft.push(
-        {
-        id: "que_" + Math.random(),
-        exam_id: id, 
-        question: '',
-        optiona: '',
-        optionb: '',
-        optionc: '',
-        optiond: '',
-        answer: ''
-        });
-    })
-  );
+  setData((draft) => {
+    draft.push(
+      {
+      id: "que_" + Math.random(),
+      exam_id: id, 
+      question: '',
+      optiona: '',
+      optionb: '',
+      optionc: '',
+      optiond: '',
+      answer: ''
+      });
+  });
 
 
 },[]);

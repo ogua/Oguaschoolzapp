@@ -16,7 +16,7 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
  // import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 import { selectroles, selecttoken, selectuser } from '../../features/userinfoSlice';
 import { schoolzapi } from '../constants';
-import {produce} from "immer";
+//import {produce} from "immer";
 
   
   function Resultenter ({schexamscore,schclassscore,stindex,stclass,termid,resubjectitems,resubject,id,examid,index,classscore,examscore,studentid}) {

@@ -1,19 +1,81 @@
 import { useState } from "react";
-import { ActivityIndicator, Linking, TouchableOpacity, View } from "react-native";
-import { Button, Dialog, Divider, List, Menu, Portal, Snackbar, Text, TextInput } from "react-native-paper";
+import { ActivityIndicator, Linking, TouchableOpacity, View, Alert } from "react-native";
+import { Button, Dialog, Divider, List,Menu, Portal, Snackbar, Text, TextInput } from "react-native-paper";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from "expo-router";
 import { useSelector } from "react-redux";
-import { selectcurrency } from "../features/userinfoSlice";
 import { StyleSheet } from "react-native";
+import { selectcurrency, selecttoken } from "../features/userinfoSlice";
+import { schoolzapi } from "../components/constants";
+import axios from 'axios';
+import { showMessage } from "react-native-flash-message";
 
-function Payfeelist ({item,deletedata,payfees,feeisloading}) {
+
+
+function Payfeelist ({item,deletedata,payfees,feeisloading,reloadfees}) {
 
     const [visible, setVisible] = useState(false);
+    const [ispaying, setispaying] = useState(false);
     const [paynow, setpaynow] = useState("");
     
     const currency = useSelector(selectcurrency);
+    const token = useSelector(selecttoken);
     const router = useRouter();
+
+    const payfeenow = (id,paying,delname) => {
+
+        if(paying == ""){
+            return;
+        }
+
+        return Alert.alert(
+            "Are your sure?",
+            "Pay "+currency+paying+" For "+delname,
+            [
+              {
+                text: "No",
+              },
+              {
+                text: "Yes Pay",
+                onPress: () => {
+                    setispaying(true);
+                    const formdata = {
+                        id: id,
+                        payfee: paying
+                    }
+                    axios.post(schoolzapi+'/student-pay-fee',
+                    formdata,
+                    {
+                        headers: {Accept: 'application/json',
+                        Authorization: "Bearer "+token
+                    }
+                    })
+                        .then(function (response) {
+                            if( response.data.error !== undefined){
+                                alert(response.data.error);
+                            }else{
+
+                              showMessage({
+                                message: response.data.data,
+                                type: "success",
+                                position: 'bottom',
+                              });
+
+                              reloadfees();
+                            }
+
+                            //setpaynow("");
+                            setispaying(false);
+                        })
+                        .catch(function (error) {
+                        setispaying(false);
+                        console.log(error);
+                        });
+                },
+              },
+            ]
+          );
+    }
 
 
     return (
@@ -47,8 +109,8 @@ function Payfeelist ({item,deletedata,payfees,feeisloading}) {
                     onChangeText={(e) => setpaynow(e)}
                 />
 
-                {feeisloading ? <ActivityIndicator size="large" /> : (
-                    <Button mode="text" onPress={() => payfees(item?.id,paynow,item?.fee)} style={{marginTop: 10}}>Pay</Button>
+                {ispaying ? <ActivityIndicator size="large" /> : (
+                    <Button mode="text" onPress={() => payfeenow(item?.id,paynow,item?.fee)} style={{marginTop: 10}}>Pay</Button>
                 )}
                 
             </View>

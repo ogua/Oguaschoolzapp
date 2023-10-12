@@ -9,7 +9,9 @@ const initialState = {
   menu: null,
   currency: null,
   school: null,
-  staffrole: null
+  staffrole: null,
+  accstatus: null,
+  printtype: null
 }
 
 export const userinfoSlice = createSlice({
@@ -43,6 +45,12 @@ export const userinfoSlice = createSlice({
   setStaffrole: (state, action) => {
     state.staffrole = action.payload
   },
+  setAccstatus: (state, action) => {
+    state.accstatus = action.payload
+  },
+  setPrinttype: (state, action) => {
+    state.printtype = action.payload
+  },
   logout: (state) => {
     state.user = null;
     state.token = null;
@@ -50,11 +58,13 @@ export const userinfoSlice = createSlice({
     state.userpermission = null;
     state.permissions = null;
     state.staffrole = null;
+    state.accstatus = null;
+    state.printtype = null;
   },
   },
 })
 
-export const {setUser, setToken, setRoles,setStaffrole, setUserpermission, setPermissions, setMenu, setCurrency, logout, setSchool} = userinfoSlice.actions
+export const {setPrinttype, setAccstatus, setUser, setToken, setRoles,setStaffrole, setUserpermission, setPermissions, setMenu, setCurrency, logout, setSchool} = userinfoSlice.actions
 
 export const selectuser = (state) => state.userinfo.user
 export const selecttoken = (state) => state.userinfo.token
@@ -65,5 +75,8 @@ export const selectmenu = (state) => state.userinfo.menu
 export const selectcurrency = (state) => state.userinfo.currency
 export const selectschool = (state) => state.userinfo.school
 export const selectstaffrole = (state) => state.userinfo.staffrole
+export const selectaccstatus = (state) => state.userinfo.accstatus
+export const selectprinttype = (state) => state.userinfo.printtype
+
 
 export default userinfoSlice.reducer

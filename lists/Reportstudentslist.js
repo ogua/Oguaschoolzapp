@@ -24,7 +24,7 @@ function Reportstudentslist ({item,term,opendate,closedate,stclass,reporttype,wo
     const [smssent, setsmssent] = useState(false);
     const [mailsent, setmailsent] = useState(false);
 
-    const [position, setposition] = useState("");
+    const [position, setposition] = useState("0");
     const [fees, setfees] = useState(0);
 
     const [link, setlink] = useState("");
@@ -202,14 +202,14 @@ function Reportstudentslist ({item,term,opendate,closedate,stclass,reporttype,wo
                 <>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                     
-                    <View style={{flex: 1, marginRight: 20}}>
+                    {/* <View style={{flex: 1, marginRight: 20}}>
                         <TextInput
                         keyboardType="numeric"
                         label="position"
                         value={position}
                         onChangeText={(e) => setposition(e)}
                         mode="outlined"/>
-                    </View>
+                    </View> */}
 
                     <View style={{flex: 2}}>
                         <TextInput

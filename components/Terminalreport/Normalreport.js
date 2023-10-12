@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Stack, useRouter } from 'expo-router';
 import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
    ScrollView, StyleSheet, Text, TouchableOpacity, 
-   View, DeviceEventEmitter, Alert, ActivityIndicator } from 'react-native'
+   View, DeviceEventEmitter, Alert, ActivityIndicator, Linking } from 'react-native'
 import { useEffect } from 'react';
 import { Card, Dialog, List, Menu, Portal,Button, Provider, Searchbar, TextInput } from 'react-native-paper';
 import { useState } from 'react';
@@ -10,8 +10,8 @@ import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import * as Imagepicker from 'expo-image-picker';
-import { schoolzapi } from '../constants';
-import { selecttoken } from '../../features/userinfoSlice';
+import { oguaschoolz, schoolzapi } from '../constants';
+import { selectprinttype, selecttoken, selectuser } from '../../features/userinfoSlice';
 import Bookissuedlist from '../../lists/Bookissedlist';
 import { LocaleConfig, Calendar } from "react-native-calendars";
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -22,6 +22,8 @@ import Recordattendancelist from '../../lists/Recordattendancelist';
 function Normalreport () {
 
     const token = useSelector(selecttoken);
+    const user = useSelector(selectuser);
+    const printtype = useSelector(selectprinttype);
     const [search, setSearch] = useState();
     const [isloading, setLoading] = useState(true);
     const [data, setData] = useState([]);
@@ -48,7 +50,8 @@ function Normalreport () {
     const [reporttypeitems, setreporttypeItems] = useState([
         { label: 'Normal Report', value: 'Normal Report'},
         { label: 'Questionnaire 1', value: 'Sample 1'},
-        { label: 'Questionnaire 2', value: 'Sample 2'}
+        { label: 'Questionnaire 2', value: 'Sample 2'},
+        { label: 'Preschool', value: 'Preschool'}
     ]);
 
 
@@ -163,12 +166,8 @@ function Normalreport () {
 
 
     const fetchstudent = () => {
-
+        
         if(term == ""){
-            return;
-        }
-
-        if(attdate == ""){
             return;
         }
 
@@ -183,8 +182,19 @@ function Normalreport () {
         if(reporttype == ""){
             return;
         }
+
         
-        router.push(`/admin/terminalreport/report-students?term=${term}&open=${attdate}&close=${reopenattdate}&stclass=${studentclass}&type=${reporttype}&working=${working}&totstudent=${totstudent}`);
+        const currentDate = new Date();
+        const dateString = currentDate.toISOString();
+
+
+        if(printtype != "0"){
+
+            Linking.openURL(`${oguaschoolz}/terminal-report/${term}/{reopenattdate}/${user.uniqueid == "e6ddc0c0-2e7e-4735-bfe1-4ee02f53834f" ? dateString : attdate}/${studentclass}/${user.uniqueid}/${reporttype}`);
+            return;
+        }
+        
+        router.push(`/admin/terminalreport/report-students?term=${term}&open=${reopenattdate}&close=${user.uniqueid == "e6ddc0c0-2e7e-4735-bfe1-4ee02f53834f" ?  dateString :attdate}&stclass=${studentclass}&type=${reporttype}&working=${working}&totstudent=${totstudent}`);
     }
 
     return (
@@ -271,6 +281,11 @@ function Normalreport () {
                     }}
                     />
 
+    
+    {user.uniqueid != "e6ddc0c0-2e7e-4735-bfe1-4ee02f53834f" && (
+        <>
+    
+    
     <View style={{flexDirection: 'row', alignItems: 'center'}}>
     <Text>School Closes On </Text>
     <Button icon="calendar-range" onPress={() => setShowdialog(true)}> select Date</Button>
@@ -304,6 +319,8 @@ function Normalreport () {
         onChangeText={(e) => setattdate(e)}
         value={attdate} />
 
+</>
+    )}
 
 
 <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 20}}>
@@ -375,7 +392,7 @@ function Normalreport () {
                     />
 
                     {fetchingclass ? <ActivityIndicator size="large"  style={{marginTop: 20}} /> : (
-                        <Button onPress={fetchstudent} mode="contained" style={{marginTop: 20}}>Fetch Details</Button>
+                        <Button onPress={fetchstudent} mode="contained" style={{marginTop: 20}}>{printtype != "0" ? 'View Report' : 'Fetch Details'}</Button>
                     )}
 
          

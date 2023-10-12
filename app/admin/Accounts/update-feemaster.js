@@ -17,7 +17,7 @@ import { TouchableOpacity } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { showMessage } from "react-native-flash-message";
 
-function Createeditfeemaster() {
+function Updatefeemaster() {
 
     const token = useSelector(selecttoken);
     const [amount, setamount] = useState("0");
@@ -30,6 +30,8 @@ function Createeditfeemaster() {
     const [openyear, setOpenyear] = useState(false);
     const [year, setYear] = useState("");
     const [yearitems, setyearItems] = useState([]);
+
+    const [isdeleting, setisdeleting] = useState(false);
 
 
     const [opendscnt, setOpendscnt] = useState(false);
@@ -81,20 +83,16 @@ function Createeditfeemaster() {
     },[]);
 
 
-  const loadademicterm = () => {
+    const loadademicterm = () => {
             
       const mddatas = [0,1,2,3,4,5];
       let mdata = [];
       const currentDate = new Date();
       const currentYear = currentDate.getFullYear();
 
-      mdata.push(
-        { label: `${currentYear + 1} - ${currentYear + 2}`, value: currentYear + 1}
-        );
-
       mddatas.map(item =>  mdata.push(
-      { label: `${currentYear - item} - ${currentYear - item + 1}`, value: currentYear - item}
-      ))
+        { label: item == '0' ? `${currentYear} - ${currentYear + item + 1}` : `${currentYear + item} - ${currentYear + item + 1}`, value: currentYear + item}
+        ))
       setyearItems(mdata);
   }
 
@@ -157,6 +155,18 @@ function Createeditfeemaster() {
     }
 
 
+    const loadfees = (data) => {
+
+      const mddatas = data;
+        
+        let mdata = [];
+  
+         mddatas.map(item =>  mdata.push({id: parseInt(item?.id), fee: parseInt(item?.feeid), amount: item?.exfeeamount, other: item?.exofeeamount, dscnt: parseInt(item?.status)}))
+        
+         setaddmore(mdata);            
+      
+    }
+
 
     const loadedit = () => {
       setLoading(true);
@@ -170,10 +180,15 @@ function Createeditfeemaster() {
           
           setstudentclass(parseInt(results.data.data.classid));
           setacdemicterm(parseInt(results.data.data.semesterid));
-          setfee(parseInt(results.data.data.feeid));
-          setamount(results.data.data.feeamount);
-          setofee(results.data.data.ofeeamount);
-          setYear(results.data.data.year);
+          //setfee(parseInt(results.data.data.feeid));
+          //setamount(results.data.data.feeamount);
+          //setofee(results.data.data.ofeeamount);
+          //setYear(results.data.data.year);
+          setYear(parseInt(results.data.data.year));
+
+          loadfees(results.data.data.fees);
+
+         // console.log("year",results.data.data.year);
 
           setLoading(false);
           
@@ -300,52 +315,50 @@ function Createeditfeemaster() {
 
     const updatedata = () => {
 
-        if(studentclass == ""){
-            alert('student class cant be empty');
-            return;
-          }
-  
-          if(acdemicterm == ""){
-              alert('Acdemic term cant be empty');
-              return;
-          }
-  
-          if(fee == ""){
-            alert('Fee cant be empty');
-            return;
-          }
-  
-          if(amount == ""){
-            alert('Amount cant be empty');
-            return;
-          }
-  
-      
-        if(year == ""){
-          alert('Year cant be empty');
+      if(studentclass == ""){
+        alert('student class cant be empty');
+        return;
+      }
+
+      if(acdemicterm == ""){
+          alert('Acdemic term cant be empty');
           return;
       }
+
   
-          setIssubmitting(true);
-  
-          const formdata = {
-           studentclass: studentclass,
-           acdemicterm: acdemicterm,
-           fee: fee,
-           amount: amount,
-           ofee: ofee,
-           year: year
-          }
+    if(year == ""){
+      alert('Year cant be empty');
+      return;
+    }
+
+    setIssubmitting(true);
+
+      const formdata = {
+       studentclass: studentclass,
+       fee: addmore,
+       acdemicterm: acdemicterm,
+       year: year
+      }
+
+      console.log("formdata",formdata);
     
-      axios.patch(schoolzapi+'/fee-master/'+id,
+      axios.post(schoolzapi+'/fee-master/'+id,
       formdata,
       {
           headers: {Accept: 'application/json',
+          'Content-Type': 'multipart/form-data',
           Authorization: "Bearer "+token
       }
       })
         .then(function (response) {
           setIssubmitting(false);
+
+          showMessage({
+            message: 'Info updated Successfully!',
+            type: "success",
+            position: 'bottom',
+          });
+          
           DeviceEventEmitter.emit('subject.added', {});
           router.back();
         })
@@ -367,15 +380,57 @@ function Createeditfeemaster() {
 
   const addmorefee = () => {
     //const newfee = [...addmore,Math.random(0,10)];
-    const newfee = [...addmore,{fee: '', amount: 0, other: 0, dscnt: user.uniqueid == "23cd37b8-9657-420c-b9d2-6651f5c080ce" || user.uniqueid == "c542417f-0671-439e-8f76-6c8ddb729f02" ? 1 : 0}];
+    const newfee = [...addmore,{id: 0, fee: '', amount: 0, other: 0, dscnt: user.uniqueid == "23cd37b8-9657-420c-b9d2-6651f5c080ce" || user.uniqueid == "c542417f-0671-439e-8f76-6c8ddb729f02" ? 1 : 0}];
     console.log("newfee",newfee);
     setaddmore(newfee);
    }
 
-   const removefee = (index) => {
-    const updatedItems = [...addmore];
-    updatedItems.splice(index, 1);
-    setaddmore(updatedItems);
+   const removefee = (index,id) => {
+
+    return Alert.alert(
+      "Are your sure?",
+      "You want to remove fee",
+      [
+        {
+          text: "No",
+        },
+        {
+          text: "Yes Remove",
+          onPress: () => {
+
+            if(id == "0"){
+
+              const updatedItems = [...addmore];
+              updatedItems.splice(index, 1);
+              setaddmore(updatedItems);
+
+            }else{
+
+              setisdeleting(true);
+              axios.delete(schoolzapi+'/fee-item-delete/'+id,
+              {
+                  headers: {Accept: 'application/json',
+                  Authorization: "Bearer "+token
+              }
+              })
+                  .then(function (response) {
+                    const updatedItems = [...addmore];
+                    updatedItems.splice(index, 1);
+                    setaddmore(updatedItems);
+                    setisdeleting(false);
+                  })
+                  .catch(function (error) {
+                   setisdeleting(false);
+                  console.log(error);
+                  });
+
+            }
+          },
+        },
+      ]
+    )
+
+
    }
 
   const updatefee = (index,newvalue) => {
@@ -524,7 +579,7 @@ function Createeditfeemaster() {
                     }}
                     />
 
-      <Text style={{fontSize: 15, fontWeight: 50, marginTop: 20}}>School Fees Amount</Text>
+      <Text style={{fontSize: 15, fontWeight: 500, marginTop: 20}}>School Fees Amount</Text>
         <TextInput
         keyboardType="numeric"
         mode="outlined"
@@ -537,7 +592,7 @@ function Createeditfeemaster() {
           {user.uniqueid == "23cd37b8-9657-420c-b9d2-6651f5c080ce" || user.uniqueid == "c542417f-0671-439e-8f76-6c8ddb729f02" ? (
             <>
 
-      <Text style={{fontSize: 15, fontWeight: 50, marginTop: 20}}>Other Fees Total</Text>
+      <Text style={{fontSize: 15, fontWeight: 500, marginTop: 20}}>Other Fees Total</Text>
         <TextInput
         keyboardType="numeric"
         mode="outlined"
@@ -549,7 +604,7 @@ function Createeditfeemaster() {
           ) : (
             <>
 
-      <Text style={{fontSize: 15, fontWeight: 50, marginTop: 20}}>Other Fees Total</Text>
+      <Text style={{fontSize: 15, fontWeight: 500, marginTop: 20}}>Other Fees Total</Text>
         <TextInput
         keyboardType="numeric"
         mode="outlined"
@@ -557,7 +612,7 @@ function Createeditfeemaster() {
         onChangeText={(e) => updateother(index,e)}
         />
 
-            <Text style={{fontSize: 15, fontWeight: 50, marginTop: 20}}>Will Discount Affect Fee ?</Text>
+            <Text style={{fontSize: 15, fontWeight: 500, marginTop: 20}}>Will Discount Affect Fee ?</Text>
               <DropDownPicker
                     open={opendscnt}
                     value={addmore[index]?.dscnt}
@@ -596,9 +651,9 @@ function Createeditfeemaster() {
           </>
         )}
 
-      {user.accnt == "1" && (
+      {accnt == "1" && (
           <>
-          <Text style={{fontSize: 15, fontWeight: 50, marginTop: 20}}>Will Discount Affect Fee ?</Text>
+          <Text style={{fontSize: 15, fontWeight: 500, marginTop: 20}}>Will Discount Affect Fee ?</Text>
               <DropDownPicker
                     open={opendscnt}
                     value={addmore[index]?.dscnt}
@@ -635,9 +690,18 @@ function Createeditfeemaster() {
           </>
         )}
 
-         <Button icon="delete" onPress={()=> removefee(index)} textColor='red'>
+
+        {isdeleting ? (
+          <ActivityIndicator />
+        ) : (
+          <>
+          <Button icon="delete" onPress={()=> removefee(index,addmore[index]?.id)} textColor='red'>
            Remove Fee
-        </Button>
+          </Button>
+          </>
+        )}
+
+         
 
         <Divider />
 
@@ -730,7 +794,7 @@ function Createeditfeemaster() {
     )
 }
 
-export default Createeditfeemaster;
+export default Updatefeemaster;
 
 const styles = StyleSheet.create({
     Forminput: {

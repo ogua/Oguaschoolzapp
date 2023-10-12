@@ -298,7 +298,7 @@ function Enterresults () {
                     }}
                     />
 
-                   <Button onPress={fetchstudent} mode="contained" style={{marginTop: 20}}>Fetch Details</Button>
+                   <Button onPress={fetchstudent} mode="contained" style={{marginTop: 20}}>Fetch</Button>
 
          
                     </>

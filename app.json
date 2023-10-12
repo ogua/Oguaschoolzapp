@@ -8,7 +8,7 @@
     ],
     "name": "OguaSchoolz",
     "slug": "oguaschoolz-app",
-    "version": "1.2.4",
+    "version": "1.3.7",
     "orientation": "portrait",
     "icon": "./assets/logo-128.png",
     "primaryColor": "#fff",
@@ -20,17 +20,18 @@
     "android": {
       "package": "com.oguaschoolz.app",
       "playStoreUrl": "https://play.google.com/store/apps/details?id=com.oguaschoolz.app",
-      "versionCode": 5,
+      "versionCode": 9,
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo-128.png",
         "backgroundColor": "#fff"
       },
-      "permissions":[
+      "permissions": [
         "com.google.android.gms.permission.AD_ID",
         "READ_EXTERNAL_STORAGE",
         "READ_INTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE",
-        "CAMERA"
+        "CAMERA",
+        "READ_PHONE_STATE"
       ]
     },
     "ios": {
@@ -58,19 +59,8 @@
           "icon": "./assets/logo-128.png",
           "color": "#ffffff"
         }
-      ],
-      [
-        "expo-updates",
-        {
-          "username": "Ogua"
-        }
       ]
     ],
-    "updates": {
-      "enabled": true,
-      "fallbackToCacheTimeout": 15000,
-      "checkAutomatically": "ON_ERROR_RECOVERY"
-    },
     "extra": {
       "eas": {
         "projectId": "242237b3-473a-4027-9be4-9c50b748b13d"

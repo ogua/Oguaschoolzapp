@@ -16,24 +16,21 @@ function Visitorslist ({item,deletedata}) {
         >
 
         <List.Item
-            title={()=> (
-                <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <Ionicons name="man" style={{marginRight: 10}} size={20} />
-                    <Text style={{flex: 1, fontSize: 18}}>{item?.fullname}</Text>
-                     <Text style={{fontSize: 10}}>{item?.created_at}</Text>
-                     {/* <Ionicons name="ellipsis-vertical-sharp" size={20} /> */}
-                </View>
-            )}
+            title={item?.fullname}
             titleEllipsizeMode="middle"
-            description={()=>(
-                <>
-                <Text style={{fontSize: 12, color: '#abc',  marginLeft: 30}}>In: {item?.intime} - Out: {item?.outtime}, ID Card: ({item?.idcard})</Text>
-                <Text style={{fontSize: 13,marginLeft: 30}}>{item?.purpose}</Text>
-                </>
-            )}
-            descriptionNumberOfLines={5}
+            description={`${item?.purpose}`}
+            descriptionNumberOfLines={15}
             //left={props => <Ionicons name="help-circle" {...props} size={20} />}
-            //right={props => <Ionicons name="ellipsis-vertical-sharp" {...props} size={20} />}
+            left={props => <View>
+                <Text style={{fontSize: 10,color: '#17a2b8'}}>{item?.intime}</Text>
+                <Text style={{fontSize: 10,color: 'red'}}>{item?.outtime}</Text>
+                </View>
+                }
+
+                right={props => <View>
+                    <Text style={{fontSize: 10}}>{item?.created_at}</Text>
+                    </View>
+                    }
         />
             
         </TouchableOpacity>

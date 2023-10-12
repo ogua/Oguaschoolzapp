@@ -63,6 +63,9 @@ function Promotestudent () {
 
     const loadstudents = () => {
 
+      setData([]);
+      setFilterdata([]);
+      
       setLoading(true);
       axios.get(schoolzapi+'/student-info-by-class/'+value,
       {
@@ -186,12 +189,12 @@ function Promotestudent () {
                     />
                 </View>
 
-            <Searchbar
+            {/* <Searchbar
                 placeholder='Search....'
                onChangeText={(text) => searchFilterFunction(text)}
                mode="outlined"
                 value={search}
-            />
+            /> */}
 
         <ScrollView
         refreshControl={

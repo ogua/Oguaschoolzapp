@@ -1,7 +1,7 @@
 import { Redirect, Stack, useFocusEffect, useRouter } from 'expo-router';
 import { ActivityIndicator, Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, 
-    TextInput, ToastAndroid, View } from 'react-native';
-import {Button} from 'react-native-paper';
+     ToastAndroid, View } from 'react-native';
+import {Button, TextInput} from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useEffect, useRef, useState } from 'react';
@@ -120,23 +120,15 @@ function Parentlogin() {
             </View>
             <View style={styles.formcontainer}>
                 <View style={styles.formgroup}>
-                    <Text>Student ID</Text>
-                    <View style={styles.inputextcontainer}>
-                        <Ionicons name="mail" style={styles.formgroundinputicon} size={20} color="#000" />
-                       <TextInput ref={emailref} placeholder='Enter Student ID' name="email" onChangeText={ (e) => setemail(e) } style={styles.formgroundinput} id="email"  />
-                    </View>
+                    <TextInput ref={emailref} mode="outlined"  left={<TextInput.Icon icon="mail" />} placeholder='Enter Student ID' name="email" onChangeText={ (e) => setemail(e) } id="email"  />
                 </View>
 
                 <View style={styles.formgroup}>
-                    <Text>Phone number</Text>
-                    <View style={styles.inputextcontainer}>
-                        <Ionicons name="key-outline" style={styles.formgroundinputicon} size={20} color="#000" />
-                        <TextInput name="password" placeholder='Enter Your Phone number' secureTextEntry={true} id="password" onChangeText={(e) => setpassword(e)} style={styles.formgroundinput} />
-                    </View>
+                <TextInput name="password" mode="outlined" left={<TextInput.Icon icon="key" />} placeholder='Enter Your Phone number' secureTextEntry={true} id="password" onChangeText={(e) => setpassword(e)}  />
                 </View>
 
                 <TouchableOpacity style={styles.loginbtn} onPress={Userlogin}>
-                    {issumit ? <ActivityIndicator size="large" color="#fff" /> : <Text style={styles.loginbtntext}>Login</Text>}
+                    {issumit ? <ActivityIndicator color="#fff" /> : <Text style={styles.loginbtntext}>Login</Text>}
                 </TouchableOpacity>
                 
 

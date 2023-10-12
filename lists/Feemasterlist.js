@@ -1,21 +1,65 @@
 import { useState } from "react";
 import { Linking, TouchableOpacity, View } from "react-native";
-import { Button, Dialog, Divider, List, Menu, Portal, Snackbar, Text } from "react-native-paper";
+import { Button, Dialog, Divider, List, Menu, Portal, Snackbar, Text, MD3Colors } from "react-native-paper";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from "expo-router";
 import { useSelector } from "react-redux";
-import { selectcurrency } from "../features/userinfoSlice";
+import { selectaccstatus, selectcurrency } from "../features/userinfoSlice";
 import { StyleSheet } from "react-native";
 
 function Feemasterlist ({item,deletedata}) {
 
     const [visible, setVisible] = useState(false);
     const currency = useSelector(selectcurrency);
-    const router = useRouter();    
+    const accnt = useSelector(selectaccstatus);
+    const router = useRouter();   
 
     return (
         <>
-        <TouchableOpacity style={{backgroundColor: '#fff', padding: 10}}
+         <List.AccordionGroup>
+            <List.Accordion title={item?.class} id={item?.id}
+             description={`${item?.semester} - ${item?.exyear} Academic year`}
+             right={props => (
+                <>
+                <Text style={{color: '#17a2b8'}}>{accnt == '1' && item?.extotalamount}</Text>
+                </>
+            )}
+            >
+            <View style={{backgroundColor: '#fff', borderBottomColor: '#000', borderBottomWidth: 1 }}>
+            
+            {item.fees.map((feeitem,index) => (
+                <>
+                    <Divider />
+                    <List.Item title={feeitem?.fee} key={item?.id} 
+                     right={props => (
+                        <>
+                        <Text style={{color: feeitem?.status != '0' && 'red'}}>{feeitem?.totalamount}</Text>
+                        </>
+                    )}
+                    />
+                    <Divider />
+                </>
+            ))}
+
+
+                <View style={{flexDirection: 'row', justifyContent: "space-evenly"}}>
+                    <Button onPress={()=> router.push(`/admin/Accounts/update-feemaster?id=${item?.id}`)} icon="square-edit-outline">Edit</Button>
+                    <Button  onPress={()=> deletedata(item?.id,item?.class+' ('+item?.fee+')')} icon="delete-forever-outline">Delete</Button>
+                </View>
+            
+                {/* <Menu.Item style={{marginLeft: 10}} leadingIcon="square-edit-outline" onPress={()=> router.push(`/admin/Accounts/update-feemaster?id=${item?.id}`)} title="Edit" />
+                <Divider />
+                <Menu.Item style={{marginLeft: 10}} leadingIcon="delete-forever-outline" title="Delete" onPress={()=> deletedata(item?.id,item?.class+' ('+item?.fee+')')} />
+                 <Divider />
+                 <Menu.Item style={{marginLeft: 10}} leadingIcon="content-duplicate" title="Duplicate" onPress={()=> deletedata(item?.id,item?.class+' ('+item?.fee+')')} /> */}
+            </View>
+            
+            </List.Accordion>
+        </List.AccordionGroup>
+
+
+
+        {/* <TouchableOpacity style={{backgroundColor: '#fff', padding: 10}}
         onPress={() => setVisible(! visible)}
         >
 
@@ -25,7 +69,6 @@ function Feemasterlist ({item,deletedata}) {
                     <Ionicons name="cash" size={20} style={{marginRight: 10}} />
                     <Text style={{flex: 1, fontSize: 18}}>{item?.class}</Text>
                      <Text style={{fontSize: 10}}>{item?.semester}</Text>
-                     {/* <Ionicons name="ellipsis-vertical-sharp" size={20} /> */}
                 </View>
             )}
             titleEllipsizeMode="middle"
@@ -46,11 +89,9 @@ function Feemasterlist ({item,deletedata}) {
                 </>
             )}
             descriptionNumberOfLines={5}
-            //left={props => <Ionicons name="help-circle" {...props} size={20} />}
-            //right={props => <Ionicons name="ellipsis-vertical-sharp" {...props} size={20} />}
         />
             
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {visible && (
             <View style={{backgroundColor: '#fff', borderBottomColor: '#000', borderBottomWidth: 1 }}>

@@ -22,6 +22,7 @@ function Payrollgeneratelist ({item,saveattendance,attdate,studentclass,month,ye
     const currency = useSelector(selectcurrency);
     const [issubmitting, setissubmitting] = useState(false);
     const [status, setstatus] = useState("");
+    const [paid, setpaid] = useState(false);
     const router = useRouter();
 
     const [intime, setIntime] = useState("");
@@ -61,6 +62,7 @@ function Payrollgeneratelist ({item,saveattendance,attdate,studentclass,month,ye
             .then(function (response) {
                 setvisibility(false);
                 setLoading(false);
+                setpaid(true);
                 showMessage({
                   message: 'Payment Info updated Successfully!',
                   type: "success",
@@ -132,7 +134,7 @@ function Payrollgeneratelist ({item,saveattendance,attdate,studentclass,month,ye
                 );
             }
 
-            if(item?.payroll.status == "Paid"){
+            if(item?.payroll.status == "Paid" || paid){
                 return (
                    <><Button mode="contained">Paid</Button>
                     <Button mode="text" onPress={() => router.push('/admin/staff/generate-payroll?userid='+item?.user_id+'&month='+month+"&year="+year)}>View</Button></>

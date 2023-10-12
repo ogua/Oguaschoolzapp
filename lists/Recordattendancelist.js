@@ -72,7 +72,8 @@ function Recordattendancelist ({item,saveattendance,attdate,studentclass}) {
 
     useEffect(() => {
         
-        
+        console.log("attendance",item?.attendance);
+
         if(item?.attendance !== null){
 
             if(item?.attendance?.attendance == "P"){

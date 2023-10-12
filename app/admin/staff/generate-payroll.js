@@ -77,8 +77,9 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
       }
     })
     .then(function (results) {
-      setLoading(false);
+      
       setData(results.data.data);
+      console.log("pic",results.data.data.pic);
       
       setbasic(results.data.data.salary);
       //setearns();
@@ -87,6 +88,8 @@ import { FlatList,Image, Platform, RefreshControl, SafeAreaView,
       settax("0");
       // setnetsalary();
       loadpayroll(results.data.data.payroll);
+
+      setLoading(false);
       
     }).catch(function(error){
       setLoading(false);
@@ -381,6 +384,8 @@ const savepayoll = () => {
       position: 'bottom',
     });
 
+    DeviceEventEmitter.emit('subject.added', {});
+
     router.back();
     
   })
@@ -398,7 +403,8 @@ return (
   <SafeAreaView>
   <Stack.Screen
   options={{
-    headerShown: false
+    headerShown: true,
+    headerTitle: 'Generate'
   }}
   />
   
@@ -412,15 +418,17 @@ return (
   <Card>
   <Card.Content>
   
-  <TouchableOpacity style={{flexDirection: 'row',marginTop: 20}} onPress={()=> router.back()}>
+  {/* <TouchableOpacity style={{flexDirection: 'row',marginTop: 20}} onPress={()=> router.back()}>
   <Ionicons name="close-circle" size={30} />
-  </TouchableOpacity>
-  
+  </TouchableOpacity> */}
+
+  {isloading ? <ActivityIndicator /> : (
+    <>
   
   <View style={{alignItems: 'center'}}>
   
   <Avatar.Image 
-  source={{uri: data.pic}}
+  source={{uri: data?.pic}}
   size={150}
   />
   
@@ -576,6 +584,8 @@ return (
           <Button onPress={savepayoll} mode="contained" style={{marginVertical: 20}}>Save Payroll</Button>
       )}
       
+      </>
+  )}
       </Card.Content>
       </Card> 
       

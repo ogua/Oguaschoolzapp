@@ -1,11 +1,10 @@
 import axios from 'axios';
 import { Redirect, Stack, useRouter, useSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, DeviceEventEmitter, KeyboardAvoidingView, PermissionsAndroid, SafeAreaView, ScrollView, StyleSheet, Text, ToastAndroid, View } from 'react-native'
-import { Avatar, Button, Card, TextInput } from 'react-native-paper';
+import {  Alert, DeviceEventEmitter, KeyboardAvoidingView, PermissionsAndroid, SafeAreaView, ScrollView, StyleSheet, Text, ToastAndroid, View } from 'react-native'
+import { ActivityIndicator, Avatar, Button, Card, Divider, TextInput } from 'react-native-paper';
 import { useSelector } from 'react-redux';
-import { schoolzapi } from '../../../components/constants';
-import { selecttoken } from '../../../features/userinfoSlice';
+import { selectaccstatus, selecttoken, selectuser } from '../../features/userinfoSlice';
 import { useEffect } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { TimePickerModal } from 'react-native-paper-dates';
@@ -16,17 +15,32 @@ import { cos } from 'react-native-reanimated';
 import { TouchableOpacity } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { showMessage } from "react-native-flash-message";
+import { oguaschoolz, schoolzapi } from '../constants';
+import { Linking } from 'react-native';
 
-function Requestfees() {
+function Viewbill() {
 
     const token = useSelector(selecttoken);
-    const [amount, setamount] = useState("");
-    const [ofee, setofee] = useState("");
+    const [amount, setamount] = useState("0");
+    const [ofee, setofee] = useState("0");
 
     const [openstudentclass, setOpenstudentclass] = useState(false);
     const [studentclass, setstudentclass] = useState("");
     const [studentclassitems, setstudentclassItems] = useState([]);
     
+    const [openyear, setOpenyear] = useState(false);
+    const [year, setYear] = useState("");
+    const [yearitems, setyearItems] = useState([]);
+
+
+    const [opendscnt, setOpendscnt] = useState(false);
+    const [dscnt, setdscnt] = useState(0);
+    const [dscntitems, setdscntItems] = useState([
+      { label: 'Yes', value: 1},
+      { label: 'No', value: 0}
+    ]);
+
+
     const [openacdemicterm, setOpenacdemicterm] = useState(false);
     const [acdemicterm, setacdemicterm] = useState("");
     const [acdemictermitems, setacdemictermItems] = useState([]);
@@ -40,12 +54,15 @@ function Requestfees() {
     const [creatoredit, isCreatedorEdit] = useState();
     const [isloading, setLoading] = useState(false);
     const [issubmitting, setIssubmitting] = useState(false);
+
+    const [addmore, setaddmore] = useState([]);
+
+    const user = useSelector(selectuser);
+    const accnt = useSelector(selectaccstatus);
+
+
     const router = useRouter();
     const {id} = useSearchParams();
-
-    const [openyear, setOpenyear] = useState(false);
-    const [year, setYear] = useState("");
-    const [yearitems, setyearItems] = useState([]);
 
   
 
@@ -64,11 +81,11 @@ function Requestfees() {
       let mdata = [];
       const currentDate = new Date();
       const currentYear = currentDate.getFullYear();
-  
+
       mdata.push(
         { label: `${currentYear + 1} - ${currentYear + 2}`, value: currentYear + 1}
         );
-  
+
       mddatas.map(item =>  mdata.push(
       { label: `${currentYear - item} - ${currentYear - item + 1}`, value: currentYear - item}
       ))
@@ -76,6 +93,15 @@ function Requestfees() {
   }
 
       
+      function getstudentclass() {
+
+        return axios.get(schoolzapi+'/student-classes',
+        {
+            headers: {Accept: 'application/json',
+            Authorization: "Bearer "+token
+        }
+        });
+      }
 
       function getacademicterm() {
 
@@ -101,23 +127,70 @@ function Requestfees() {
      const loaddata = () => {
         setLoading(true);
         
-        Promise.all([getacademicterm(), getfee()])
+        Promise.all([getstudentclass(), getacademicterm()])
         .then(function (results) {
             ///setLoading(false);
-            const academicterm = results[0];
-            const fee = results[1];
+            const stclass = results[0];
+            const academicterm = results[1];
+            //const fee = results[2];
 
+            loadstclass(stclass.data.data);
             loadacademicterm(academicterm.data.data);
-            loadfee(fee.data.data);
+            //loadfee(fee.data.data);
+
+            // if(id == undefined){
+            //   setLoading(false);
+            // }
 
         }).catch(function(error){
-          
             setLoading(false);
             const acct = error[0];
             const studeclass = error[1];
             
         });
     }
+
+
+
+    const loadedit = () => {
+      setLoading(true);
+      
+      axios.get(schoolzapi+'/fee-master/show/'+id,
+      {
+          headers: {Accept: 'application/json',
+          Authorization: "Bearer "+token
+      }
+      }).then(function (results) {
+          
+          setstudentclass(parseInt(results.data.data.classid));
+          setacdemicterm(parseInt(results.data.data.semesterid));
+          setfee(parseInt(results.data.data.feeid));
+          setamount(results.data.data.feeamount);
+          setofee(results.data.data.ofeeamount);
+          setYear(results.data.data.year);
+
+          setLoading(false);
+          
+
+      }).catch(function(error){
+          setLoading(false);
+          const acct = error[0];
+          const studeclass = error[1];
+          
+      });
+  }
+
+    const loadstclass = (data) => {
+            
+        const mddatas = data;
+        
+        let mdata = [];
+  
+         mddatas.map(item =>  mdata.push({ label: item?.name, value: item?.id}))
+        
+         setstudentclassItems(mdata);
+    }
+
 
     const loadacademicterm = (data) => {
             
@@ -128,6 +201,8 @@ function Requestfees() {
          mddatas.map(item =>  mdata.push({ label: item?.name, value: item?.id}))
         
          setacdemictermItems(mdata);
+
+         setLoading(false);
     }
 
 
@@ -141,72 +216,103 @@ function Requestfees() {
         
          setfeeItems(mdata);
 
-        setLoading(false);
+
+         if(id == undefined){
+              setLoading(false);
+          }
+
+         //setLoading(false);
     }
 
 
-    const createdata = () => {
+    const Viewbill = () => {
+
+        if(studentclass == ""){
+          return;
+        }
 
         if(acdemicterm == ""){
-            alert('Acdemic term cant be empty');
             return;
         }
 
-        if(fee == ""){
-          alert('Fee cant be empty');
-          return;
-        }
+    
+      if(year == ""){
+        return;
+      }
 
-        if(amount == ""){
-          alert('Amount cant be empty');
-          return;
-        }
-
-        setIssubmitting(true);
-
-        const formdata = {
-         id: id,
-         feeid: fee,
-         feeamount: amount,
-         term: acdemicterm,
-         year,
-        }
-
-        axios.post(schoolzapi+'/request-fee-for-student',
-        formdata,
-        {
-            headers: {Accept: 'application/json',
-            Authorization: "Bearer "+token
-        }
-        })
-          .then(function (response) {
-
-            setIssubmitting(false);
-
-            if( response.data.error !== undefined){
-                alert(response.data.error);
-            }else{
-
-                showMessage({
-                    message: response.data.data,
-                    type: "success",
-                    position: 'bottom',
-                  });
-                
-                DeviceEventEmitter.emit('subject.added', {});
-                router.back();
-            }
-            
-          })
-          .catch(function (error) {
-            setIssubmitting(false);
-            console.log("error",error);
-          });
+      Linking.openURL(`${oguaschoolz}/app-view-bill/${acdemicterm}/${year}/${studentclass}/${user?.uniqueid}`);
+     
     }
 
-
+   
   const refresh = () => {
     loaddata();
+
+    if(id !== undefined){
+      loadedit();
+    }
+    
+  }
+
+
+  const addmorefee = () => {
+    //const newfee = [...addmore,Math.random(0,10)];
+    const newfee = [...addmore,{fee: '', amount: 0, other: 0, dscnt: user.uniqueid == "23cd37b8-9657-420c-b9d2-6651f5c080ce" || user.uniqueid == "c542417f-0671-439e-8f76-6c8ddb729f02" ? 1 : 0}];
+    console.log("newfee",newfee);
+    setaddmore(newfee);
+   }
+
+   const removefee = (index) => {
+    const updatedItems = [...addmore];
+    updatedItems.splice(index, 1);
+    setaddmore(updatedItems);
+   }
+
+  const updatefee = (index,newvalue) => {
+    const value = addmore.map((item,nindex) => {
+      if(nindex === index){
+        return {...item, fee: newvalue};
+      }
+      console.log("newfee",item);
+      return item;
+    });
+        
+    setaddmore(value);
+  }
+
+
+  const updateamount = (index,newvalue) => {
+    const value = addmore.map((item,nindex) => {
+      if(nindex === index){
+        return {...item, amount: newvalue};
+      }
+      return item;
+    });
+        
+    setaddmore(value);
+  }
+
+  const updateother = (index,newvalue) => {
+    const value = addmore.map((item,nindex) => {
+      if(nindex === index){
+        return {...item, other: newvalue};
+      }
+      return item;
+    });
+        
+    setaddmore(value);
+  }
+
+
+  const updatedscnt = (index,newvalue) => {
+    const value = addmore.map((item,nindex) => {
+      if(nindex === index){
+        return {...item, dscnt: newvalue};
+      }
+      return item;
+    });
+        
+    setaddmore(value);
   }
 
 
@@ -214,20 +320,16 @@ function Requestfees() {
       <SafeAreaView>
         <Stack.Screen
             options={{
-                headerTitle: 'Request Fee',
-                presentation: 'formSheet',
-                // headerLeft: () => (
-                //     <TouchableOpacity onPress={() => router.back()}>
-                //           <Ionicons name="close-circle" size={30} style={{marginRight: 10}} />
-                //     </TouchableOpacity>
-                // ),
-                headerRight: () => (
-                    <>
-                      <TouchableOpacity onPress={refresh}>
-                        <Ionicons name="refresh" size={30} />
-                      </TouchableOpacity>
-                    </>
-                  )
+                headerTitle: 'View Bill',
+                //headerShown: false,
+                presentation: "card",
+                // headerRight: () => (
+                //     <>
+                //       <TouchableOpacity onPress={refresh}>
+                //         <Ionicons name="refresh" size={30} />
+                //       </TouchableOpacity>
+                //     </>
+                //   )
             }}
 
         />
@@ -240,8 +342,7 @@ function Requestfees() {
         <Card>
         <Card.Content>
 
-            
-            <Text style={{fontSize: 15, fontWeight: 500}}>Academic Term</Text>
+        <Text style={{fontSize: 15, fontWeight: 500}}>Academic Term</Text>
               <DropDownPicker
                     open={openacdemicterm}
                     value={acdemicterm}
@@ -269,12 +370,12 @@ function Requestfees() {
                         borderWidth: 1,
                         //backgroundColor: "#F5F7F6",
                         minHeight: 50,
-                       // marginBottom: 20
+                        //marginBottom: 20
                     }}
                     />
 
-                <Text style={{fontSize: 15, fontWeight: 500, marginTop: 20}}>Academic Year</Text>
-                <DropDownPicker
+        <Text style={{fontSize: 15, fontWeight: 500, marginTop: 20}}>Academic Year</Text>
+        <DropDownPicker
                     open={openyear}
                     value={year}
                     setValue={setYear}
@@ -303,19 +404,17 @@ function Requestfees() {
                         minHeight: 50,
                         marginBottom: 20
                     }}
-                />
+                    />
 
-
-
-             <Text style={{fontSize: 15, fontWeight: 500}}>Fee</Text>
-              <DropDownPicker
-                    open={openfee}
-                    value={fee}
-                    items={feeitems}
-                    setOpen={setOpenfee}
-                    setValue={setfee}
-                    setItems={setfeeItems}
-                    placeholder={"Choose Fee"}
+<Text style={{fontSize: 15, fontWeight: 500}}>Student Class</Text>
+               <DropDownPicker
+                    open={openstudentclass}
+                    value={studentclass}
+                    items={studentclassitems}
+                    setOpen={setOpenstudentclass}
+                    setValue={setstudentclass}
+                    setItems={setstudentclassItems}
+                    placeholder={""}
                     placeholderStyle={{
                         color: "#456A5A",
                     }}
@@ -335,26 +434,16 @@ function Requestfees() {
                         borderWidth: 1,
                         //backgroundColor: "#F5F7F6",
                         minHeight: 50,
-                        marginBottom: 20
+                       // marginTop: 10,
+                       // marginBottom: 20
                     }}
                     />
 
-      <Text style={{fontSize: 15, fontWeight: 500}}>School Fees Amount</Text>
-        <TextInput
-        style={styles.Forminputhelp}
-        keyboardType="numeric"
-        mode="outlined"
-        value={amount}
-        onChangeText={(e) => setamount(e)}
-        />
+      <Button mode="contained" onPress={Viewbill} style={{marginTop: 30}}>
+        View
+      </Button>
 
-        {issubmitting ? <ActivityIndicator size="large" color="#1782b6" /> : (
-        <Button mode="contained" onPress={createdata} style={{marginTop: 30}}>
-           Request
-        </Button>
-        )}
-
-</Card.Content>
+      </Card.Content>
         </Card>
         )}
         </KeyboardAvoidingView>
@@ -365,7 +454,7 @@ function Requestfees() {
     )
 }
 
-export default Requestfees;
+export default Viewbill;
 
 const styles = StyleSheet.create({
     Forminput: {
