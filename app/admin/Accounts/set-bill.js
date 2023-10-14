@@ -15,6 +15,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { selectaccstatus, selecttoken, selectuser } from '../../../features/userinfoSlice';
 import { schoolzapi } from '../../../components/constants';
 import Billtwo from '../../../components/Accounts/Billtwo';
+import Billone from '../../../components/Accounts/Billone';
 
 
 
@@ -136,7 +137,7 @@ function Setbill () {
                         <>
                         {acctype == "0" ? (
                             <>
-                            <Text>Accounts 0</Text>
+                            <Billone key={student} stclass={stclass} term={term} year={year} studentid={student}/>
                             </>
                         ) : (
                             <>

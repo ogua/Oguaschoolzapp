@@ -15,13 +15,17 @@ import { TouchableOpacity } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { showMessage } from "react-native-flash-message";
 import { selectaccstatus, selecttoken, selectuser } from '../../features/userinfoSlice';
-import { schoolzapi } from '../constants';
+import { oguaschoolz, schoolzapi } from '../constants';
+import { Linking } from 'react-native';
 
 function Billtwo({stclass,term,year,studentid}) {
 
     const token = useSelector(selecttoken);
     const [amount, setamount] = useState("0");
     const [ofee, setofee] = useState("0");
+
+    const [ismail, setismail] = useState(false);
+    const [issms, setissms] = useState(false);
 
 
     const [isloading, setLoading] = useState(false);
@@ -72,6 +76,58 @@ function Billtwo({stclass,term,year,studentid}) {
         }
         });
      }
+
+     const sendmail = () => {
+      setismail(true);
+      
+      axios.get(`${schoolzapi}/send-student-bill-mail/${term}/${year}/${studentid}/${stclass}/${user?.uniqueid}`,
+        {
+            headers: {Accept: 'application/json',
+            Authorization: "Bearer "+token
+        }
+        })
+      .then(function (results) {
+        showMessage({
+          message: 'Mail sent Successfully!',
+          type: "success",
+          position: 'bottom',
+        });
+          
+        setismail(false);
+      }).catch(function(error){
+        setismail(false);
+          
+      });
+  }
+
+  const sendsms = () => {
+    setissms(true);
+    
+    axios.get(`${schoolzapi}/send-student-bill-sms/${term}/${year}/${studentid}/${stclass}/${user?.uniqueid}`,
+      {
+          headers: {Accept: 'application/json',
+          Authorization: "Bearer "+token
+      }
+      })
+    .then(function (results) {
+      showMessage({
+        message: 'Mail sent Successfully!',
+        type: "success",
+        position: 'bottom',
+      });
+        
+      setissms(false);
+    }).catch(function(error){
+      setissms(false);
+        
+    });
+}
+
+
+const download = () => {
+  let url = `${oguaschoolz}/view-bill/${term}/${year}/${studentid}/${stclass}/${user?.uniqueid}`;
+  Linking.openURL(url);
+}
 
 
      const loaddata = () => {
@@ -413,10 +469,18 @@ const updatedsnt = (index,newvalue) => {
         <Card>
 
           <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-            <Button icon="download">Download</Button>
-            <Button icon="mail">Mail</Button>
-            <Button icon="mail">Sms</Button>
-          </View>
+
+          <Button icon="download" onPress={download}>Download</Button>
+
+            {ismail ? <ActivityIndicator /> : (
+              <Button icon="mail" onPress={sendmail}>Mail</Button>
+            )}
+
+            {issms ? <ActivityIndicator /> : (
+              <Button icon="mail" onPress={sendsms}>Sms</Button>
+            )}
+
+          </View>      
 
             {addmore.map((item,index) => (
               <>
