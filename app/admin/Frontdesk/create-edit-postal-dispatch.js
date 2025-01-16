@@ -27,7 +27,7 @@ function Createeditpostaldispatch() {
     
     const [docdate,setdocdate] = useState('');
     const [showdialog, setShowdialog] = useState(false);
-const hideDialog = () => setShowdialog(false);
+    const hideDialog = () => setShowdialog(false);
     
     const [creatoredit, isCreatedorEdit] = useState();
     const [isloading, setLoading] = useState(false);
